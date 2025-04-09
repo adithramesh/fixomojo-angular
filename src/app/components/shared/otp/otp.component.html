@@ -1,1 +1,47 @@
-<p>otp works!</p>
+<div class="otp-container">
+  <div class="otp-card">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="50"
+      height="50"
+      viewBox="0 0 100 100"
+      class="logo"
+    >
+      <rect
+        x="10"
+        y="10"
+        width="80"
+        height="80"
+        rx="15"
+        ry="15"
+        fill="black"
+      />
+      <text
+        x="50"
+        y="55"
+        text-anchor="middle"
+        alignment-baseline="middle"
+        font-family="Arial, sans-serif"
+        font-size="50"
+        font-weight="bold"
+        fill="white"
+      >
+        FM
+      </text>
+    </svg>
+    <h2>Verify OTP</h2>
+    <p>Enter the OTP sent to your phone. Time remaining: {{ formattedTimeLeft }}</p>
+    <form [formGroup]="otpForm" (ngSubmit)="onVerifyOtp()">
+      <div class="form-group">
+      
+        <input formControlName="otp" placeholder="4-digit OTP" required class="form-input"/>
+        <div *ngIf="otpForm.get('otp')?.touched && otpForm.get('otp')?.invalid" class="error-message">
+          <div *ngIf="otpForm.get('otp')?.errors?.['required']">OTP is required</div>
+          <div *ngIf="otpForm.get('otp')?.errors?.['pattern']">4 digits only</div>
+        </div>
+      </div>
+      <button class="otp-button" type="submit" [disabled]="otpForm.invalid || timeLeft <= 0">Verify OTP</button>
+    </form>
+    <button class="otp-button" (click)="onResendOtp()" [disabled]="timeLeft <= 0">Resend OTP</button>
+  </div>
+</div>

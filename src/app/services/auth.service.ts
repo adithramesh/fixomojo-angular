@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AdminSignupData, PartnerSignUpData, User, UserSignUpData } from '../models/auth.model';
+import {  SignupUserRequestDTO, SignupResponseDTO, OtpRequestDTO, OtpResendRequestDTO} from '../models/auth.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,8 +10,16 @@ export class AuthService {
 
   constructor(private http:HttpClient) { }
 
-  api='http://localhost:3000/'
-  signUp(data:UserSignUpData | PartnerSignUpData | AdminSignupData):Observable<User>{
-    return this.http.post<User>(`${this.api}signup`,data)
+  private apiUrl='http://localhost:3000/auth/'
+  signup(signUpData: SignupUserRequestDTO): Observable<SignupResponseDTO> {
+    return this.http.post<SignupResponseDTO>(`${this.apiUrl}/signup`, signUpData);
+  }
+
+  verifyOtp(otpData: OtpRequestDTO): Observable<SignupResponseDTO> {
+    return this.http.post<SignupResponseDTO>(`${this.apiUrl}/verify-otp`, otpData);
+  }
+
+  resendOtp(resendData: OtpResendRequestDTO): Observable<SignupResponseDTO> {
+    return this.http.post<SignupResponseDTO>(`${this.apiUrl}/resend-otp`, resendData);
   }
 }

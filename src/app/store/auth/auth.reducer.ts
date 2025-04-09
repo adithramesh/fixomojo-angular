@@ -1,65 +1,88 @@
-// import { createFeature, createReducer, on } from '@ngrx/store';
-// import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-// import { Auth } from './auth.model';
-// import { AuthActions } from './auth.actions';
 
-// export const authsFeatureKey = 'auths';
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { AuthActions } from './auth.actions';
+import { SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
 
-// export interface State extends EntityState<Auth> {
-//   // additional entities state properties
-// }
+interface AuthState {
+  user: SignupResponseDTO | null;
+  username:string|null;
+  tempUserId: string | null;
+  phoneNumber: string | null;
+  error: any;
+  loading: boolean;
+}
 
-// export const adapter: EntityAdapter<Auth> = createEntityAdapter<Auth>();
+export const initialState: AuthState = {
+  user: null,
+  username:null,
+  tempUserId: null,
+  phoneNumber: null,
+  error: null,
+  loading: false,
+};
 
-// export const initialState: State = adapter.getInitialState({
-//   // additional entity state properties
-// });
+export const authFeature = createFeature({
+  name: 'auth',
+  reducer: createReducer(
+    initialState,
+    on(AuthActions.signUpUser, (state, { signUpData }) => ({
+      ...state,
+      loading: true,
+      phoneNumber: signUpData.phoneNumber,
+    })),
+    on(AuthActions.signUpSuccess, (state, { response }) => ({
+      ...state,
+      tempUserId: response.tempUserId || null,
+      loading: false,
+      error: null,
+    })),
+    on(AuthActions.signUpFailure, (state, { error }) => ({
+      ...state,
+      error,
+      loading: false,
+    })),
 
-// export const reducer = createReducer(
-//   initialState,
-//   on(AuthActions.addAuth,
-//     (state, action) => adapter.addOne(action.auth, state)
-//   ),
-//   on(AuthActions.upsertAuth,
-//     (state, action) => adapter.upsertOne(action.auth, state)
-//   ),
-//   on(AuthActions.addAuths,
-//     (state, action) => adapter.addMany(action.auths, state)
-//   ),
-//   on(AuthActions.upsertAuths,
-//     (state, action) => adapter.upsertMany(action.auths, state)
-//   ),
-//   on(AuthActions.updateAuth,
-//     (state, action) => adapter.updateOne(action.auth, state)
-//   ),
-//   on(AuthActions.updateAuths,
-//     (state, action) => adapter.updateMany(action.auths, state)
-//   ),
-//   on(AuthActions.deleteAuth,
-//     (state, action) => adapter.removeOne(action.id, state)
-//   ),
-//   on(AuthActions.deleteAuths,
-//     (state, action) => adapter.removeMany(action.ids, state)
-//   ),
-//   on(AuthActions.loadAuths,
-//     (state, action) => adapter.setAll(action.auths, state)
-//   ),
-//   on(AuthActions.clearAuths,
-//     state => adapter.removeAll(state)
-//   ),
-// );
+    on(AuthActions.verifyOtp, state => ({ ...state, loading: true })),
+    on(AuthActions.verifyOtpSuccess, (state, { response }) => ({
+      ...state,
+      user: response,
+      username:response.data?.username||null,
+      tempUserId: null,
+      phoneNumber: null,
+      loading: false,
+      error: null,
+    })),
+    on(AuthActions.verifyOtpFailure, (state, { error }) => ({
+      ...state,
+      error,
+      loading: false,
+    })),
 
-// export const authsFeature = createFeature({
-//   name: authsFeatureKey,
-//   reducer,
-//   extraSelectors: ({ selectAuthsState }) => ({
-//     ...adapter.getSelectors(selectAuthsState)
-//   }),
-// });
+    on(AuthActions.resendOtp, state => ({ ...state, loading: true })),
+    on(AuthActions.resendOtpSuccess, (state, { response }) => ({
+      ...state,
+      tempUserId: response.tempUserId || state.tempUserId,
+      loading: false,
+      error: null,
+    })),
+    on(AuthActions.resendOtpFailure, (state, { error }) => ({
+      ...state,
+      error,
+      loading: false,
+    })),
 
-// export const {
-//   selectIds,
-//   selectEntities,
-//   selectAll,
-//   selectTotal,
-// } = authsFeature;
+    on(AuthActions.setUser, (state, { user }) => ({ ...state, user })),
+    on(AuthActions.logout, () => initialState)
+  ),
+});
+
+export const {
+  name: authFeatureKey,
+  reducer: authReducer,
+  selectAuthState,
+  selectUser,
+  selectTempUserId,
+  selectPhoneNumber,
+  selectError,
+  selectLoading,
+} = authFeature;

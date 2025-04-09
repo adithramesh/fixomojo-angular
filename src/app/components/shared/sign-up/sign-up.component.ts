@@ -9,8 +9,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-// import { AuthActions } from '../store/auth/auth.actions'; 
-import { UserSignUpData, PartnerSignUpData, AdminSignupData } from '../../../models/auth.model';
+import { SignupUserRequestDTO } from '../../../models/auth.model';
+import { AuthActions } from '../../../store/auth/auth.actions';
+ 
 @Component({
   selector: 'app-sign-up',
   imports: [CommonModule, ReactiveFormsModule],
@@ -57,7 +58,7 @@ export class SignUpComponent implements OnInit {
       email: new FormControl('', [Validators.required, Validators.email]),
       phoneNumber: new FormControl('', [
         Validators.required,
-        Validators.pattern(/^[0-9]{10}$/),
+        Validators.pattern('^(\\+?\d{1,4}[\s-])?(?!0+\s+,?$)\\d{10}\s*,?$'),
       ]),
       password: new FormControl('', [
         Validators.required,
@@ -101,15 +102,18 @@ export class SignUpComponent implements OnInit {
   submitReactiveSignUpForm() {
     if (this.signUpForm.valid) {
       const formData = this.signUpForm.value;
-      const role = formData.role;
+      const signUpData: SignupUserRequestDTO = {
+        username: formData.username,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        role: formData.role,
+        serviceType: formData.serviceType,
+        adminCode: formData.adminCode,
+        department: formData.department,
+      };
+      this.store.dispatch(AuthActions.signUpUser({ signUpData }));
 
-      // if (role === 'user') {
-      //   this.store.dispatch(AuthActions['Signup User']({ signupData: formData as UserSignUpData }));
-      // } else if (role === 'partner') {
-      //   this.store.dispatch(AuthActions['Signup Partner']({ signupData: formData as PartnerSignUpData }));
-      // } else if (role === 'admin') {
-      //   this.store.dispatch(AuthActions['Signup Admin']({ signupData: formData as AdminSignupData }));
-      // }
     } else {
       Object.keys(this.signUpForm.controls).forEach((key) => {
         const control = this.signUpForm.get(key);
@@ -120,12 +124,9 @@ export class SignUpComponent implements OnInit {
 
   private passwordMatchValidator(): ValidatorFn {
     return (form: AbstractControl): { [key: string]: any } | null => {
-      const password = form.get('password');
-      const confirmPassword = form.get('confirmPassword');
-
-      return password &&
-        confirmPassword &&
-        password.value !== confirmPassword.value
+      const password = form.get('password')?.value;
+      const confirmPassword = form.get('confirmPassword')?.value;
+      return password && confirmPassword && password !== confirmPassword
         ? { passwordMismatch: true }
         : null;
     };

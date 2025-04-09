@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+.otp-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4f8 0%, #f9fafb 100%);
+}
+
+.otp-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.logo {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+    background-color: #f9fafb;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.error-message {
+    color: #8a4fff;  /* Purple error color */
+    font-size: 12px;
+    text-align: left;
+    margin-top: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-group input:invalid + .error-message,
+.form-group input.ng-invalid.ng-touched + .error-message {
+    opacity: 1;
+}
+
+.otp-button {
+    width: 100%;
+    padding: 14px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px; /* Added margin for spacing between buttons */
+}
+
+.otp-button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.otp-button:hover:not(:disabled) {
+    background-color: #333; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+.otp-button:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(138, 79, 255, 0.5); /* Add focus ring */
+}
