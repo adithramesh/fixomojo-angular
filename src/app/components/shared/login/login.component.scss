@@ -1,0 +1,152 @@
+// @use '../../../../styles/variables' as var;
+// @use '../../../../styles/buttons';
+// @use '../../../../styles/forms';
+@use 'sass:color' as color;
+@use 'variables' as var;
+@use 'buttons' as btn; // Consistent namespace
+@use 'forms' as forms;
+
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4f8 0%, #f9fafb 100%);
+
+  .login-left {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var.$input-bg;
+    padding: 40px;
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+
+      img {
+        margin-right: 15px;
+      }
+
+      h1 {
+        font-family: var.$title-font;
+        font-size: 24px;
+        color: var.$text-color;
+      }
+    }
+
+    .login-title {
+      font-family: var.$title-font;
+      font-size: 28px;
+      font-weight: 600;
+      color: var.$text-color;
+    }
+
+    .login-subtitle {
+      font-family: var.$primary-font;
+      font-size: 16px;
+      color: var.$gray-text;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 400px;
+    }
+  }
+
+  .login-right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 40px;
+
+    .login-card {
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    .login-left, .login-right {
+      width: 100%;
+      padding: 20px;
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+
+  .form-input {
+    @include forms.input-style;
+    width: 100%;
+    height: 50px;
+    &:focus {
+      border-color: var.$purple;
+      box-shadow: 0 0 0 2px rgba(138, 79, 255, 0.2);
+    }
+  }
+
+  .error-message {
+    color: var.$purple;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+}
+
+.login-button {
+  @include btn.button-style;
+  width: 100%;
+  height: 50px;
+  background-color: #000;
+  &:hover {
+    background-color: #333;
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var.$purple;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.forgot-password-link, .signup-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: var.$link-color;
+  font-family: var.$primary-font;
+
+  .link-purple {
+    color: var.$purple;
+    text-decoration: none;
+    font-weight: 600;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@use 'variables' as *;
+
+@mixin button-style($bg-color: $button-bg) {
+  width: 100%;
+  padding: 14px;
+  background-color: $bg-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: $title-font;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:disabled {
+    background-color: $disabled-bg;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $button-hover-bg;
+  }
+}
+
+.signup-button,
+.login-button {
+  @include button-style;
+}

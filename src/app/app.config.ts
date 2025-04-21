@@ -6,7 +6,6 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { AuthEffects } from './store/auth/auth.effects';
 import { authFeatureKey, authReducer } from './store/auth/auth.reducer';
-// import { provideHttpClient } from '@angular/common/http';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 

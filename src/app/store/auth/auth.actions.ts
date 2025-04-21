@@ -1,6 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
-import {  OtpRequestDTO, OtpResendRequestDTO, SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
+import {  ForgotPasswordRequestDTO, LoginRequestDTO, OtpRequestDTO, OtpResendRequestDTO, ResetPasswordRequestDTO, SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
 
 export const AuthActions = createActionGroup({
   source: 'Auth',
@@ -17,9 +16,18 @@ export const AuthActions = createActionGroup({
     'Resend Otp': props<{ resendData: OtpResendRequestDTO }>(),
     'Resend Otp Success': props<{ response: SignupResponseDTO }>(),
     'Resend Otp Failure': props<{ error: any }>(),
-    // 'Login': props<{ loginData: any }>(),
-    // 'Login Success': props<{ authResponse: AuthResponse }>(),
-    // 'Login Failure': props<{ error: any }>(),
+
+    'Forgot Password': props<{ data:ForgotPasswordRequestDTO }>(),
+    'Forgot Password Success': props<{ response: SignupResponseDTO }>(),
+    'Forgot Password Failure': props<{ error: any }>(),
+
+    'Reset Password': props<{ resetData:ResetPasswordRequestDTO }>(),
+    'Reset Password Success': props<{ response: SignupResponseDTO }>(),
+    'Reset Password Failure': props<{ error: any }>(),
+
+    'Login': props<{ loginData: LoginRequestDTO }>(),
+    'Login Success': props<{ response: SignupResponseDTO }>(),
+    'Login Failure': props<{ error: any }>(),
 
     'Logout': emptyProps(),
     'Set User': props<{ user: SignupResponseDTO | null }>(), //sets the user or null if logout.

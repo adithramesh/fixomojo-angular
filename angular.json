@@ -26,9 +26,13 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+         
+           "styles": [
+              "src/styles/styles.scss"
+                  ],
+                  "stylePreprocessorOptions": {
+                    "includePaths": ["src/styles"]
+                  },
             "scripts": [],
             "server": "src/main.server.ts",
             "prerender": true,
@@ -87,15 +91,25 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/app/assets/logo",
+                "output": "assets/logo"
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles/styles.css"
             ],
             "scripts": []
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss"
     }
   },
   "cli": {

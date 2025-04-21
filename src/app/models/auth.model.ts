@@ -27,16 +27,34 @@ export interface SignupResponseDTO {
   tempUserId?:string;
   access_token?: string;
   refresh_token?: string;
+  reset_token?:string;
+  context?:string;
   status: number;
 }
 
 export interface OtpRequestDTO{
   tempUserId:string
   otp:string
+  context:string
 }
 
 export interface OtpResendRequestDTO{
   tempUserId:string
   phoneNumber:string
+}
+
+export interface ForgotPasswordRequestDTO {
+  phoneNumber:string
+}
+
+export interface ResetPasswordRequestDTO {
+  tempUserId:string,
+  reset_token:string,
+  newPassword:string
+}
+
+export interface LoginRequestDTO {
+  phoneNumber:string,
+  password:string
 }
 

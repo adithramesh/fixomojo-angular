@@ -1,247 +1,121 @@
 <div class="signup-container">
   <div class="signup-left">
     <div class="logo-container">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="50"
-        height="50"
-        viewBox="0 0 100 100"
-      >
-        <rect
-          x="10"
-          y="10"
-          width="80"
-          height="80"
-          rx="15"
-          ry="15"
-          fill="black"
-        />
-        <text
-          x="50"
-          y="55"
-          text-anchor="middle"
-          alignment-baseline="middle"
-          font-family="Arial, sans-serif"
-          font-size="50"
-          font-weight="bold"
-          fill="white"
-        >
-          FM
-        </text>
+      <!-- <img src="../../../assets/logo/fixomojo-logo.png" alt="FixoMojo Logo" width="40" height="40"> -->
+      <svg width="40" height="40" viewBox="0 0 100 100">
+        <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black"/>
+        <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">FM</text>
       </svg>
-      <h2 class="signup-title">FixoMojo</h2>
+      <h1>FixoMojo</h1>
     </div>
-    <p class="signup-subtitle">{{ subtitle }}</p>
+    <h2 class="signup-title">{{ subtitle }}</h2>
+    <p class="signup-subtitle">Join FixoMojo to book or provide home services.</p>
   </div>
-
   <div class="signup-right">
     <div class="signup-card">
       <form [formGroup]="signUpForm" (ngSubmit)="submitReactiveSignUpForm()">
         <div class="form-group">
-          <input
-            type="text"
-            formControlName="username"
-            placeholder="Username"
-            class="form-input"
-          />
-          <div
-            *ngIf="
-              signUpForm.get('username')?.invalid &&
-              signUpForm.get('username')?.touched
-            "
-            class="error-message"
-          >
-            <div *ngIf="signUpForm.get('username')?.errors?.['required']">
-              Username is required
-            </div>
-            <div *ngIf="signUpForm.get('username')?.errors?.['minlength']">
-              Username must be at least 4 characters long
-            </div>
-            <div *ngIf="signUpForm.get('username')?.errors?.['pattern']">
-              Username can only contain letters, numbers, and underscores
-            </div>
+          <input type="text" class="form-input" formControlName="username" placeholder="Username" aria-label="Username">
+          <div class="error-message" *ngIf="signUpForm.get('username')?.touched && signUpForm.get('username')?.errors">
+            <span *ngIf="signUpForm.get('username')?.errors?.['required']">Username is required.</span>
+            <span *ngIf="signUpForm.get('username')?.errors?.['minlength']">Username must be at least 4 characters.</span>
+            <span *ngIf="signUpForm.get('username')?.errors?.['pattern']">Use letters, numbers, or underscores only.</span>
           </div>
         </div>
+        <div class="form-group">
+          <input type="email" class="form-input" formControlName="email" placeholder="Email" aria-label="Email">
+          <div class="error-message" *ngIf="signUpForm.get('email')?.touched && signUpForm.get('email')?.errors">
+            <span *ngIf="signUpForm.get('email')?.errors?.['required']">Email is required.</span>
+            <span *ngIf="signUpForm.get('email')?.errors?.['email']">Enter a valid email address.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="tel" class="form-input" formControlName="phoneNumber" placeholder="Phone Number (+919876543210)" aria-label="Phone Number">
+          <div class="error-message" *ngIf="signUpForm.get('phoneNumber')?.touched && signUpForm.get('phoneNumber')?.errors">
+            <span *ngIf="signUpForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
+            <span *ngIf="signUpForm.get('phoneNumber')?.errors?.['pattern']">Use a valid +91 number (e.g., +919876543210).</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-input" formControlName="password" placeholder="Password" aria-label="Password">
+          <div class="error-message" *ngIf="signUpForm.get('password')?.touched && signUpForm.get('password')?.errors">
+            <span *ngIf="signUpForm.get('password')?.errors?.['required']">Password is required.</span>
+            <span *ngIf="signUpForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</span>
+            <span *ngIf="signUpForm.get('password')?.errors?.['pattern']">Include letters and numbers.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-input" formControlName="confirmPassword" placeholder="Confirm Password" aria-label="Confirm Password">
+          <div class="error-message" *ngIf="signUpForm.get('confirmPassword')?.touched && (signUpForm.get('confirmPassword')?.errors || signUpForm.errors?.['mismatch'])">
+            <span *ngIf="signUpForm.get('confirmPassword')?.errors?.['required']">Confirm password is required.</span>
+            <span *ngIf="signUpForm.errors?.['mismatch']">Passwords do not match.</span>
+          </div>
+        </div>
+
+
+       
+
+        <div class="form-group" *ngIf="signUpForm.get('serviceType')">
+          <input type="text" class="form-input" formControlName="serviceType" placeholder="Service Type (e.g., Plumbing)" aria-label="Service Type">
+          <div class="error-message" *ngIf="signUpForm.get('serviceType')?.touched && signUpForm.get('serviceType')?.errors?.['required']">
+            Service type is required for partners.
+          </div>
+        </div>
+        <div class="form-group" *ngIf="signUpForm.get('adminCode')">
+          <input type="text" class="form-input" formControlName="adminCode" placeholder="Admin Code" aria-label="Admin Code">
+          <div class="error-message" *ngIf="signUpForm.get('adminCode')?.touched && signUpForm.get('adminCode')?.errors?.['required']">
+            Admin code is required.
+          </div>
+        </div>
+        <div class="form-group" *ngIf="signUpForm.get('department')">
+          <input type="text" class="form-input" formControlName="department" placeholder="Department" aria-label="Department">
+          <div class="error-message" *ngIf="signUpForm.get('department')?.touched && signUpForm.get('department')?.errors?.['required']">
+            Department is required.
+          </div>
+        </div>
+        <div class="error-message" *ngIf="error$ | async as error">
+          {{ error.message || 'Signup failed. Please try again.' }}
+        </div>
+        <div class="loading-overlay" *ngIf="loading$ | async">
+          <div class="spinner"></div>
+        </div>
+
+        <!-- <div class="form-group">
+          <div class="radio-group" role="radiogroup" aria-label="Select Role">
+            <label>
+              <input type="radio" formControlName="role" value="user" aria-label="User Role"> User
+            </label>
+            <label>
+              <input type="radio" formControlName="role" value="partner" aria-label="Partner Role"> Partner
+            </label>
+            <label>
+              <input type="radio" formControlName="role" value="admin" aria-label="Admin Role"> Admin
+            </label>
+          </div>
+          <div class="error-message" *ngIf="signUpForm.get('role')?.touched && signUpForm.get('role')?.errors?.['required']">
+            Role is required.
+          </div>
+        </div> -->
 
         <div class="form-group">
-          <input
-            type="email"
-            formControlName="email"
-            placeholder="Email"
-            class="form-input"
-          />
-          <div
-            *ngIf="
-              signUpForm.get('email')?.invalid &&
-              signUpForm.get('email')?.touched
-            "
-            class="error-message"
-          >
-            <div *ngIf="signUpForm.get('email')?.errors?.['required']">
-              Email is required
-            </div>
-            <div *ngIf="signUpForm.get('email')?.errors?.['email']">
-              Please enter a valid email
-            </div>
+          <select class="form-input role-select" formControlName="role" aria-label="Select Role">
+            <option value="">Select Role</option>
+            <option value="user">User</option>
+            <option value="partner">Partner</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div class="error-message" *ngIf="signUpForm.get('role')?.touched && signUpForm.get('role')?.errors?.['required']">
+            Role is required.
           </div>
         </div>
 
-        <div class="form-group">
-          <input
-            type="tel"
-            formControlName="phoneNumber"
-            placeholder="Phone Number"
-            class="form-input"
-          />
-          <div
-            *ngIf="
-              signUpForm.get('phoneNumber')?.invalid &&
-              signUpForm.get('phoneNumber')?.touched
-            "
-            class="error-message"
-          >
-            <div *ngIf="signUpForm.get('phoneNumber')?.errors?.['required']">
-              Phone number is required
-            </div>
-            <div *ngIf="signUpForm.get('phoneNumber')?.errors?.['pattern']">
-              Please enter a valid 10-digit phone number
-            </div>
-          </div>
-        </div>
-
-        <ng-container *ngIf="signUpForm.get('role')?.value === 'partner'">
-          <div class="form-group">
-            <select formControlName="serviceType" class="form-input">
-              <option value="">Select Service Type</option>
-              <option value="electrician">Electrician</option>
-              <option value="plumber">Plumber</option>
-              <option value="ac-mechanic">AC Mechanic</option>
-            </select>
-            <div
-              *ngIf="
-                signUpForm.get('serviceType')?.invalid &&
-                signUpForm.get('serviceType')?.touched
-              "
-              class="error-message"
-            >
-              Please select a service type
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="signUpForm.get('role')?.value === 'admin'">
-          <div class="form-group">
-            <input
-              type="text"
-              formControlName="adminCode"
-              placeholder="Admin Code"
-              class="form-input"
-            />
-            <div
-              *ngIf="
-                signUpForm.get('adminCode')?.invalid &&
-                signUpForm.get('adminCode')?.touched
-              "
-              class="error-message"
-            >
-              Admin Code is required
-            </div>
-          </div>
-
-          <div class="form-group">
-            <input
-              type="text"
-              formControlName="department"
-              placeholder="Department"
-              class="form-input"
-            />
-            <div
-              *ngIf="
-                signUpForm.get('department')?.invalid &&
-                signUpForm.get('department')?.touched
-              "
-              class="error-message"
-            >
-              Department is required
-            </div>
-          </div>
-        </ng-container>
-
-        <div class="form-group">
-          <input
-            type="password"
-            formControlName="password"
-            placeholder="Password"
-            class="form-input"
-          />
-          <div
-            *ngIf="
-              signUpForm.get('password')?.invalid &&
-              signUpForm.get('password')?.touched
-            "
-            class="error-message"
-          >
-            <div *ngIf="signUpForm.get('password')?.errors?.['required']">
-              Password is required
-            </div>
-            <div *ngIf="signUpForm.get('password')?.errors?.['minlength']">
-              Password must be at least 6 characters long
-            </div>
-            <div *ngIf="signUpForm.get('password')?.errors?.['pattern']">
-              Password must contain at least one letter and one number
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <input
-            type="password"
-            formControlName="confirmPassword"
-            placeholder="Confirm Password"
-            class="form-input"
-          />
-          <div
-            *ngIf="
-              signUpForm.get('confirmPassword')?.invalid ||
-              signUpForm.hasError('passwordMismatch')
-            "
-            class="error-message"
-          >
-            Passwords must match
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          class="signup-button"
-          [disabled]="signUpForm.invalid"
-        >
-          SignUp
+        <button type="submit" class="signup-button" [disabled]="signUpForm.invalid || (loading$ | async)" aria-label="Sign Up">
+          Sign Up
         </button>
-
-        <div class="form-group">
-        
-         
-           <br>
-          <div class="radio-group">
-            <label>
-              <input type="radio" formControlName="role" value="user" /> User
-            </label>
-            <label>
-              <input type="radio" formControlName="role" value="partner" />
-              Partner
-            </label>
-            <label>
-              <input type="radio" formControlName="role" value="admin" /> Admin
-            </label>
-          </div>
-        </div>
       </form>
-
-      <p class="login-link">
-        Already a member?
-        <a routerLink="/login">Login</a>
-      </p>
+      <div class="login-link">
+        Already have an account? <a routerLink="/login" class="link-purple">Log In</a>
+      </div>
     </div>
   </div>
 </div>
