@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { selectTempUserId, selectResetToken } from '../../../store/auth/auth.reducer';
 import { ResetPasswordRequestDTO } from '../../../models/auth.model';
+import { combineLatest, Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-password',
@@ -16,9 +18,10 @@ import { ResetPasswordRequestDTO } from '../../../models/auth.model';
 })
 export class ResetPasswordComponent {
   private store = inject(Store);
-  router = inject(Router);
-  tempUserId$ = this.store.select(selectTempUserId);
-  resetToken$ = this.store.select(selectResetToken);
+  private router = inject(Router);
+  
+  tempUserId$!:Observable<string | null>;
+  resetToken$!:Observable<string | null>;
   resetPasswordForm!: FormGroup;
 
   constructor() {
@@ -33,30 +36,43 @@ export class ResetPasswordComponent {
       },
       { validators: this.passwordMatchValidator() }
     );
+
   }
 
-  onSubmit(tempUserId: string | null, resetToken: string | null) {
-    if (this.resetPasswordForm.valid && tempUserId && resetToken) {
-      const { newPassword } = this.resetPasswordForm.value;
-      const payload: ResetPasswordRequestDTO = {
-        tempUserId,
-        reset_token: resetToken,
-        newPassword,
-      };
-      console.log("payload", payload);
-      this.store.dispatch(AuthActions.resetPassword({ resetData: payload }));
-    } else {
-      console.warn("Invalid form or missing tempUserId/resetToken");
-      this.router.navigate(['/forgot-password']);
+  ngOnInit():void{
+    this.tempUserId$=this.store.select(selectTempUserId)
+    this.resetToken$=this.store.select(selectResetToken)
+  }
+
+
+  onSubmit(): void {
+    if (this.resetPasswordForm.valid) {
+      combineLatest([this.tempUserId$, this.resetToken$])
+        .pipe(first())
+        .subscribe(([tempUserId, resetToken]) => {
+          console.log('tempUserId:', tempUserId, 'resetToken:', resetToken);
+          if (tempUserId && resetToken) {
+            const { newPassword } = this.resetPasswordForm.value;
+            const payload: ResetPasswordRequestDTO = {
+              tempUserId,
+              reset_token: resetToken,
+              newPassword,
+            };
+            this.store.dispatch(AuthActions.resetPassword({ resetData: payload }));
+          } else {
+            this.router.navigate(['/forgot-password']);
+          }
+        });
     }
   }
+  
 
   private passwordMatchValidator(): ValidatorFn {
     return (form: AbstractControl): { [key: string]: any } | null => {
       const password = form.get('newPassword')?.value;
       const confirmPassword = form.get('confirmPassword')?.value;
       return password && confirmPassword && password !== confirmPassword
-        ? { passwordMismatch: true }
+        ? { mismatch: true }
         : null;
     };
   }

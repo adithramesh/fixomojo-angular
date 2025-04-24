@@ -49,7 +49,8 @@ export const authFeature = createFeature({
       ...state,
       user: response,
       username:response.data?.username||null,
-      tempUserId: null,
+      tempUserId:response.tempUserId || null,
+      resetToken:response.reset_token || null,
       phoneNumber: null,
       loading: false,
       error: null,
@@ -79,7 +80,7 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.forgotPasswordSuccess, (state, { response }) => ({
       ...state,
-      tempUserId: response.tempUserId || null,
+      tempUserId:response.tempUserId || null,
       loading: false,
       error: null,
     })),
@@ -88,10 +89,16 @@ export const authFeature = createFeature({
       error,
       loading: false,
     })),
-    on(AuthActions.resetPassword, state => ({ ...state, loading: true })),
-    on(AuthActions.resetPasswordSuccess, state => ({
+    on(AuthActions.resetPassword, (state,{resetData}) => ({ 
+      ...state, 
+      // resetToken:state.resetToken,
+      // tempUserId:resetData.tempUserId,
+      loading: true 
+    })),
+    on(AuthActions.resetPasswordSuccess, (state) => ({
       ...state,
-      resetToken: null,
+      tempUserId: null,
+      reset_token:null,
       loading: false,
       error: null,
     })),

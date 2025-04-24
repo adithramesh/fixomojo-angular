@@ -28,19 +28,20 @@ export interface SignupResponseDTO {
   access_token?: string;
   refresh_token?: string;
   reset_token?:string;
-  context?:string;
+  context?:"signup" | "forgot-password"
   status: number;
 }
 
 export interface OtpRequestDTO{
   tempUserId:string
   otp:string
-  context:string
+  context?:"signup" | "forgot-password"
 }
 
 export interface OtpResendRequestDTO{
   tempUserId:string
   phoneNumber:string
+  context?:'signup' | 'forgot-password'
 }
 
 export interface ForgotPasswordRequestDTO {

@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   resendOtp(resendData: OtpResendRequestDTO): Observable<SignupResponseDTO> {
-    return this.http.post<SignupResponseDTO>(`${this.apiUrl}resend-otp`, resendData);
+    return this.http.post<SignupResponseDTO>(`${this.apiUrl}resend-otp`, resendData)
   }
 
   forgotPassword(data: ForgotPasswordRequestDTO):Observable<SignupResponseDTO> {

@@ -18,7 +18,7 @@ export const routes: Routes = [
     { path: 'home', component: HomeComponent }, // For 'user' role after OTP verification
     { path: 'partner-dashboard', component: PartnerDashboardComponent }, // For 'partner' role
     { path: 'admin-dashboard', component: AdminDashboardComponent }, // For 'admin' role
-    { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
-    { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
+    // { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
+    // { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
     
 ];

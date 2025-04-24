@@ -54,9 +54,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log('otpForm initialized:', this.otpForm);
   }
 
-  ngOnDestroy(): void {
-    this.timerSubscription?.unsubscribe();
-  }
+ 
 
   private startTimer(): void {
     this.timerSubscription = interval(1000).subscribe(() => {
@@ -116,7 +114,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('onSubmit triggered with otpValues:', this.otpValues);
     if (this.isOtpValid) {
       combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
-        console.log('tempUserId:', tempUserId, 'loading:', loading);
+        // console.log('tempUserId:', tempUserId, 'loading:', loading);
         if (tempUserId) {
           const otpData: OtpRequestDTO = {
             tempUserId,
@@ -153,19 +151,43 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   //   }).unsubscribe();
   // }
 
+  // onResendOtp(): void {
+  //   combineLatest([this.tempUserId$, this.phoneNumber$])
+  //     .pipe(first())
+  //     .subscribe(([tempUserId, phoneNumber]) => {
+  //       console.log("tempuserid, phonenumber in on resendotp front",tempUserId, phoneNumber );
+        
+  //       if (tempUserId && phoneNumber) {
+  //         const resendData: OtpResendRequestDTO = { tempUserId, phoneNumber, context : this.verificationContext};
+  //         console.log("resend otp from otp comp", resendData);
+  //         this.store.dispatch(AuthActions.resendOtp({ resendData }));
+  //         this.timeLeft = 600;
+  //         this.timerSubscription?.unsubscribe();
+  //         this.startTimer();
+  //       }
+  //     });
+  // }
+
   onResendOtp(): void {
     combineLatest([this.tempUserId$, this.phoneNumber$])
       .pipe(first())
       .subscribe(([tempUserId, phoneNumber]) => {
-        console.log("tempuserid, phonenumber in on resendotp front",tempUserId, phoneNumber );
-        
         if (tempUserId && phoneNumber) {
-          const resendData: OtpResendRequestDTO = { tempUserId, phoneNumber };
-          console.log("resend otp from otp comp", resendData);
+          const resendData: OtpResendRequestDTO = { 
+            tempUserId, 
+            phoneNumber, 
+            context: this.verificationContext 
+          };
+          
+          console.log("Resending OTP with data:", resendData);
           this.store.dispatch(AuthActions.resendOtp({ resendData }));
+          
+          // Reset timer
           this.timeLeft = 600;
           this.timerSubscription?.unsubscribe();
           this.startTimer();
+        } else {
+          console.error('Missing tempUserId or phoneNumber for OTP resend');
         }
       });
   }
@@ -180,5 +202,10 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateOtpValidity(): void {
     this.isOtpValid = this.otpValues.every(value => value.length === 1);
+  }
+
+
+  ngOnDestroy(): void {
+    this.timerSubscription?.unsubscribe();
   }
 }
