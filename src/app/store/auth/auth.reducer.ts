@@ -1,5 +1,5 @@
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
 import { SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
 
@@ -34,6 +34,7 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.signUpSuccess, (state, { response }) => ({
       ...state,
+      username: response.data?.username || null,
       tempUserId: response.tempUserId || null,
       loading: false,
       error: null,
@@ -51,7 +52,7 @@ export const authFeature = createFeature({
       username:response.data?.username||null,
       tempUserId:response.tempUserId || null,
       resetToken:response.reset_token || null,
-      phoneNumber: null,
+      phoneNumber: response.data?.phoneNumber || null,
       loading: false,
       error: null,
     })),
@@ -62,9 +63,9 @@ export const authFeature = createFeature({
     })),
 
     on(AuthActions.resendOtp, state => ({ ...state, loading: true })),
-    on(AuthActions.resendOtpSuccess, (state, { response }) => ({
+    on(AuthActions.resendOtpSuccess, (state ) => ({
       ...state,
-      tempUserId: response.tempUserId || state.tempUserId,
+      // tempUserId: response.tempUserId || state.tempUserId,
       loading: false,
       error: null,
     })),
@@ -111,6 +112,9 @@ export const authFeature = createFeature({
     on(AuthActions.loginSuccess, (state, { response }) => ({
       ...state,
       user: response,
+      phoneNumber:response.data?.phoneNumber || null,
+      tempUserId: response.data?.id || null,
+      username: response.data?.username || null,
       loading: false,
       error: null,
     })),
@@ -129,9 +133,16 @@ export const {
   reducer: authReducer,
   selectAuthState,
   selectUser,
+  selectUsername,
   selectTempUserId,
   selectPhoneNumber,
   selectResetToken,
   selectError,
   selectLoading,
 } = authFeature;
+
+
+export const selectUserRole = createSelector(
+  selectUser,
+  (user) => user?.data?.role || null
+);

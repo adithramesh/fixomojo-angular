@@ -8,7 +8,11 @@
       <h1>FixoMojo</h1>
     </div>
     <h2 class="otp-title">Verify OTP</h2>
-    <p class="otp-subtitle">Enter the 4-digit OTP sent to your phone. Time remaining: {{ formattedTimeLeft }}</p>
+   <p class="otp-subtitle">
+    Enter the 4-digit OTP sent to your phone
+    <span class="highlight-phone">{{phoneNumber$ | async}}</span>.
+    Time remaining: {{ formattedTimeLeft }}.
+</p>
   </div>
   <div class="otp-right">
     <div class="otp-card">
@@ -26,7 +30,7 @@
             (input)="handleInput($event, index)"
             (keydown)="handleKeydown($event, index)"
             (paste)="handlePaste($event)"
-            autocomplete="one-time-code"
+            autocomplete="one-time-code" 
           >
         </div>
         <div class="error-message" *ngIf="error$ | async as error">
@@ -40,7 +44,7 @@
         </button>
       </form>
       <div class="resend-link">
-        Didn't receive OTP? <a href="#" (click)="onResendOtp()" [class.disabled]="timeLeft === 0" class="link-purple">Resend OTP</a>
+        Didn't receive OTP? <a  (click)="onResendOtp()" [class.disabled]="timeLeft === 0" class="link-purple">Resend OTP</a>
       </div>
       <div class="forgot-password-link">
         <a routerLink="/forgot-password" class="link-purple">Back to Forgot Password</a>

@@ -43,11 +43,12 @@ import { Router } from '@angular/router';
 import { selectLoading } from '../../../store/auth/auth.reducer'; // Import loading selector
 import { Observable } from 'rxjs';
 import { ForgotPasswordRequestDTO } from '../../../models/auth.model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss']
 })

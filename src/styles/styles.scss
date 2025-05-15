@@ -1,6 +1,11 @@
 @use 'variables' as var;
 @use 'forms' as forms;
 @use 'buttons' as btn;
+@use '../app/components/shared/nav-bar/nav-bar.component.scss';
+@use '../app/components/admin/side-bar/side-bar.component.scss';
+@use '../app/components/shared/data-table/data-table.component.scss';
+@use '../app/components/admin/admin-dashboard/admin-dashboard.component.scss';
+@use '../app/components/user/home/home.component.scss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600&display=swap');
 
 * {
@@ -15,3 +20,5 @@ body {
   color: var.$text-color;
   line-height: 1.6;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

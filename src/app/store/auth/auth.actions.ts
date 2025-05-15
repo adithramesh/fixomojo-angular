@@ -8,13 +8,12 @@ export const AuthActions = createActionGroup({
     'SignUp Success':props<{response: SignupResponseDTO}>(),
     'SignUp Failure': props<{error: any}>(),
 
-
     'Verify Otp': props<{ otpData:OtpRequestDTO }>(),
     'Verify Otp Success': props<{ response: SignupResponseDTO }>(),
     'Verify Otp Failure': props<{ error: any }>(),
 
     'Resend Otp': props<{ resendData: OtpResendRequestDTO }>(),
-    'Resend Otp Success': props<{ response: SignupResponseDTO }>(),
+    'Resend Otp Success': emptyProps(),
     'Resend Otp Failure': props<{ error: any }>(),
 
     'Forgot Password': props<{ data:ForgotPasswordRequestDTO }>(),
@@ -42,3 +41,4 @@ export function signUpUser(signUpUser: any): import("rxjs").OperatorFunction<any
 // export function signUpUser(signUpUser: any): import("rxjs").OperatorFunction<any, any> {
 //   throw new Error('Function not implemented.');
 // }
+// props<{ response: SignupResponseDTO }>

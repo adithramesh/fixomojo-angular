@@ -1,0 +1,48 @@
+@use 'variables' as var;
+@use 'buttons' as btn;
+
+.navbar {
+  display: flex; // Horizontal alignment
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 0.75rem 1.5rem; 
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+  height: 48px; 
+
+  .navbar-left {
+    .welcome-message {
+      font-family: var.$primary-font;
+      font-size: 0.875rem; 
+      color: var.$text-color;
+      line-height: 1.2;
+    }
+  }
+
+  .navbar-right {
+    .logout-button {
+      @include btn.button-style;
+      padding: 0.5em 1em; 
+      font-size: 0.75rem;
+      border-radius: 6px; 
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: auto;
+
+    .navbar-left,
+    .navbar-right {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

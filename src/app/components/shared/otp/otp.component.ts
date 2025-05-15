@@ -135,39 +135,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onSubmit(); // Trigger onSubmit on click
   }
 
-  // onResendOtp(): void {
-  //   this.tempUserId$.subscribe(tempUserId => {
-  //     this.phoneNumber$.subscribe(phoneNumber => {
-  //       if (tempUserId && phoneNumber) {
-  //         const resendData: OtpResendRequestDTO = { tempUserId, phoneNumber };
-  //         console.log("resend otp from otp comp",resendData );
-          
-  //         this.store.dispatch(AuthActions.resendOtp({ resendData }));
-  //         this.timeLeft = 600;
-  //         this.timerSubscription?.unsubscribe();
-  //         this.startTimer();
-  //       }
-  //     }).unsubscribe();
-  //   }).unsubscribe();
-  // }
-
-  // onResendOtp(): void {
-  //   combineLatest([this.tempUserId$, this.phoneNumber$])
-  //     .pipe(first())
-  //     .subscribe(([tempUserId, phoneNumber]) => {
-  //       console.log("tempuserid, phonenumber in on resendotp front",tempUserId, phoneNumber );
-        
-  //       if (tempUserId && phoneNumber) {
-  //         const resendData: OtpResendRequestDTO = { tempUserId, phoneNumber, context : this.verificationContext};
-  //         console.log("resend otp from otp comp", resendData);
-  //         this.store.dispatch(AuthActions.resendOtp({ resendData }));
-  //         this.timeLeft = 600;
-  //         this.timerSubscription?.unsubscribe();
-  //         this.startTimer();
-  //       }
-  //     });
-  // }
-
+  
   onResendOtp(): void {
     combineLatest([this.tempUserId$, this.phoneNumber$])
       .pipe(first())

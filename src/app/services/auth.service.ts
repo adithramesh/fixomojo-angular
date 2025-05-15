@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SignupUserRequestDTO, SignupResponseDTO, OtpRequestDTO, OtpResendRequestDTO, ForgotPasswordRequestDTO, ResetPasswordRequestDTO, LoginRequestDTO} from '../models/auth.model';
-import { Observable } from 'rxjs';
-
+import { SignupUserRequestDTO, SignupResponseDTO, OtpRequestDTO, OtpResendRequestDTO, ForgotPasswordRequestDTO, ResetPasswordRequestDTO, LoginRequestDTO, RefreshTokenResponse} from '../models/auth.model';
+import { catchError, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +34,19 @@ export class AuthService {
 
   login(loginData: LoginRequestDTO):Observable<SignupResponseDTO>{
     return this.http.post<SignupResponseDTO>(`${this.apiUrl}login`, loginData)
+  }
+
+  refreshToken(): Observable<RefreshTokenResponse | null> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token found'));
+    }
+    
+    const body = { refreshToken };
+    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}refresh-token`, body).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

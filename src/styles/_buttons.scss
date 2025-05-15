@@ -27,3 +27,9 @@
 .login-button {
   @include button-style;
 }
+
+.block-button {
+  @include button-style;
+  background-color: $error-red; // Red for blocking
+  color: white;
+}

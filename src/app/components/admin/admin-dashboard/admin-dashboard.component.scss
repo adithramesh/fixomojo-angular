@@ -1,0 +1,45 @@
+@use 'variables' as var;
+
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: var.$background-color;
+  padding-top: 48px;
+  position: relative;
+
+  .phone-number {
+    font-family: var.$primary-font;
+    font-size: 1rem;
+    color: var.$gray-text;
+    margin: 1rem 2rem;
+  }
+
+  .main-content {
+    flex: 1;
+    margin-left: 250px; // Match sidebar width
+    padding: 2rem;
+    box-sizing: border-box; // Ensure padding doesn't affect width
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+
+    .dashboard-header {
+      margin-bottom: 1.5rem;
+      h1 {
+        font-family: var.$title-font;
+        font-size: 1.75rem;
+        color: var.$text-color;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding-top: 48px;
+
+    .main-content {
+      margin-left: 0;
+      padding: 1rem;
+    }
+  }
+}

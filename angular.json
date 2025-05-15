@@ -28,8 +28,9 @@
             ],
          
            "styles": [
-              "src/styles/styles.scss"
-                  ],
+            "@angular/material/prebuilt-themes/magenta-violet.css",
+            "src/styles/styles.scss"
+          ],
                   "stylePreprocessorOptions": {
                     "includePaths": ["src/styles"]
                   },
@@ -99,7 +100,8 @@
               }
             ],
             "styles": [
-              "src/styles/styles.css"
+              "@angular/material/prebuilt-themes/magenta-violet.css",
+              "src/styles/styles.scss"
             ],
             "scripts": []
           }

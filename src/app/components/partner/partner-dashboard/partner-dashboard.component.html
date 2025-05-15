@@ -1,1 +1,11 @@
-<p>partner-dashboard works!</p>
+<app-nav-bar></app-nav-bar>
+
+<main class="home-container">
+  <!-- User information section -->
+  <section class="user-info-section">
+    <div class="card">
+      <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
+      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
+    </div>
+  </section>
+</main>

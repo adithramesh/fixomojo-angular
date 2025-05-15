@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'app-footer',
     imports: [],
     templateUrl: './footer.component.html',
-    styleUrl: './footer.component.css'
+    styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
   email: string = '';

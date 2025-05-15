@@ -1,0 +1,213 @@
+@use 'sass:color';
+@use 'variables' as var;
+@use 'buttons' as btn;
+
+// Data table container styles
+.data-table-container {
+  position: relative;
+  width: 100%;
+  padding: var.$spacing-lg;
+  margin-top: var.$spacing-md;
+  background-color: var.$white;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+  min-height: 200px;
+  box-sizing: border-box;
+
+  // Title styling
+  h2 {
+    font-family: var.$title-font;
+    font-size: var.$font-size-xl;
+    color: var.$text-color;
+    margin-bottom: var.$spacing-md;
+  }
+
+  // Loading indicator
+  .loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-size: var.$font-size-md;
+    color: var.$gray-text;
+  }
+
+  // Empty state
+  .empty-state {
+    text-align: center;
+    font-size: var.$font-size-md;
+    color: var.$gray-text;
+    padding: var.$spacing-xl;
+  }
+
+  // Responsive table wrapper
+  .table-responsive {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  // Main table styles
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: var.$primary-font;
+
+    // Table header
+    thead {
+      background-color: var.$input-bg;
+      border-bottom: 2px solid var.$purple;
+
+      th {
+        padding: var.$spacing-sm;
+        font-size: var.$font-size-sm;
+        font-weight: var.$font-weight-bold;
+        color: var.$text-color;
+        text-align: left;
+        text-transform: uppercase;
+        border-bottom: 1px solid var.$border-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    // Table body
+    tbody {
+      tr {
+        &:hover {
+          background-color: rgba(138, 79, 255, 0.05); // $purple with opacity
+        }
+
+        td {
+          padding: var.$spacing-sm;
+          font-size: var.$font-size-sm;
+          color: var.$text-color;
+          border-bottom: 1px solid var.$border-color;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          // Table button styles
+          button {
+            // Customize button-style for table buttons (smaller, left-aligned)
+            display: inline-block;
+            font-family: var.$primary-font;
+            font-weight: var.$font-weight-semibold;
+            font-size: var.$font-size-xs;
+            padding: var.$spacing-xs var.$spacing-sm;
+            border: none;
+            border-radius: var.$border-radius-sm;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: left;
+
+            &.edit-button {
+              background-color: var.$purple;
+              color: var.$white;
+              &:hover:not(:disabled) {
+                background-color: color.adjust(var.$purple, $lightness: -10%);
+              }
+            }
+
+            &.block-button {
+              background-color: var.$error-red;
+              color: var.$white;
+              &:hover:not(:disabled) {
+                background-color: color.adjust(var.$error-red, $lightness: -10%);
+              }
+            }
+
+            &:disabled {
+              background-color: var.$disabled-bg;
+              cursor: not-allowed;
+            }
+          }
+
+          // Status styles
+          .status-active {
+            color: var.$success-green;
+            font-weight: var.$font-weight-semibold;
+            text-transform: lowercase;
+          }
+
+          .status-inactive,
+          .status-blocked,
+          .status-pending {
+            color: var.$error-red;
+            font-weight: var.$font-weight-semibold;
+            text-transform: lowercase;
+          }
+        }
+      }
+    }
+  }
+
+  // Pagination controls
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var.$spacing-sm;
+    margin-top: var.$spacing-md;
+    font-family: var.$primary-font;
+
+    .btn {
+      // Customize button-style for pagination buttons
+      display: inline-block;
+      font-family: var.$primary-font;
+      font-weight: var.$font-weight-semibold;
+      font-size: var.$font-size-sm;
+      padding: var.$spacing-xs var.$spacing-md;
+      background-color: var.$purple;
+      color: var.$white;
+      border: none;
+      border-radius: var.$border-radius-sm;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background-color: color.adjust(var.$purple, $lightness: -10%);
+      }
+
+      &:disabled {
+        background-color: var.$disabled-bg;
+        cursor: not-allowed;
+      }
+    }
+
+    .pagination-info {
+      font-size: var.$font-size-sm;
+      color: var.$text-color;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: var.$breakpoint-md) {
+    padding: var.$spacing-md;
+
+    .data-table {
+      font-size: var.$font-size-xs;
+
+      th,
+      td {
+        padding: var.$spacing-xs;
+      }
+
+      button {
+        padding: var.$spacing-xs;
+        font-size: var.$font-size-xs;
+      }
+    }
+
+    .pagination-controls {
+      flex-wrap: wrap;
+      gap: var.$spacing-xs;
+
+      .btn {
+        padding: var.$spacing-xs var.$spacing-sm;
+        font-size: var.$font-size-xs;
+      }
+    }
+  }
+}

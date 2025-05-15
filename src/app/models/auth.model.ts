@@ -4,7 +4,7 @@ enum Role{
   ADMIN = "admin",
 }
 export interface SignupUserRequestDTO{
-  username: string;
+    username: string;
     email: string;
     phoneNumber: string; 
     password: string;
@@ -59,3 +59,6 @@ export interface LoginRequestDTO {
   password:string
 }
 
+export interface RefreshTokenResponse {
+  access_token: string;
+}

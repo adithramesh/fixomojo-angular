@@ -1,18 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, concatMap, mergeMap, tap, exhaustMap } from 'rxjs/operators';
-import { Observable, EMPTY, of } from 'rxjs';
+import { of } from 'rxjs';
 import { AuthActions } from './auth.actions';
-// import * as AuthActions from "./auth.actions"
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { response } from 'express';
 
 @Injectable()
 export class AuthEffects {
-  actions$ = inject(Actions);
-  router = inject(Router);
-  authService = inject(AuthService);
+  private actions$ = inject(Actions);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   signUpUser$ = createEffect(()=>
      this.actions$.pipe(
@@ -146,36 +144,30 @@ export class AuthEffects {
       ofType(AuthActions.resendOtp),
       exhaustMap(action =>
         this.authService.resendOtp(action.resendData).pipe(
-          map(response =>  AuthActions.resendOtpSuccess({ response })),
-          catchError(error => {
-            console.error('resendOtp$ error:', error);  // Use console.error for errors
-             localStorage.setItem('resendOtp_error', JSON.stringify({
-              error: JSON.stringify(error),
-              timestamp: new Date().toISOString()
-            }));
-            return of(AuthActions.resendOtpFailure({ error }));
-          })
+          map(() =>  AuthActions.resendOtpSuccess()),
+          catchError(error =>  of(AuthActions.resendOtpFailure({ error }))
+          )
         )
       )
     )
   );
 
-  resendOtpSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.resendOtpSuccess),
-        tap(action => {
-          console.log('resendOtpSuccess$ triggered with action:', action);
-          localStorage.setItem('resendOtpSuccess_received', JSON.stringify({
-            response: action.response,
-            timestamp: new Date().toISOString()
-          }));
-          //  DO NOT perform navigation here. Effects should not be used for navigation.
-          //  Navigation should be handled in a component, after the store has been updated.
-        })
-      ),
-    { dispatch: false } //  Correct:  This effect does not dispatch an action.
-  );
+  // resendOtpSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(AuthActions.resendOtpSuccess),
+  //       tap(action => {
+  //         console.log('resendOtpSuccess$ triggered with action:', action);
+  //         localStorage.setItem('resendOtpSuccess_received', JSON.stringify({
+  //           response: action.response,
+  //           timestamp: new Date().toISOString()
+  //         }));
+  //         //  DO NOT perform navigation here. Effects should not be used for navigation.
+  //         //  Navigation should be handled in a component, after the store has been updated.
+  //       })
+  //     ),
+  //   { dispatch: false } //  Correct:  This effect does not dispatch an action.
+  // );
   // resendOtpSuccess$ = createEffect(
   //   () =>
   //     this.actions$.pipe(
@@ -280,9 +272,14 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         tap(({ response }) => {
+          console.log('loginSuccess: Tokens stored', {
+            access_token: response.access_token,
+            refresh_token: response.refresh_token,
+          });
           localStorage.setItem('access_token', response.access_token || '');
           localStorage.setItem('refresh_token', response.refresh_token || '');
           const role = response.data?.role;
+          console.log('loginSuccess: Navigating to role-based route', role);
           const route =
             role === 'user' ? '/home' :
             role === 'partner' ? '/partner-dashboard' :
@@ -305,7 +302,7 @@ export class AuthEffects {
   logAllActions$ = createEffect(
     () => this.actions$.pipe(
       tap(action => {
-        console.log('[🔥 Action fired]:', action);
+        console.log('[ Action fired]:', action);
       })
     ),
     { dispatch: false }

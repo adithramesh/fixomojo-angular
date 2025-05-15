@@ -1,1 +1,7 @@
-<p>admin-dashboard works!</p>
+<app-nav-bar></app-nav-bar>
+<div class="admin-dashboard">
+  <app-side-bar></app-side-bar>
+  <div class="main-content">
+    <div class="phone-number">{{ phoneNumber$ | async }}</div>
+  </div>
+</div>

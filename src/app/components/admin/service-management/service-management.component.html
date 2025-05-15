@@ -1,0 +1,13 @@
+<app-nav-bar></app-nav-bar>
+<div class="admin-dashboard">
+  <app-side-bar></app-side-bar>
+  <div class="main-content">
+    <app-data-table
+      [tableData]="serviceTableData"
+      [tableColumns]="serviceTableColumns"
+      [isLoading]="isLoading"
+      [emptyMessage]="'No services found'"
+      (rowAction)="handleAction($event)"
+    ></app-data-table>
+  </div>
+</div>
