@@ -12,17 +12,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './nav-bar.component.scss'
 })
 export class NavBarComponent {
-  router = inject(Router)
+  private _router = inject(Router)
   store = inject(Store)
 
   username$=this.store.select(selectUsername)
-  constructor() { }
 
- 
   logout(){
     localStorage.removeItem('access_token'); 
     localStorage.removeItem('refresh_token'); 
-    this.router.navigate(['/login']); 
+    this._router.navigate(['/login']); 
     console.log('User logged out successfully'); 
   }
 }

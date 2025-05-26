@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { SidebarComponent } from "../side-bar/side-bar.component";
 import { DataTableComponent, TableColumn, TableData } from "../../shared/data-table/data-table.component";
-import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { Store } from '@ngrx/store';
 import { PaginationRequestDTO, UserResponseDTO } from '../../../models/admin.model';
@@ -17,7 +17,9 @@ import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 export class UserManagementComponent {
   private _store = inject(Store);
   private _adminService = inject(AdminService);
-  subscription: Subscription | undefined;
+  private subscription: Subscription = new Subscription;
+  searchTerm: string=''
+  private searchSubject = new Subject<string>()
 
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; // Fixed: missing $ and type
@@ -38,7 +40,8 @@ export class UserManagementComponent {
     page: 1,
     pageSize: 10,
     sortBy: 'username',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
+    searchTerm:''
   };
   totalUsers = 0;
   totalPages = 0;
@@ -47,6 +50,15 @@ export class UserManagementComponent {
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber); 
+     this.subscription.add(this.searchSubject.pipe(
+          debounceTime(300),
+          distinctUntilChanged()
+        ).subscribe(searchTerm=>{
+          this.searchTerm=searchTerm;
+          this.pagination.searchTerm = searchTerm; 
+          this.pagination.page = 1;
+          this.loadUsers();
+        }))
     this.loadUsers();
   }
 
@@ -86,19 +98,19 @@ export class UserManagementComponent {
     };
   }
 
-  prevPage(): void {
-    if (this.pagination.page > 1) {
-      this.pagination.page--;
-      this.loadUsers();
-    }
-  }
+  // prevPage(): void {
+  //   if (this.pagination.page > 1) {
+  //     this.pagination.page--;
+  //     this.loadUsers();
+  //   }
+  // }
 
-  nextPage(): void {
-    if (this.pagination.page < this.totalPages) {
-      this.pagination.page++;
-      this.loadUsers();
-    }
-  }
+  // nextPage(): void {
+  //   if (this.pagination.page < this.totalPages) {
+  //     this.pagination.page++;
+  //     this.loadUsers();
+  //   }
+  // }
 
   handleAction(event: { action: string, item: TableData }): void {
     const userId = event.item.id;
@@ -123,5 +135,9 @@ export class UserManagementComponent {
   onPageChange(newPage: number): void {
     this.pagination.page = newPage;
     this.loadUsers();
+  }
+
+  onSearchChange(searchTerm: string): void {
+    this.searchSubject.next(searchTerm)
   }
 }

@@ -36,11 +36,15 @@ export class DataTableComponent {
   @Input() currentPage: number = 1;
   @Input() pageSize: number = 10;
   @Input() totalPages: number = 1;
+  @Input() showAddButton: boolean = false;
+  @Input() searchTerm: string = '';
   
   // Events for buttons or row actions
   @Output() rowAction = new EventEmitter<{action: string, item: TableData}>();
   @Output() dropdownChange = new EventEmitter<{ itemId: string | number; field: string; newValue: string }>();
   @Output() pageChange = new EventEmitter<number>();
+  @Output() searchChange = new EventEmitter<string>();
+  @Output() addItem = new EventEmitter<void>();
   // Method to handle button clicks
   onButtonClick(action: string, item: TableData): void {
     this.rowAction.emit({action, item});
@@ -66,5 +70,21 @@ export class DataTableComponent {
     if (this.currentPage < this.totalPages) {
       this.pageChange.emit(this.currentPage + 1);
     }
+  }
+
+  // onSearchChange(searchTerm: string): void {
+  //   this.searchChange.emit(searchTerm);
+  // }
+
+  onSearchChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target) {
+      this.searchTerm = target.value; // Update searchTerm for two-way binding
+      this.searchChange.emit(target.value);
+    }
+  }
+
+  onAddClick(): void {
+    this.addItem.emit();
   }
 }

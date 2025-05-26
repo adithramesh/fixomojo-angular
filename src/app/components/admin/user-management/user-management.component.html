@@ -13,6 +13,8 @@
       [totalPages]="totalPages"
       (rowAction)="handleAction($event)"
       (pageChange)="onPageChange($event)"
+      [searchTerm]="searchTerm"
+      (searchChange)="onSearchChange($event)"
     ></app-data-table>
   </div>
 </div>

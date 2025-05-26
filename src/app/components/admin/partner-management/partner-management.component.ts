@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { PaginationRequestDTO, UserResponseDTO } from '../../../models/admin.model';
 import { AdminService } from '../../../services/admin.service';
 import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.reducer';
@@ -17,11 +17,11 @@ import { SidebarComponent } from "../side-bar/side-bar.component";
 export class PartnerManagementComponent {
   private _store = inject(Store);
   private _adminService = inject(AdminService);
-  subscription: Subscription | undefined;
-
+  private subscription: Subscription = new Subscription;
+  searchTerm:string=''
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; 
-
+  private searchSubject= new Subject<string>();
   userTableColumns: TableColumn[] = [
     { header: 'Partner name', key: 'username', type: 'text', width: '15%' },
     { header: 'Phone Number', key: 'phoneNumber', type: 'text', width: '15%' },
@@ -44,15 +44,26 @@ export class PartnerManagementComponent {
     page: 1,
     pageSize: 10,
     sortBy: 'username',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
+    searchTerm:''
   };
   totalUsers = 0;
   totalPages = 0;
   isLoading = false;
+  
 
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber); 
+    this.subscription.add(this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchTerm=>{
+      this.searchTerm=searchTerm
+      this.pagination.searchTerm = searchTerm; 
+      this.pagination.page = 1
+      this.loadUsers()
+    }))
     this.loadUsers();
   }
 
@@ -93,19 +104,19 @@ export class PartnerManagementComponent {
     };
   }
 
-  prevPage(): void {
-    if (this.pagination.page > 1) {
-      this.pagination.page--;
-      this.loadUsers();
-    }
-  }
+  // prevPage(): void {
+  //   if (this.pagination.page > 1) {
+  //     this.pagination.page--;
+  //     this.loadUsers();
+  //   }
+  // }
 
-  nextPage(): void {
-    if (this.pagination.page < this.totalPages) {
-      this.pagination.page++;
-      this.loadUsers();
-    }
-  }
+  // nextPage(): void {
+  //   if (this.pagination.page < this.totalPages) {
+  //     this.pagination.page++;
+  //     this.loadUsers();
+  //   }
+  // }
 
   handleAction(event: { action: string, item: TableData }): void {
     const userId = event.item.id;
@@ -148,6 +159,15 @@ export class PartnerManagementComponent {
         this.loadUsers();
       },
     });
+  }
+
+   onPageChange(newPage: number): void {
+    this.pagination.page = newPage;
+    this.loadUsers();
+  }
+
+   onSearchChange(searchTerm: string): void {
+    this.searchSubject.next(searchTerm)
   }
 
   

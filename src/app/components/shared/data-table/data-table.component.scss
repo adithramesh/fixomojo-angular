@@ -40,6 +40,57 @@
     padding: var.$spacing-xl;
   }
 
+  // Table controls (search and add button)
+  .table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var.$spacing-sm;
+    margin-bottom: var.$spacing-md;
+
+    .search-input {
+      flex: 1;
+      max-width: 300px;
+      padding: var.$spacing-xs var.$spacing-sm;
+      font-size: var.$font-size-sm;
+      font-family: var.$primary-font;
+      border: 1px solid var.$border-color;
+      border-radius: var.$border-radius-sm;
+      outline: none;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        border-color: var.$purple;
+      }
+
+      &::placeholder {
+        color: var.$gray-text;
+      }
+    }
+
+    .btn-primary {
+      background-color: var.$purple;
+      color: var.$white;
+      font-family: var.$primary-font;
+      font-weight: var.$font-weight-semibold;
+      font-size: var.$font-size-sm;
+      padding: var.$spacing-xs var.$spacing-md;
+      border: none;
+      border-radius: var.$border-radius-sm;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background-color: color.adjust(var.$purple, $lightness: -10%);
+      }
+
+      &:disabled {
+        background-color: var.$disabled-bg;
+        cursor: not-allowed;
+      }
+    }
+  }
+
   // Responsive table wrapper
   .table-responsive {
     overflow-x: auto;
@@ -90,7 +141,6 @@
 
           // Table button styles
           button {
-            // Customize button-style for table buttons (smaller, left-aligned)
             display: inline-block;
             font-family: var.$primary-font;
             font-weight: var.$font-weight-semibold;
@@ -133,7 +183,9 @@
 
           .status-inactive,
           .status-blocked,
-          .status-pending {
+          .status-pending,
+          .status-suspended,
+          .status-deleted {
             color: var.$error-red;
             font-weight: var.$font-weight-semibold;
             text-transform: lowercase;
@@ -153,7 +205,6 @@
     font-family: var.$primary-font;
 
     .btn {
-      // Customize button-style for pagination buttons
       display: inline-block;
       font-family: var.$primary-font;
       font-weight: var.$font-weight-semibold;
@@ -185,6 +236,21 @@
   // Responsive design
   @media (max-width: var.$breakpoint-md) {
     padding: var.$spacing-md;
+
+    .table-controls {
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-input {
+        max-width: 100%;
+        margin-bottom: var.$spacing-sm;
+      }
+
+      .btn-primary {
+        padding: var.$spacing-xs var.$spacing-sm;
+        font-size: var.$font-size-xs;
+      }
+    }
 
     .data-table {
       font-size: var.$font-size-xs;

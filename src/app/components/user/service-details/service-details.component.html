@@ -1,0 +1,30 @@
+<app-nav-bar></app-nav-bar>
+
+<main class="home-container">
+
+  <section class="user-info-section">
+    <div class="card">
+      <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
+      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
+    </div>
+  </section>
+  
+
+  <section class="services-section">
+    <div class="card">
+      <app-data-table
+        [tableData]="serviceTableData"
+        [tableColumns]="serviceTableColumns"
+        title="Available Services"
+        [isLoading]="isLoading"
+        emptyMessage="No services available at the moment."
+        (rowAction)="bookSubService($event)"
+      ></app-data-table>
+      
+     
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+      </div>
+    </div>
+  </section>
+</main>

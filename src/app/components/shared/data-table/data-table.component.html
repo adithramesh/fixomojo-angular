@@ -1,6 +1,26 @@
 <div class="data-table-container">
   <h2 *ngIf="title">{{ title }}</h2>
 
+    <!-- Table controls: Search and Add button -->
+  <div class="table-controls" *ngIf="!isLoading && tableData.length > 0">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange($event)"
+      placeholder="Search..."
+      class="search-input"
+      aria-label="Search table data"
+    />
+    <button
+      *ngIf="showAddButton"
+      class="btn btn-primary"
+      (click)="onAddClick()"
+      aria-label="Add new item"
+    >
+      Add
+    </button>
+  </div>
+
   <!-- Loading state -->
   <div *ngIf="isLoading" class="loading-indicator">Loading data...</div>
 

@@ -10,6 +10,7 @@ import { HomeResponseDTO } from '../../../models/home.model';
 import { CommonModule } from '@angular/common';
 import { DataTableComponent, TableColumn, TableData } from "../../shared/data-table/data-table.component";
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -31,9 +32,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   // Table configuration
   serviceTableColumns: TableColumn[] = [
-    { header: 'Service Name', key: 'serviceName', type: 'text', width: '70%' },
+    { header: 'Types of services', key: 'serviceName', type: 'text', width: '70%' },
     // { header: 'Description', key: 'description', type: 'text', width: '70%' },
-    { header: 'Book', key: 'book', type: 'button', buttonText: 'Book Now', buttonClass: 'btn-primary', width: '30%' }
+    { header: '', key: 'view', type: 'button', buttonText: 'View', buttonClass: 'btn-primary', width: '30%' }
   ];
   
   // Table data
@@ -43,6 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _store = inject(Store);
   private _homeService = inject(HomeService);
   private _subscription: Subscription | undefined;
+  private _router = inject(Router)
 
   constructor() {}
 
@@ -76,16 +78,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   // Handle button clicks from the table
   onServiceAction(event: {action: string, item: TableData}): void {
-    if (event.action === 'book') {
-      this.bookService(event.item['serviceName']);
+    if (event.action === 'view') {
+      this.viewService(event.item['serviceName']);
     }
   }
   
   // Method to handle service booking
-  bookService(serviceName: string): void {
-    console.log(`Booking service: ${serviceName}`);
-    // Here you would typically navigate to a booking page or open a modal
-    // For example: this.router.navigate(['/booking'], { queryParams: { service: serviceName } });
+  viewService(serviceName: string): void {
+    console.log(`View service: ${serviceName}`);
+    this._router.navigate([`/services/${encodeURIComponent(serviceName)}`]);
   }
 
   ngOnDestroy(): void {

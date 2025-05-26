@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { DataTableComponent, TableColumn, TableData } from "../../shared/data-table/data-table.component";
 import { Store } from '@ngrx/store';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PaginationRequestDTO, ServiceResponseDTO} from '../../../models/admin.model';
 import { AdminService } from '../../../services/admin.service';
 import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.reducer';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { SidebarComponent } from "../side-bar/side-bar.component";
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service-management',
@@ -16,12 +17,15 @@ import { SidebarComponent } from "../side-bar/side-bar.component";
   styleUrl: './service-management.component.scss'
 })
 export class ServiceManagementComponent {
-  private _store = inject(Store);
-  private _adminService = inject(AdminService);
-  subscription: Subscription | undefined;
 
+  private _store = inject(Store);
+  private _router = inject(Router)
+  private _adminService = inject(AdminService);
+  private _subscription: Subscription = new Subscription();
+  private searchSubject = new Subject<string>();
+  searchTerm:string = '';
   username$!: Observable<string | null>;
-  phoneNumber$!: Observable<string | null>; // Fixed: missing $ and type
+  phoneNumber$!: Observable<string | null>; 
 
   serviceTableColumns: TableColumn[] = [
     { header: 'Service name', key: 'serviceName', type: 'text', width: '20%' },
@@ -38,7 +42,8 @@ export class ServiceManagementComponent {
     page: 1,
     pageSize: 10,
     sortBy: 'serviceName',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
+    searchTerm:''
   };
   totalServices = 0;
   totalPages = 0;
@@ -47,19 +52,32 @@ export class ServiceManagementComponent {
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber); 
+    this._subscription.add(this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchTerm=>{
+      this.searchTerm=searchTerm;
+      console.log("searchTerm",searchTerm);
+      this.pagination.searchTerm = searchTerm; 
+      this.pagination.page = 1;
+      console.log("loadServices 2 called");
+      this.loadServices();
+    }))
+     console.log("loadServices 1 called");
     this.loadServices();
   }
 
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this._subscription) {
+      this._subscription.unsubscribe();
     }
   }
 
   loadServices(): void {
     this.isLoading = true;
-    
-    this.subscription = this._adminService.getServices(this.pagination).subscribe({
+    console.log("this.pagination", this.pagination);
+    console.log("this.searchTerm",this.searchTerm);
+    this._subscription.add(this._adminService.getServices(this.pagination).subscribe({
       next: (response) => {
         this.totalServices = response.total;
         this.totalPages = response.totalPages;
@@ -70,9 +88,9 @@ export class ServiceManagementComponent {
         console.error('Error loading services:', error);
         this.isLoading = false;
       }
-    });
+    })
+  )
   }
-
   mapServiceToTableData(service: ServiceResponseDTO): TableData {
     return {
       id: service.id,
@@ -85,19 +103,19 @@ export class ServiceManagementComponent {
     };
   }
 
-  prevPage(): void {
-    if (this.pagination.page > 1) {
-      this.pagination.page--;
-      this.loadServices();
-    }
-  }
+  // prevPage(): void {
+  //   if (this.pagination.page > 1) {
+  //     this.pagination.page--;
+  //     this.loadServices();
+  //   }
+  // }
 
-  nextPage(): void {
-    if (this.pagination.page < this.totalPages) {
-      this.pagination.page++;
-      this.loadServices();
-    }
-  }
+  // nextPage(): void {
+  //   if (this.pagination.page < this.totalPages) {
+  //     this.pagination.page++;
+  //     this.loadServices();
+  //   }
+  // }
 
   
   handleAction(event: { action: string, item: TableData }): void {
@@ -105,6 +123,7 @@ export class ServiceManagementComponent {
       switch (event.action) {
         case 'edit':
           console.log('Editing service:', serviceId);
+          this._router.navigate([`/edit-service/${serviceId}`])
           break;
         case 'block':
           console.log('Blocking service', serviceId);
@@ -118,6 +137,19 @@ export class ServiceManagementComponent {
           });
           break;
     }
+  }
+
+  onPageChange(newPage: number): void {
+    this.pagination.page = newPage;
+    this.loadServices();
+  }
+
+  onAddService() {
+    this._router.navigate(['/add-service'])
+  }
+
+  onSearchChange(searchTerm: string): void {
+    this.searchSubject.next(searchTerm)
   }
 
 }

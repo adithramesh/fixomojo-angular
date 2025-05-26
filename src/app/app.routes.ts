@@ -12,6 +12,9 @@ import { AddServiceComponent } from './components/admin/add-service/add-service.
 import { ServiceManagementComponent } from './components/admin/service-management/service-management.component';
 import { PartnerManagementComponent } from './components/admin/partner-management/partner-management.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { AddSubServiceComponent } from './components/admin/add-sub-service/add-sub-service.component';
+import { SubServiceManagementComponent } from './components/admin/sub-service-management/sub-service-management.component';
+import { ServiceDetailsComponent } from './components/user/service-details/service-details.component';
 
 export const routes: Routes = [
     { path: "signup", component:SignUpComponent},
@@ -26,7 +29,14 @@ export const routes: Routes = [
     { path: 'user-management', component: UserManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'partner-management', component: PartnerManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'service-management', component: ServiceManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
-    { path: 'add-service', component: AddServiceComponent },
+    { path: 'sub-service-management', component: SubServiceManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'add-service', component: AddServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'edit-service/:id', component: AddServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'sub-service', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'edit-sub-service/:id', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+
+    { path: 'services/:serviceName', component: ServiceDetailsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
     { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
     
