@@ -50,7 +50,7 @@ export const authFeature = createFeature({
       ...state,
       user: response,
       username:response.data?.username||null,
-      tempUserId:response.tempUserId || null,
+      tempUserId:response.data?.id  || null,
       resetToken:response.reset_token || null,
       phoneNumber: response.data?.phoneNumber || null,
       loading: false,

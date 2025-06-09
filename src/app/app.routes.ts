@@ -15,6 +15,8 @@ import { UserManagementComponent } from './components/admin/user-management/user
 import { AddSubServiceComponent } from './components/admin/add-sub-service/add-sub-service.component';
 import { SubServiceManagementComponent } from './components/admin/sub-service-management/sub-service-management.component';
 import { ServiceDetailsComponent } from './components/user/service-details/service-details.component';
+import { BookingServiceComponent } from './components/user/booking-service/booking-service.component';
+import { LocationComponent } from './components/partner/location/location.component';
 
 export const routes: Routes = [
     { path: "signup", component:SignUpComponent},
@@ -24,7 +26,7 @@ export const routes: Routes = [
     { path: 'forgot-password/verify-otp', component: OtpComponent, data: { context: 'forgot-password' }, canActivate:[dontGoBack] },
     { path: 'reset-password', component: ResetPasswordComponent},
     { path: 'home', component: HomeComponent,canActivate:[RoleGuard], data: { allowedRoles: ['user'] } }, 
-    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin'] } }, 
+    
     { path: 'admin-dashboard', component: AdminDashboardComponent,  canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'user-management', component: UserManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'partner-management', component: PartnerManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
@@ -36,8 +38,11 @@ export const routes: Routes = [
     { path: 'edit-sub-service/:id', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
 
     { path: 'services/:serviceName', component: ServiceDetailsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    { path: 'book-service', component: BookingServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    //partner
+    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin'] } }, 
+    { path: 'location', component: LocationComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
 
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
     { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
-    
 ];

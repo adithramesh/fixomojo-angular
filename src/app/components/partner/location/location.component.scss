@@ -1,0 +1,77 @@
+@use 'variables' as var;
+@use 'buttons' as btn;
+@use 'forms' as forms;
+
+.location-container {
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-md;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var.$spacing-lg;
+  background-color: var.$input-bg;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-sm;
+}
+
+button {
+  @include btn.button-style;
+  width: 100%;
+  max-width: 250px;
+  align-self: center;
+}
+
+.form-input {
+  @include forms.input-style;
+  width: 100%;
+}
+
+.autocomplete-suggestions {
+  list-style: none;
+  padding: 0;
+  margin-top: var.$spacing-xs;
+  border: 1px solid var.$border-color;
+  background-color: var.$white;
+  border-radius: var.$border-radius-sm;
+  max-height: 150px;
+  overflow-y: auto;
+
+  li {
+    padding: var.$spacing-sm;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var.$button-hover-bg;
+      color: var.$white;
+    }
+  }
+}
+
+.location-info {
+  background-color: #f0f0f0;
+  padding: var.$spacing-sm;
+  border-radius: var.$border-radius-sm;
+  font-size: var.$font-size-sm;
+  color: var.$gray-text;
+  border: 1px solid var.$border-color;
+}
+
+.confirm-button {
+  @include btn.button-style;
+  margin-top: var.$spacing-md;
+  max-width: 300px;
+  align-self: center;
+}
+
+.error-message {
+  color: var.$purple;
+  font-size: var.$font-size-xs;
+  margin-top: var.$spacing-xs;
+}

@@ -4,7 +4,8 @@ export interface PaginationRequestDTO {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     searchTerm?: string;
-    filter?: Record<string, any>;
+    filter?:any;
+    // filter?: Record<string, any>;
   }
   
 export interface PaginatedResponseDTO<T> {
@@ -23,6 +24,13 @@ export interface UserResponseDTO {
     status: string;
     licenseStatus:string;
     role: string;
+    location?: {
+      address?: string;
+      latitude: number;
+      longitude: number;
+    };
+    experience?:number;
+    rating?:number;
     createdAt?: string;
 }
 

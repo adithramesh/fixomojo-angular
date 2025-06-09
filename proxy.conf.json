@@ -1,0 +1,10 @@
+{
+  "/locationiq": {
+    "target": "https://api.locationiq.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/locationiq": ""
+    }
+  }
+}

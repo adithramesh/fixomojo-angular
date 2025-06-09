@@ -1,0 +1,303 @@
+<div class="booking-container">
+  <!-- Left Panel: Step Navigation and Form -->
+  <div class="booking-left">
+    <!-- Steps Navigation -->
+    <div class="booking-steps">
+      <div class="steps-header">
+        <h2>Book a Service</h2>
+      </div>
+
+      <div class="steps-list">
+        <div *ngFor="let step of [1,2,3,4]; let i = index"
+             class="step-item"
+             [class.active]="isStepActive(step)"
+             [class.completed]="isStepCompleted(step)"
+             [class.clickable]="canNavigateToStep(step)"
+             (click)="goToStep(step)">
+          <div class="step-indicator">
+            <span class="step-number" *ngIf="!isStepCompleted(step)">{{ step }}</span>
+            <span class="step-check" *ngIf="isStepCompleted(step)">✓</span>
+          </div>
+          <div class="step-content">
+            <h3 class="step-title">{{ getStepTitle(step) }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="booking-content">
+      <!-- Step 1: Location -->
+      <div *ngIf="currentStep === 1" class="step-panel location-panel">
+        <div class="panel-header">
+          <h3>Choose Your Location</h3>
+          <p>Select your service location or enter address</p>
+        </div>
+        <div class="location-content">
+          <div  class="form-group">
+            <label for="address-input">Address:</label>
+            <input type="text"
+                  id="address-input"
+                  class="form-input"
+                  [(ngModel)]="addressInput"
+                  (input)="onAddressInputChange(addressInput)"
+                  placeholder="Start typing a full address...">
+
+            <ul *ngIf="autocompleteSuggestions.length > 0" class="autocomplete-suggestions">
+              <li *ngFor="let suggestion of autocompleteSuggestions"
+                  (click)="onSelectSuggestion(suggestion)">
+                {{ suggestion.display_name }}
+              </li>
+            </ul>
+
+            <p *ngIf="selectedAddressDetails" class="location-info">
+              <strong>Selected Address:</strong> {{ selectedAddressDetails.address }}<br>
+              <strong>Latitude:</strong> {{ selectedAddressDetails.latitude }}<br>
+              <strong>Longitude:</strong> {{ selectedAddressDetails.longitude }}
+            </p>
+            <p *ngIf="typedLocationErrorMessage" class="error-message">{{ typedLocationErrorMessage }}</p>
+          </div>
+          <div class="location-actions">
+            <button type="button" class="secondary-button" (click)="getCurrentLocation()">
+              📍 Use Current Location
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Technician -->
+      <div *ngIf="currentStep === 2" class="step-panel technician-panel">
+        <div class="panel-header">
+          <h3>Choose Your Technician</h3>
+          <p>Available technicians within 10km radius</p>
+        </div>
+        <div class="technician-content">
+          <div *ngIf="isLoadingTechnicians" class="loading-state">
+            <p>Finding available technicians...</p>
+          </div>
+          <div *ngIf="!isLoadingTechnicians && availableTechnicians.length === 0" class="no-technicians">
+            <p>No technicians available for the selected location.</p>
+            <button type="button" class="secondary-button" (click)="previousStep()">
+              Choose Different Location
+            </button>
+          </div>
+          <div *ngIf="!isLoadingTechnicians && availableTechnicians.length > 0" class="technician-list">
+            <div *ngFor="let technician of availableTechnicians"
+                 class="technician-card"
+                 [class.selected]="bookingForm.get('technician')?.value === technician.id"
+                 (click)="onTechnicianSelected(technician)">
+              <div class="technician-avatar">
+                <img [src]="technician.profileImage"
+                     [alt]="technician.name"
+                     onerror="this.src=''">
+              </div>
+              <div class="technician-info">
+                <h4 class="technician-name">{{ technician.name }}</h4>
+                <div class="technician-rating">
+                  <span class="rating">⭐ {{ technician.rating }}</span>
+                  <span class="experience">{{ technician.experience }}</span>
+                </div>
+                <div class="technician-distance">
+                  <span class="distance">📍 {{ technician.distance }}km away</span>
+                </div>
+              </div>
+              <div class="selection-indicator">
+                <span class="checkmark" *ngIf="bookingForm.get('technician')?.value === technician.id">✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- Step 3: Time Slot -->
+      <!-- <div *ngIf="currentStep === 3" class="step-panel timeslot-panel">
+        <div class="panel-header">
+          <h3>Select Preferred Time Slot</h3>
+          <p>Choose a convenient time for your service</p>
+        </div>
+        <div class="timeslot-content">
+          <div *ngIf="isLoadingTimeSlots" class="loading-state">
+            <p>Loading available time slots...</p>
+          </div>
+          <div *ngIf="!isLoadingTimeSlots" class="timeslot-grid">
+            <div *ngFor="let slot of availableTimeSlots"
+                 class="timeslot-item"
+                 [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
+                 [class.disabled]="!slot.available"
+                 (click)="slot.available && onTimeSlotSelected(slot)">
+              <span class="slot-time">{{ slot.time }}</span>
+              <span class="slot-status" *ngIf="!slot.available">Not Available</span>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- Step 3: Date & Time Slot -->
+      <div *ngIf="currentStep === 3" class="step-panel timeslot-panel">
+        <div class="panel-header">
+          <h3>Select Date & Time Slot</h3>
+          <p>Choose a convenient date and time for your service</p>
+        </div>
+        <div class="timeslot-content">
+          <!-- Date Selection -->
+          <div class="date-selection">
+            <label for="service-date">Select Date:</label>
+            <input type="date"
+                   id="service-date"
+                   class="form-input"
+                   [(ngModel)]="selectedDate"
+                   [min]="minDate"
+                   [max]="maxDate"
+                   (change)="onDateSelected()">
+          </div>
+
+          <!-- Time Slots -->
+          <div *ngIf="selectedDate" class="time-slots-section">
+            <div *ngIf="isLoadingTimeSlots" class="loading-state">
+              <p>Loading available time slots...</p>
+            </div>
+            <div *ngIf="!isLoadingTimeSlots && availableTimeSlots.length === 0 && selectedDate" class="no-slots">
+              <p>No available slots for the selected date. Please choose another date.</p>
+            </div>
+            <div *ngIf="!isLoadingTimeSlots && availableTimeSlots.length > 0" class="timeslot-grid">
+              <div *ngFor="let slot of availableTimeSlots"
+                   class="timeslot-item"
+                   [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
+                   (click)="onTimeSlotSelected(slot)">
+                <span class="slot-time">{{ slot.time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Payment -->
+      <div *ngIf="currentStep === 4" class="step-panel payment-panel">
+        <div class="panel-header">
+          <h3>Payment & Confirmation</h3>
+          <p>Review your booking and make payment</p>
+        </div>
+        <div class="payment-content">
+          <div class="booking-summary">
+            <h4>Booking Summary</h4>
+            <div class="summary-item">
+              <span class="label">Service:</span>
+              <span class="value">{{ serviceId }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Location:</span>
+              <span class="value">{{ userLocation?.address || 'Not selected' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Time:</span>
+              <span class="value">{{ getSelectedTimeSlot()?.time || 'Not selected' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Technician:</span>
+              <span class="value">{{ getSelectedTechnician()?.name || 'Not selected' }}</span>
+            </div>
+          </div>
+          <div class="payment-methods">
+            <h4>Choose Payment Method</h4>
+            <div class="payment-options">
+              <div class="payment-option"
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'card'"
+                   (click)="onPaymentMethodSelected('card')">
+                <span class="payment-icon">💳</span>
+                <span class="payment-label">Credit/Debit Card</span>
+              </div>
+              <div class="payment-option"
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'upi'"
+                   (click)="onPaymentMethodSelected('upi')">
+                <span class="payment-icon">📱</span>
+                <span class="payment-label">UPI</span>
+              </div>
+              <div class="payment-option"
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'cash'"
+                   (click)="onPaymentMethodSelected('cash')">
+                <span class="payment-icon">💰</span>
+                <span class="payment-label">Cash on Service</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="step-navigation">
+      <button type="button"
+              class="nav-button secondary-button"
+              *ngIf="currentStep > 1"
+              (click)="previousStep()">
+        Previous
+      </button>
+      <button type="button"
+              class="nav-button signup-button"
+              *ngIf="currentStep < maxSteps"
+              [disabled]="!canProceedToNextStep()"
+              (click)="nextStep()">
+        Next
+      </button>
+      <button type="button"
+              class="nav-button signup-button"
+              *ngIf="currentStep === maxSteps"
+              [disabled]="!canProceedToNextStep()"
+              (click)="onSubmit()">
+        Pay Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Panel: Map and Details -->
+  <div class="booking-right">
+    <!-- Map -->
+    <div class="map-container">
+      <h3>Location</h3>
+      <div *ngIf="isLoadingMap" class="map-loading">
+        <p>Loading map...</p>
+      </div>
+      <div *ngIf="!isLoadingMap" class="map-placeholder">
+        <div class="map-mock">
+          <p>🗺️ Map will be integrated here</p>
+          <p *ngIf="userLocation">📍 {{ userLocation.address }}</p>
+          <p *ngIf="getSelectedTechnician()">Technician: {{ getSelectedTechnician().name }} ({{ getSelectedTechnician().distance }} km)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technicians -->
+    <div class="technicians-list">
+      <h3>Available Technicians</h3>
+      <div *ngIf="isLoadingTechnicians" class="loading-state">
+        <p>Loading technicians...</p>
+      </div>
+      <div *ngIf="!isLoadingTechnicians && availableTechnicians.length === 0" class="no-technicians">
+        <p>No technicians available within 10km.</p>
+      </div>
+      <div *ngIf="!isLoadingTechnicians && availableTechnicians.length > 0">
+        <div *ngFor="let tech of availableTechnicians" class="technician-card"
+             [class.selected]="bookingForm.get('technician')?.value === tech.id">
+          <p>{{ tech.name }}</p>
+          <p>⭐ {{ tech.rating }} ({{ tech.distance }} km away)</p>
+        </div>
+      </div>
+    </div>
+
+      <!-- Time Slots -->
+    <div class="time-slots">
+      <h3>Preferred Time Slots</h3>
+      <div *ngIf="isLoadingTimeSlots" class="loading-state">
+        <p>Loading time slots...</p>
+      </div>
+      <ul *ngIf="!isLoadingTimeSlots">
+        <li *ngFor="let slot of availableTimeSlots"
+            [class.selected]="bookingForm.get('timeSlot')?.value === slot.id">
+          {{ slot.time }} <span *ngIf="!slot.available">(Not Available)</span>
+        </li>
+      </ul>
+    </div>
+
+
+  </div>
+</div>

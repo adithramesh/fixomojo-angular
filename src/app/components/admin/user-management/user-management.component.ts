@@ -22,7 +22,7 @@ export class UserManagementComponent {
   private searchSubject = new Subject<string>()
 
   username$!: Observable<string | null>;
-  phoneNumber$!: Observable<string | null>; // Fixed: missing $ and type
+  phoneNumber$!: Observable<string | null>; 
 
   userTableColumns: TableColumn[] = [
     { header: 'User name', key: 'username', type: 'text', width: '15%' },

@@ -5,10 +5,11 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectPhoneNumber, selectUsername } from '../../../store/auth/auth.reducer';
 import { CommonModule } from '@angular/common';
+import { PartnerSideBarComponent } from "../partner-side-bar/partner-side-bar.component";
 
 @Component({
   selector: 'app-partner-dashboard',
-  imports: [NavBarComponent, CommonModule],
+  imports: [NavBarComponent, CommonModule, PartnerSideBarComponent],
   templateUrl: './partner-dashboard.component.html',
   styleUrl: './partner-dashboard.component.scss'
 })

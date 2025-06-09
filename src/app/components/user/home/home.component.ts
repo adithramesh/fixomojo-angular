@@ -83,10 +83,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
   
-  // Method to handle service booking
+  
   viewService(serviceName: string): void {
     console.log(`View service: ${serviceName}`);
-    this._router.navigate([`/services/${encodeURIComponent(serviceName)}`]);
+    this._router.navigate([`/services/${serviceName}`]);
   }
 
   ngOnDestroy(): void {
