@@ -1,3 +1,5 @@
+<app-nav-bar></app-nav-bar>
+<br>
 <div class="booking-container">
   <!-- Left Panel: Step Navigation and Form -->
   <div class="booking-left">
@@ -109,29 +111,7 @@
         </div>
       </div>
 
-      
-      <!-- Step 3: Time Slot -->
-      <!-- <div *ngIf="currentStep === 3" class="step-panel timeslot-panel">
-        <div class="panel-header">
-          <h3>Select Preferred Time Slot</h3>
-          <p>Choose a convenient time for your service</p>
-        </div>
-        <div class="timeslot-content">
-          <div *ngIf="isLoadingTimeSlots" class="loading-state">
-            <p>Loading available time slots...</p>
-          </div>
-          <div *ngIf="!isLoadingTimeSlots" class="timeslot-grid">
-            <div *ngFor="let slot of availableTimeSlots"
-                 class="timeslot-item"
-                 [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
-                 [class.disabled]="!slot.available"
-                 (click)="slot.available && onTimeSlotSelected(slot)">
-              <span class="slot-time">{{ slot.time }}</span>
-              <span class="slot-status" *ngIf="!slot.available">Not Available</span>
-            </div>
-          </div>
-        </div>
-      </div> -->
+
       <!-- Step 3: Date & Time Slot -->
       <div *ngIf="currentStep === 3" class="step-panel timeslot-panel">
         <div class="panel-header">
@@ -151,7 +131,7 @@
                    (change)="onDateSelected()">
           </div>
 
-          <!-- Time Slots -->
+          <!-- Time Slots leftside-->
           <div *ngIf="selectedDate" class="time-slots-section">
             <div *ngIf="isLoadingTimeSlots" class="loading-state">
               <p>Loading available time slots...</p>
@@ -182,11 +162,11 @@
             <h4>Booking Summary</h4>
             <div class="summary-item">
               <span class="label">Service:</span>
-              <span class="value">{{ serviceId }}</span>
+              <span class="value">{{ subServiceName }}</span>
             </div>
             <div class="summary-item">
               <span class="label">Location:</span>
-              <span class="value">{{ userLocation?.address || 'Not selected' }}</span>
+              <span class="value">{{ userLocation.address || 'Not selected' }}</span>
             </div>
             <div class="summary-item">
               <span class="label">Time:</span>
@@ -196,25 +176,29 @@
               <span class="label">Technician:</span>
               <span class="value">{{ getSelectedTechnician()?.name || 'Not selected' }}</span>
             </div>
+            <div class="summary-item">
+              <span class="label">Amount payable:</span>
+              <span class="value">{{ price }}</span>
+            </div>
           </div>
           <div class="payment-methods">
             <h4>Choose Payment Method</h4>
             <div class="payment-options">
               <div class="payment-option"
-                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'card'"
-                   (click)="onPaymentMethodSelected('card')">
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'Card'"
+                   (click)="onPaymentMethodSelected('Card')">
                 <span class="payment-icon">💳</span>
                 <span class="payment-label">Credit/Debit Card</span>
               </div>
               <div class="payment-option"
-                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'upi'"
-                   (click)="onPaymentMethodSelected('upi')">
-                <span class="payment-icon">📱</span>
-                <span class="payment-label">UPI</span>
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'Wallet'"
+                   (click)="onPaymentMethodSelected('Wallet')">
+                <span class="payment-icon">👛</span>
+                <span class="payment-label">Wallet</span>
               </div>
               <div class="payment-option"
-                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'cash'"
-                   (click)="onPaymentMethodSelected('cash')">
+                   [class.selected]="bookingForm.get('paymentMethod')?.value === 'Cash'"
+                   (click)="onPaymentMethodSelected('Cash')">
                 <span class="payment-icon">💰</span>
                 <span class="payment-label">Cash on Service</span>
               </div>
@@ -266,38 +250,45 @@
       </div>
     </div>
 
-    <!-- Technicians -->
-    <div class="technicians-list">
-      <h3>Available Technicians</h3>
-      <div *ngIf="isLoadingTechnicians" class="loading-state">
-        <p>Loading technicians...</p>
-      </div>
-      <div *ngIf="!isLoadingTechnicians && availableTechnicians.length === 0" class="no-technicians">
-        <p>No technicians available within 10km.</p>
-      </div>
-      <div *ngIf="!isLoadingTechnicians && availableTechnicians.length > 0">
-        <div *ngFor="let tech of availableTechnicians" class="technician-card"
-             [class.selected]="bookingForm.get('technician')?.value === tech.id">
-          <p>{{ tech.name }}</p>
-          <p>⭐ {{ tech.rating }} ({{ tech.distance }} km away)</p>
-        </div>
+
+   <!-- Technician -->
+    <div class="technicians-list" *ngIf="currentStep >= 2">
+    <h3>Available Technicians</h3>
+    <div *ngIf="isLoadingTechnicians" class="loading-state">
+      <p>Loading technicians...</p>
+    </div>
+    <div *ngIf="!isLoadingTechnicians && availableTechnicians.length === 0" class="no-technicians">
+      <p>No technicians available within 10km.</p>
+    </div>
+    <div *ngIf="!isLoadingTechnicians && availableTechnicians.length > 0">
+      <div *ngFor="let tech of availableTechnicians" class="technician-card"
+           [class.selected]="bookingForm.get('technician')?.value === tech.id">
+        <p><strong>{{ tech.name }}</strong></p>
+        <p>⭐ {{ tech.rating }} ({{ tech.distance }} km away)</p>
       </div>
     </div>
+  </div>
 
-      <!-- Time Slots -->
-    <div class="time-slots">
-      <h3>Preferred Time Slots</h3>
-      <div *ngIf="isLoadingTimeSlots" class="loading-state">
-        <p>Loading time slots...</p>
-      </div>
-      <ul *ngIf="!isLoadingTimeSlots">
-        <li *ngFor="let slot of availableTimeSlots"
-            [class.selected]="bookingForm.get('timeSlot')?.value === slot.id">
-          {{ slot.time }} <span *ngIf="!slot.available">(Not Available)</span>
-        </li>
-      </ul>
+      <!-- Time Slots right side -->
+
+<div class="time-slots" *ngIf="currentStep >= 3">
+    <h3>Available Time Slots</h3>
+    <div *ngIf="!selectedDate" class="no-date">
+      <p>Please select a date first</p>
     </div>
-
-
+    <div *ngIf="selectedDate && isLoadingTimeSlots" class="loading-state">
+      <p>Loading time slots...</p>
+    </div>
+    <div *ngIf="selectedDate && !isLoadingTimeSlots && availableTimeSlots.length === 0" class="no-slots">
+      <p>No available slots for selected date</p>
+    </div>
+    <ul *ngIf="selectedDate && !isLoadingTimeSlots && availableTimeSlots.length > 0">
+      <li *ngFor="let slot of availableTimeSlots"
+          [class.selected]="bookingForm.get('timeSlot')?.value === slot.id">
+        {{ slot.time }}
+        <!-- Show if this slot is selected -->
+        <span *ngIf="bookingForm.get('timeSlot')?.value === slot.id" class="selected-indicator">✓ Selected</span>
+      </li>
+    </ul>
   </div>
 </div>

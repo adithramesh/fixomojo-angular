@@ -1,0 +1,72 @@
+
+ <app-nav-bar></app-nav-bar>
+
+<!-- Main layout container for sidebars and content -->
+<div class="main-layout-container">
+  <!-- Sidebars (conditionally rendered) -->
+  <div *ngIf="role === 'admin'" class="sidebar-container">
+    <app-side-bar></app-side-bar>
+  </div>
+  <div *ngIf="role === 'partner'" class="sidebar-container">
+    <app-partner-side-bar></app-partner-side-bar>
+  </div>
+
+  <!-- Main Wallet Content Area -->
+  <div class="content-area">
+    <div class="wallet-container">
+      <h2>{{ role | titlecase }} Wallet</h2>
+
+      <!-- Wallet Balance Section -->
+      <div class="wallet-balance">
+        <p>Balance: <span class="currency-amount">{{ currency }} {{ walletBalance | number:'1.2-2' }}</span></p>
+
+        <!-- <button *ngIf="role !== 'admin'" (click)="onAddMoney()" class="add-money-button">
+          Add Money
+        </button> -->
+        <button *ngIf="!showRechargeInput && role !== 'admin'" (click)="toggleRechargeInput()" class="add-money-button">
+          Add Money
+        </button>
+      </div>
+      <div *ngIf="showRechargeInput" class="wallet-recharge">
+        <input type="number" min="10" [(ngModel)]="amountToAdd" placeholder="Enter amount (₹)" />
+        <button (click)="onAddMoney()">Confirm Add</button>
+        <button (click)="toggleRechargeInput()" style="background: transparent; border: none; color: gray; margin-top: 0.5rem;">Cancel</button>
+      </div>
+
+      <!-- Transaction History Section -->
+      <div class="transaction-history">
+        <h3>Transactions</h3>
+        
+        <div *ngIf="isLoading" class="loading-message">
+          <p>Loading transactions...</p>
+          <!-- You can add a spinner here if you have one -->
+        </div>
+
+        <div *ngIf="!isLoading && transactionTableData.length > 0" class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking Number</th>
+                <th>Date & Time</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of transactionTableData">
+                <td>{{ t._id }}</td>
+                <td>{{ t.createdAt | date: 'short' }}</td>
+                <td>{{ t.transactionType }}</td>
+                <td>{{ currency }} {{ t.amount | number:'1.2-2' }}</td>
+                <td>{{ t.purpose }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p *ngIf="!isLoading && transactionTableData.length === 0" class="no-transactions-message">No transactions found.</p>
+        <p *ngIf="!isLoading && error" class="error-message">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+</div>

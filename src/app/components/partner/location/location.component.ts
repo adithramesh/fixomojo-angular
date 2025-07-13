@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { selectTempUserId } from '../../../store/auth/auth.reducer';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { PartnerSideBarComponent } from "../partner-side-bar/partner-side-bar.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-location',
@@ -32,6 +33,7 @@ export class LocationComponent {
   private addressInputChanges = new Subject<string>();
   private _store = inject(Store)
   private _userId!:Observable<string|null>
+  private _router = inject(Router)
 
 
   ngOnInit(): void {
@@ -126,6 +128,7 @@ export class LocationComponent {
     this._locationService.updateTechnicianWithLocation(id,locationToSend).subscribe({
       next:(res)=>{
         console.log("Technician location saved", res);
+        this._router.navigate(['/partner-dashboard'])
       },
       error:(err)=>{
          this.errorMessage = 'Failed to update location';

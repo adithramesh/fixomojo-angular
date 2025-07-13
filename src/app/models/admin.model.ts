@@ -9,7 +9,7 @@ export interface PaginationRequestDTO {
   }
   
 export interface PaginatedResponseDTO<T> {
-    items: T;
+    items: T ;
     total: number;
     page: number;
     pageSize: number;
@@ -36,7 +36,7 @@ export interface UserResponseDTO {
 
 export interface ServiceRequestDTO {
   serviceName: string;
-  image: string;
+  image?: string;
   description?: string;
 }
 
@@ -62,6 +62,7 @@ export interface SubServiceRequestDTO {
 
 export interface SubServiceResponseDTO {
   id: string;
+  serviceId?:string;
   subServiceName: string;
   serviceName:string;
   price: number;

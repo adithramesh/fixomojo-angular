@@ -1,0 +1,181 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { WalletService } from '../../../services/wallet.service';
+import { CommonModule } from '@angular/common';
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { SidebarComponent } from '../../admin/side-bar/side-bar.component';
+import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-side-bar.component';
+import { TransactionService } from '../../../services/transaction.service';
+import { PaginationRequestDTO } from '../../../models/admin.model';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+import { TableData } from '../data-table/data-table.component';
+import { Transaction } from '../../../models/wallet.model';
+import { FormsModule } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-wallet',
+  imports: [CommonModule, NavBarComponent, SidebarComponent, PartnerSideBarComponent, FormsModule],
+  templateUrl: './wallet.component.html',
+  styleUrl: './wallet.component.scss',
+  standalone: true
+})
+export class WalletComponent implements OnInit {
+  role: 'user' | 'partner' | 'admin' = 'user';
+  referenceId: string = '';
+  
+  walletBalance: number = 0;
+  currency = 'INR';
+  isLoading!:boolean;
+  error: string | null = null;
+  // transactions: any[] = [];
+  // transactionTableData: TableData[] = [];
+  transactions!: Transaction; 
+  transactionTableData: Transaction[] = []; 
+  searchTerm: string = '';
+  amountToAdd: number = 0;
+  showRechargeInput:boolean = false;
+
+
+  private route= inject(ActivatedRoute)
+  private walletService=inject(WalletService)
+  private transactionService=inject(TransactionService)
+  private _subscription: Subscription = new Subscription();
+  private searchSubject = new Subject<string>();
+
+  pagination: PaginationRequestDTO = {
+      page: 1,
+      pageSize: 10,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+      searchTerm: '',
+      filter: {} // Will include serviceId if provided
+    };
+    totalTransactions = 0;
+    totalPages = 0;
+  
+  ngOnInit(): void {
+    this.isLoading=true;
+    this.route.data.subscribe(data => {
+      this.role = data['role'] || 'user';
+    });
+
+    this.transactionService.countTransactions().subscribe(count=>{
+      if(count){
+        this.totalTransactions=count
+      }
+    })
+
+    this._subscription.add(
+      this.searchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(searchTerm => {
+        console.log('searchTerm', searchTerm);
+        this.searchTerm = searchTerm;
+        this.pagination.searchTerm = searchTerm;
+        this.pagination.page = 1;
+        console.log('loadSubServices called');
+        this.fetchTransactions();
+      })
+    );    
+
+    this.fetchWallet();
+    this.fetchTransactions();
+  }
+
+  ngOnDestroy() {
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
+  }
+
+  fetchWallet(): void {
+    this.walletService.getWallet().subscribe({
+      next:(response)=>{
+        console.log("response", response);
+        console.log("response", response);
+            if (response.success && response.wallet) {
+              this.isLoading=false
+                this.walletBalance = response.wallet.balance;
+            } else {
+                console.error('Failed to fetch wallet:', response.message);
+                this.walletBalance = 0;
+            }
+      },
+      error:(err)=>{
+        this.isLoading=false
+         console.error('Error loading users:', err);
+         this.walletBalance = 0;
+      }
+    })
+  }
+
+  fetchTransactions(): void {
+    this.transactionService.getTransactions(this.pagination).subscribe({
+      next:(response)=>{
+        console.log("transaction response", response);
+         console.log("response.success && response.transactionList1",response.success, response.transaction);
+        if (response.success && response.transaction) {
+          console.log("response.success && response.transactionList2",response.success && response.transaction);
+          
+          this.transactionTableData=response.transaction.map(transaction=>this.mapTransactionToTableData(transaction))
+              this.isLoading=false
+              this.totalPages = Math.ceil( this.totalTransactions/this.pagination.page);
+              // this.totalPages = response.totalPages;
+              // this.transactionTableData=response.transactionList
+            
+            } else {
+                console.error('Failed to fetch wallet transactions:', response);
+            }
+        
+      },
+      error:(err)=>{
+        console.error('Error loading transaction:', err);
+        //  this.walletBalance = 0;
+      }
+    })
+  }
+
+  mapTransactionToTableData(transaction:Transaction):any{
+    console.log("transaction", transaction);
+    return{
+      _id: transaction._id.toString().slice(18),
+      createdAt:transaction.createdAt,
+      amount:transaction.amount,
+      purpose:transaction.purpose,
+      transactionType:transaction.transactionType
+
+    }
+  }
+
+   toggleRechargeInput():void {
+      this.showRechargeInput = !this.showRechargeInput;
+      if (!this.showRechargeInput) {
+        this.amountToAdd = 0; 
+      }
+  }
+
+  onAddMoney(): void {
+    // Only for user/partner → redirect to Stripe/trigger payment
+    if (!this.amountToAdd || this.amountToAdd < 10) {
+    alert("Please enter a valid amount (₹10 or more)");
+    return;
+  }
+
+  this.walletService.rechargeWallet(this.amountToAdd).subscribe({
+    next: (res) => {
+      if (res.success && res.checkoutUrl) {
+        window.location.href = res.checkoutUrl; // redirect to Stripe
+      } else {
+        alert(res.message || "Something went wrong!");
+      }
+    },
+    error: (err) => {
+      console.error("Recharge error", err);
+      alert("Error initiating wallet recharge.");
+    }
+  });
+  }
+  // ... rest of component logic
+}

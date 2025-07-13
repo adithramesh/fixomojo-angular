@@ -1,24 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { LocationService } from '../../../services/location.service';
 import { Store } from '@ngrx/store';
-import { selectTempUserId } from '../../../store/auth/auth.reducer';
+import { selectTempUserId, selectUsername } from '../../../store/auth/auth.reducer';
 import { AdminService } from '../../../services/admin.service';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { HttpClient } from '@angular/common/http';
+import { BookServiceRequestDTO, BookServiceResponseDTO } from '../../../models/book-service.model';
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { BookingService } from '../../../services/booking.service';
+
+
+interface BackendSlotResponse {
+  start: string;
+  end: string;
+  type: 'available' | 'customer-booked' | 'technician-blocked';
+  id?: string; // googleEventId
+  reason?: string;
+}
 
 @Component({
   selector: 'app-booking-service',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,NavBarComponent],
   templateUrl: './booking-service.component.html',
   styleUrl: './booking-service.component.scss'
 })
+
+  
+
 export class BookingServiceComponent {
-bookingForm: FormGroup;
-  serviceId: string | null = null;
+  bookingForm: FormGroup;
+  subServiceId: string | null = null;
+  subServiceName: string | null = null;
+  technicianId!:string
+  price!:number;
   currentStep = 1;
   maxSteps = 4;
   currentLatitude?: number;
@@ -31,6 +49,7 @@ bookingForm: FormGroup;
   isLoadingMap = false;
   isLoadingTimeSlots = false;
   isLoadingTechnicians = false;
+  currentBookingId!:string;
 
   // Date selection
   selectedDate: string = '';
@@ -58,28 +77,51 @@ bookingForm: FormGroup;
   private _locationService=inject(LocationService)
   private _adminService = inject(AdminService)
   private _store = inject(Store)
-  private _userId!:Observable<string|null>
+  // private _userId!:Observable<string|null>
+  private _userId:string = ''
+  private _username:string = ''
   private _destroy$ = new Subject<void>();
-  private route = inject(ActivatedRoute)
+  private _route = inject(ActivatedRoute)
+  private _router = inject(Router)
   private fb = inject(FormBuilder)
   private http = inject(HttpClient)
+  private _bookingService = inject(BookingService)
 
   constructor () {
     this.bookingForm = this.fb.group({
-      location: ['', Validators.required],
+       location: this.fb.group({
+        address: ['', Validators.required],
+        latitude: [null, Validators.required],
+        longitude: [null, Validators.required]
+      }),
       timeSlot: ['', Validators.required],
       technician: ['', Validators.required],
       paymentMethod: ['', Validators.required]
     });
-
   }
 
   ngOnInit(): void {
-    this.serviceId = this.route.snapshot.paramMap.get('serviceId');
-    // this.loadTimeSlots();
-    // this.loadAllTechnicians();
+    // this.subServiceId = this._route.snapshot.queryParamMap.get('subServiceId');
+     this._route.queryParams.subscribe(params => {
+      this.subServiceId = params['subServiceId'] || null;
+      this.subServiceName = params['subServiceName'] || null;
+      this.price = parseInt(params['price'] ) 
+    })
 
-    this._userId=this._store.select(selectTempUserId)
+    console.log("price: ", this.price);
+    console.log("subServiceName", this.subServiceName);
+    
+      this._store.select(selectTempUserId).subscribe(id => {
+            if (id) {
+              this._userId = id;
+            }
+          });
+      this._store.select(selectUsername).subscribe(name => {
+            if (name) {
+              this._username = name;
+            }
+          });
+
         this.addressInputChanges.pipe(
           debounceTime(300),
           distinctUntilChanged(),
@@ -96,7 +138,16 @@ bookingForm: FormGroup;
             console.error(err);
           }
         });
+
+        // Set date limits 
+        this.selectedDate = new Date().toISOString().split('T')[0];
+        this.minDate = new Date().toISOString().split('T')[0]; // Today
+        const maxDateObj = new Date();
+        maxDateObj.setMonth(maxDateObj.getMonth() + 3); // 3 months from now
+        this.maxDate = maxDateObj.toISOString().split('T')[0];
   }
+
+ 
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
@@ -172,7 +223,14 @@ bookingForm: FormGroup;
           latitude: this.currentLatitude, 
           longitude: this.currentLongitude 
         };
-        this.bookingForm.patchValue({ location: this.userLocation.address });
+        // this.bookingForm.patchValue({ location: this.userLocation.address });
+        this.bookingForm.patchValue({
+          location: {
+            address: this.userLocation.address,
+            latitude: this.userLocation.latitude,
+            longitude: this.userLocation.longitude
+          }
+        });
         this.isLoadingMap = false;
         
         // Filter technicians based on new location
@@ -213,7 +271,13 @@ bookingForm: FormGroup;
       latitude: this.selectedAddressDetails.latitude,
       longitude: this.selectedAddressDetails.longitude
     };
-    this.bookingForm.patchValue({ location: this.userLocation.address });
+    this.bookingForm.patchValue({
+        location: {
+          address: this.selectedAddressDetails.address,
+          latitude: this.selectedAddressDetails.latitude,
+          longitude: this.selectedAddressDetails.longitude
+        }
+      });
     
     // Filter technicians based on new location
     this.loadAllTechnicians()
@@ -304,92 +368,235 @@ bookingForm: FormGroup;
      // NEW: Clear the time slot if a new technician is selected
     this.bookingForm.patchValue({ timeSlot: null }); // Clear the value
     this.availableTimeSlots = []; // Clear current time slots
-
+    this.onDateSelected()
     // Load new slots
     // this.loadTimeSlotsForTechnician(technician.id); 
   }
 
    // Step 3: Time Slots
-//   loadTimeSlotsForTechnician(technicianId: string): void {
-//     this.isLoadingTimeSlots = true;
-//     this.http.get<{ success: boolean; slots: { start: Date; end: Date }[] }>(
-//         `http://localhost:3000/partner/available-slots?technicianId=${technicianId}&date=${new Date().toISOString()}`
-//     ).subscribe({
-//         next: (response) => {
-//             this.availableTimeSlots = response.slots.map(slot => ({
-//                 id: `${slot.start.toISOString()}-${slot.end.toISOString()}`, // Generate a unique ID
-//                 time: `${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`,
-//                 // available: true,
-//             }));
-//             this.isLoadingTimeSlots = false;
-//         },
-//         error: (err) => {
-//             console.error('Error loading time slots:', err);
-//             this.availableTimeSlots = [];
-//             this.isLoadingTimeSlots = false;
-//         },
-//     });
-// }
 
  onDateSelected(): void {
     if (!this.selectedDate || !this.bookingForm.get('technician')?.value) {
       return;
     }
-    
-    // Clear existing time slots
     this.availableTimeSlots = [];
     this.bookingForm.patchValue({ timeSlot: null });
-    
-    // Load time slots for selected technician and date
     this.loadTimeSlotsForTechnicianAndDate(this.bookingForm.get('technician')?.value, this.selectedDate);
   }
 
-  loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
-    this.isLoadingTimeSlots = true;
-    const selectedDate = new Date(date);
-    
-    this.http.get<{ success: boolean; slots: { start: string; end: string }[] }>(
-        `http://localhost:3000/partner/available-slots?technicianId=${technicianId}&date=${selectedDate.toISOString()}`
-    ).subscribe({
-        next: (response) => {
-            this.availableTimeSlots = response.slots.map(slot => {
-                const startTime = new Date(slot.start);
-                const endTime = new Date(slot.end);
-                return {
-                    id: `${slot.start}-${slot.end}`,
-                    time: `${startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })} - ${endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`,
-                    startTime: slot.start,
-                    endTime: slot.end
-                };
-            });
-            this.isLoadingTimeSlots = false;
-        },
-        error: (err) => {
-            console.error('Error loading time slots:', err);
-            this.availableTimeSlots = [];
-            this.isLoadingTimeSlots = false;
-        },
-    });
+loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
+  this.isLoadingTimeSlots = true;
+  const selectedDate = new Date(date);
+  const now = new Date();
+  
+  console.log("selectedDate:", selectedDate);
+  console.log('Now:', now.toISOString());
+ 
+  // Prevent loading slots for past dates
+  if (selectedDate.toDateString() !== now.toDateString() && selectedDate < now) {
+    this.availableTimeSlots = [];
+    this.isLoadingTimeSlots = false;
+    console.log('Cannot load slots for past dates');
+    return;
   }
 
+  this.http.get<{ success: boolean; slots: BackendSlotResponse[] }>(
+      `http://localhost:3000/partner/available-slots?technicianId=${technicianId}&date=${selectedDate.toISOString()}`
+  ).subscribe({
+      next: (response) => {
+          this.availableTimeSlots = response.slots
+              .filter(slot => {
+                  // First filter: only 'available' slots
+                  if (slot.type !== 'available') return false;
+                  
+                  // Second filter: remove past slots for current day
+                  const startTime = new Date(slot.start);
+                  const isToday = selectedDate.toDateString() === now.toDateString();
+                  const isPastSlot = isToday && startTime.getTime() < (now.getTime() + 60 * 60 * 1000); // 1 hour buffer
+                    console.log('Slot start:', slot.start);
+                    console.log('StartTime (parsed):', startTime.toISOString());
+                    console.log('Is today:', isToday);
+                    console.log('Is past slot:', isPastSlot);
+                  return !isPastSlot;
+              })
+              .map(slot => {
+                  const startTime = new Date(slot.start);
+                  const endTime = new Date(slot.end);
+                  return {
+                      id: `${slot.start}-${slot.end}`,
+                      time: `${startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })} - ${endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`,
+                      startTime: slot.start,
+                      endTime: slot.end,
+                  };
+  
+              })
+              .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()); // Sort by start time
+              
+          this.isLoadingTimeSlots = false;
+      },
+      error: (err) => {
+          console.error('Error loading time slots:', err);
+          this.availableTimeSlots = [];
+          this.isLoadingTimeSlots = false;
+      },
+  });
+}
 
-  onTimeSlotSelected(slot: any): void {
-    this.bookingForm.patchValue({ timeSlot: slot.id });
+
+  onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id:string }): void {
+    // 1. Update the form control
+    console.log("selectedSlot",selectedSlot);
+    this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
+
   }
 
   
   // Step 4: Payment
   onPaymentMethodSelected(method: string): void {
     this.bookingForm.patchValue({ paymentMethod: method });
+    
   }
 
   // Submit
   onSubmit(): void {
     if (this.canProceedToNextStep()) {
-      console.log('Booking Data:', this.bookingForm.value);
-      // Call backend to save booking
+        console.log('Booking Data:', this.bookingForm.value);
+          const data ={
+            userId:this._userId,
+            username:this._username,
+            technicianId:this.bookingForm.get('technician')?.value as string,
+            subServiceId:this.subServiceId,
+            subServiceName:this.subServiceName,
+            location: {
+                address: this.bookingForm.get('location.address')?.value,
+                latitude: this.bookingForm.get('location.latitude')?.value,
+                longitude: this.bookingForm.get('location.longitude')?.value
+            },
+            date:new Date(),
+            totalAmount:this.price,
+            paymentMethod:this.bookingForm.get('paymentMethod')?.value,
+            bookedDate:this.selectedDate,
+            timeSlotStart:this.getSelectedTimeSlot().startTime as Date,
+            timeSlotEnd:this.getSelectedTimeSlot().endTime as Date
+          }
+       
+        console.log("data:", data);
+
+        
+    
+        // Create booking record in "Pending" state
+        this.http.post<BookServiceResponseDTO>('http://localhost:3000/user/book-service', data)
+            .subscribe({
+                next: (response) => {
+                    if (response.success) {
+                      const bookingData=response.data;
+                      console.log("bookingData",bookingData );
+                      
+                      // this._bookingService.setBookingData({
+                      //         bookingId: bookingData._id,
+                      //         technicianId: this.bookingForm.get('technician')?.value,
+                      //         startTime: bookingData.startTime,
+                      //         endTime: bookingData.endTime
+                      //       });
+                        localStorage.setItem('bookingData', JSON.stringify({
+                          bookingId: bookingData._id,
+                          username:bookingData.username,
+                          subServiceName:this.subServiceName,
+                          technicianId: this.bookingForm.get('technician')?.value,
+                          startTime: bookingData.timeSlotStart,
+                          endTime: bookingData.timeSlotEnd
+                        }));
+                        // this.currentBookingId = bookingData?._id;
+                        // console.log('Booking created with ID:', this.currentBookingId);
+                        console.log("requires cash", bookingData?.requiresCash )
+                        if(bookingData?.requiresCash=== false){
+                          this.proceedToPayment(bookingData);
+                        }else{
+                          console.log("in else condition onSubmit()");
+                          this.blockSlotAfterPayment()
+                          // this.showBookingConfirmation()
+                        }
+                    }
+                },
+                error: (err) => {
+                    console.error('Failed to create booking:', err);
+                    alert('Failed to create booking. Please try again.');
+                }
+            });
     }
-  }
+}
+
+proceedToPayment(bookingData:any){
+
+    if (bookingData.checkoutUrl) {
+        console.log('Redirecting to payment page:', bookingData.checkoutUrl);
+        window.location.href = bookingData.checkoutUrl;
+        // this._router.navigate(['/payment-success'])
+        //wallet logic
+    } else {
+        // console.error('No checkout URL provided:', bookingData);
+        // alert('Failed to get payment page. Please try again.');
+        console.log('Wallet payment confirmed. Redirecting to success page.');
+        this._router.navigate(['/payment-success'], {
+          queryParams: {
+            booking_id: bookingData._id,
+            type: 'wallet-booking'
+          }
+        });
+        }
+  
+}
+
+private blockSlotAfterPayment(): void {
+    const selectedSlot = this.getSelectedTimeSlot();
+    const technicianId = this.bookingForm.get('technician')?.value;
+    
+    const blockSlotPayload = {
+        technicianId: technicianId,
+        start: selectedSlot.startTime,
+        end: selectedSlot.endTime,
+        isCustomerBooking: true,
+        reason: `Customer booking - ${this.currentBookingId}`,
+        bookingId: this.currentBookingId, // Link to booking record
+  
+    };
+    
+    this.http.post<{success: boolean, eventId: string, calendarId: string}>('http://localhost:3000/partner/block-slot', blockSlotPayload)
+        .subscribe({
+            next: (response) => {
+                if (response.success) {
+                    // Step 3: Update booking with Google Calendar details
+                    this.updateBookingWithPaymentDetails(response.eventId, response.calendarId);
+                }
+            },
+            error: (err) => {
+                console.error('Failed to block slot after payment:', err);
+                // Handle this - payment succeeded but slot blocking failed
+                // You might want to trigger a retry mechanism
+            }
+        });
+}
+
+private updateBookingWithPaymentDetails(eventId: string, calendarId: string): void {
+    const updatePayload = {
+        googleEventId: eventId,
+        googleCalendarId: calendarId,
+        bookingStatus: 'Confirmed' // Now fully confirmed
+    };
+    
+    this.http.patch(`/api/bookings/${this.currentBookingId}`, updatePayload)
+        .subscribe({
+            next: (response) => {
+                console.log('Booking fully confirmed!');
+                // this.showBookingConfirmation();
+            
+            },
+            error: (err) => {
+                console.error('Failed to update booking with calendar details:', err);
+            }
+        });
+}
+
 
   // Helper for step titles
   getStepTitle(step: number): string {
@@ -399,12 +606,19 @@ bookingForm: FormGroup;
 
   getSelectedTimeSlot(): any {
     const timeSlotId = this.bookingForm.get('timeSlot')?.value;
+    console.log("timeSlotId", timeSlotId);
+    
     return this.availableTimeSlots.find(slot => slot.id === timeSlotId);
   }
 
 
   getSelectedTechnician(): any {
-    const technicianId = this.bookingForm.get('technician')?.value;
-    return this.availableTechnicians.find(tech => tech.id === technicianId);
+    this.technicianId = this.bookingForm.get('technician')?.value;
+    return this.availableTechnicians.find(tech => tech.id === this.technicianId);
   }
+
+  getTotalAmount(){
+
+  }
+
 }

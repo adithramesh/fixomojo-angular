@@ -1,8 +1,46 @@
 <nav class="navbar">
-    <div class="navbar-left" >
-      <span class="welcome-message">Welcome, {{ (username$|async)}} !</span>
+  <div class="navbar-left">
+    <div class="logo-container" (click)="navigateToHome()">
+      <svg width="40" height="40" viewBox="0 0 100 100">
+        <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black" />
+        <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">FM</text>
+      </svg>
     </div>
-    <div class="navbar-right">
-      <button class="logout-button" (click)="logout()">Logout</button>
+    <span class="welcome-message">
+      Welcome, {{ (username$ | async) }}!
+    </span>
+  </div>
+
+  <div class="navbar-right">
+    <!-- Dropdown Trigger Button -->
+    <button class="user-menu-trigger" (click)="toggleDropdown()">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <!-- User Menu Dropdown Content -->
+    <div class="user-menu-dropdown" [class.open]="dropdownOpen">
+      <!-- "My Bookings" for user role -->
+      <button class="dropdown-item" (click)="navigateToMyProfile()" *ngIf="role === 'partner'">
+        <mat-icon>account_box</mat-icon>
+        <span>My Profile</span>
+      </button>
+      <!-- "My Bookings" for user role -->
+      <button class="dropdown-item" (click)="navigateToMyBookings()" *ngIf="role === 'user'">
+        <mat-icon>bookings</mat-icon>
+        <span>My Bookings</span>
+      </button>
+
+      <!-- "Wallet" for all roles -->
+      <button class="dropdown-item" (click)="navigateToWallet()">
+        <mat-icon>wallet</mat-icon>
+        <span>Wallet</span>
+      </button>
+
+      <!-- Logout option -->
+      <button class="dropdown-item" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
     </div>
-  </nav>
+  </div>
+</nav>

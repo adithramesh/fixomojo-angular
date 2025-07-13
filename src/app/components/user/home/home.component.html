@@ -1,30 +1,112 @@
-<app-nav-bar></app-nav-bar>
+<!-- <app-nav-bar></app-nav-bar>
 
 <main class="home-container">
-  <!-- User information section -->
   <section class="user-info-section">
     <div class="card">
       <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
       <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
     </div>
   </section>
-  
-  <!-- Services table section -->
+  <div class="view-toggle">
+    <button [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">
+      Table View
+    </button>
+    <button [class.active]="viewMode === 'card'" (click)="viewMode = 'card'">
+      Card View
+    </button>
+  </div>
   <section class="services-section">
     <div class="card">
-      <app-data-table
-        [tableData]="serviceTableData"
-        [tableColumns]="serviceTableColumns"
-        title="Available Services"
-        [isLoading]="isLoading"
-        emptyMessage="No services available at the moment."
-        (rowAction)="onServiceAction($event)"
-      ></app-data-table>
-      
-      <!-- Error message display -->
-      <div *ngIf="error" class="error-message">
-        <p>{{ error }}</p>
-      </div>
+      <ng-container *ngIf="viewMode === 'table'">
+       <app-data-table
+          (searchChange)="onSearchChange($event)"
+          [tableData]="serviceTableData"
+          [tableColumns]="serviceTableColumns"
+          title="Available Services"
+          [isLoading]="isLoading"
+          [emptyMessage]="'No services available at the moment.'"  (rowAction)="onServiceAction($event)"
+          [currentPage]="pagination.page"
+          [totalPages]="totalPages"
+          (pageChange)="onPageChange($event)"
+        ></app-data-table>
+      </ng-container>
+
+      <ng-container *ngIf="viewMode === 'card'">
+        <div class="card-grid" *ngIf="services.length > 0">
+          <app-service-card
+            *ngFor="let service of services"
+            [title]="service.subServiceName || service.serviceName"
+            [description]="service.description"
+            [imageUrl]="service.image || 'assets/placeholder.png'"
+          ></app-service-card>
+        </div>
+        <div class="empty-message" *ngIf="!isLoading && services.length === 0">
+          No services available at the moment.
+        </div>
+      </ng-container>
+    </div>
+  </section>
+</main> -->
+
+<app-nav-bar></app-nav-bar>
+
+<main class="home-container">
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="welcome-card">
+      <h1>Welcome, {{ (username$ | async) || 'User' }}!</h1>
+      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
+      <p class="subtitle">Discover our services and find what you need</p>
+    </div>
+  </section>
+
+  <!-- Featured Services Section -->
+  <section class="featured-services-section">
+    <div class="section-header">
+      <h2>Featured Services</h2>
+      <button class="view-all-btn" (click)="viewAllServices()">
+        View All Services
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" *ngIf="isLoading">
+      <p>Loading services...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-message" *ngIf="error && !isLoading">
+      <p>{{ error }}</p>
+      <button class="retry-btn" (click)="loadFeaturedServices()">Try Again</button>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="services-grid" *ngIf="!isLoading && !error && featuredServices.length > 0">
+      <app-service-card
+        *ngFor="let service of featuredServices"
+        [title]="service.serviceName"
+        [imageUrl]="_imageUrlService.buildImageUrl(service.image)"
+        (click)="viewService(service)"
+      ></app-service-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && !error && featuredServices.length === 0">
+      <p>No services available at the moment.</p>
+    </div>
+  </section>
+
+  <!-- Quick Actions Section (Optional - for future features) -->
+  <section class="quick-actions-section">
+    <div class="section-header">
+      <h2>Quick Actions</h2>
+    </div>
+    <div class="actions-grid">
+      <button class="action-card" (click)="viewAllServices()">
+        <h3>Browse Services</h3>
+        <p>View all available services</p>
+      </button>
+      <!-- Add more quick actions as needed -->
     </div>
   </section>
 </main>

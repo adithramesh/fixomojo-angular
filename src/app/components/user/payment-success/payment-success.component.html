@@ -1,0 +1,26 @@
+<div class="payment-success-container">
+  <h1 class="success-title" *ngIf="bookingDetails">Booking Success</h1>
+  <h1 class="success-title" *ngIf="walletMessage">{{ walletMessage }}</h1>
+
+  <!-- Booking Details -->
+  <div *ngIf="bookingDetails" class="booking-details">
+    <p>Your booking details are:</p>
+    <ul>
+      <li><strong>Booking ID:</strong> {{ bookingDetails._id.slice(13) }}</li>
+      <li><strong>Service Name:</strong> {{ bookingDetails.subServiceName }}</li>
+      <li><strong>Total Amount:</strong> ₹{{ bookingDetails.totalAmount }}</li>
+      <li><strong>Payment Method:</strong> {{ bookingDetails.paymentMethod }}</li>
+      <li><strong>Booking Status:</strong> {{ bookingDetails.bookingStatus }}</li>
+      <li><strong>Payment Status:</strong> {{ bookingDetails.paymentStatus }}</li>
+      <li><strong>Created At:</strong> {{ bookingDetails.createdAt | date:'medium' }}</li>
+      <li><strong>Booked For:</strong> {{ bookingDetails.timeSlotStart | date:'medium' }}</li>
+    </ul>
+  </div>
+
+  <!-- Error -->
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+  <!-- CTA -->
+  <button class="block-button" (click)="goHome()">Go to Wallet</button>
+</div>
+

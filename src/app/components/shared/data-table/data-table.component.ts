@@ -4,18 +4,44 @@ import { FormsModule } from '@angular/forms';
 
 
 export interface TableData {
-  [key: string]: any;
-  id?: string | number; 
+  [key: string]: any; // Add this line
+  id?: any;
+  image?: string;
+  serviceName?: string;
+  subServiceId?: any;
+  subServiceName?: string;
+  description?: string;
+  price?: string;
+  status?: string;
+  book?: any;
+  edit?: any;
+  totalAmount?: any;
+  // paymentStatus?: any;
+  // bookingStatus?: any;
+  bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed";
+  paymentStatus?: "Pending" | "Success" | "Failed";
+  isCompleted?: any;
+  username?: string; 
+  createdAt?: string; 
+  block?: string; 
+  location?: {
+      address?: string;
+      latitude: number;
+      longitude: number;
+   };
+  timeSlotStart?: Date; 
+  timeSlotEnd?: Date; 
 }
 
 export interface TableColumn {
   header: string;
   key: string; 
-  type: 'text' | 'image' | 'button' | 'date' | 'status' | 'dropdown';
+  type: 'text' | 'image' | 'button' | 'date' | 'status' | 'dropdown' | 'action-buttons';
   dropdownOptions?: { label: string; value: string }[];
   buttonText?: string;
   buttonClass?: string; 
   width?: string; 
+  className?: string
 }
 
 @Component({
@@ -50,6 +76,10 @@ export class DataTableComponent {
     this.rowAction.emit({action, item});
   }
 
+  onImageClick(item: TableData): void {
+    this.rowAction.emit({action: 'image', item});
+  }
+
   onDropdownChange(field: string, newValue: string, item: TableData): void {
     const itemId = item.id;
     if (!itemId) {
@@ -79,12 +109,45 @@ export class DataTableComponent {
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target) {
-      this.searchTerm = target.value; // Update searchTerm for two-way binding
-      this.searchChange.emit(target.value);
+        this.searchTerm = target.value; // Update searchTerm for two-way binding
+        this.searchChange.emit(target.value);
+      }
+    } 
+
+  onImageError(event: Event): void {
+  const target = event.target as HTMLImageElement;
+  if (target) {
+      target.src = 'assets/images/placeholder.jpg';
     }
   }
 
   onAddClick(): void {
     this.addItem.emit();
   }
+
+  shouldShowChatButton(item: TableData): boolean {
+  return item.bookingStatus === 'Confirmed' ;
+  // && !item.isCompleted
+}
+
+shouldShowCompleteButton(item: TableData): boolean {
+  if(item.timeSlotStart){
+  return item.bookingStatus === 'Confirmed'  && 
+         this.isToday(item.timeSlotStart.toString());
+        //  && !item.isCompleted
+  }else{
+    return false
+  }
+}
+
+shouldShowRateButton(item: TableData): boolean {
+  return item.bookingStatus === 'Completed'; // or item.isCompleted === 'Yes'
+}
+
+private isToday(dateString: string): boolean {
+  const today = new Date();
+  const bookingDate = new Date(dateString);
+
+  return today.toDateString() !== bookingDate.toDateString();
+}
 }

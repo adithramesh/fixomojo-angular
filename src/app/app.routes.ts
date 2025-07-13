@@ -17,8 +17,15 @@ import { SubServiceManagementComponent } from './components/admin/sub-service-ma
 import { ServiceDetailsComponent } from './components/user/service-details/service-details.component';
 import { BookingServiceComponent } from './components/user/booking-service/booking-service.component';
 import { LocationComponent } from './components/partner/location/location.component';
+import { TimeSlotsComponent } from './components/partner/time-slots/time-slots.component';
+import { PaymentSuccessComponent } from './components/user/payment-success/payment-success.component';
+import { MyBookingsComponent } from './components/user/my-bookings/my-bookings.component';
+import { WalletComponent } from './components/shared/wallet/wallet.component';
+import { TasksComponent } from './components/partner/tasks/tasks.component';
+import { ActivitiesComponent } from './components/admin/activities/activities.component';
 
 export const routes: Routes = [
+    //user
     { path: "signup", component:SignUpComponent},
     { path: 'signup/verify-otp', component: OtpComponent, data: { context: 'signup' }, canActivate:[dontGoBack]},
     { path: 'login', component: LoginComponent },
@@ -26,7 +33,13 @@ export const routes: Routes = [
     { path: 'forgot-password/verify-otp', component: OtpComponent, data: { context: 'forgot-password' }, canActivate:[dontGoBack] },
     { path: 'reset-password', component: ResetPasswordComponent},
     { path: 'home', component: HomeComponent,canActivate:[RoleGuard], data: { allowedRoles: ['user'] } }, 
-    
+    { path: 'services', component: ServiceDetailsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    { path: 'book-service', component: BookingServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    { path: 'my-bookings', component:MyBookingsComponent , canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
+    { path: 'user-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'], role: 'user'} },
+
+    //admin
     { path: 'admin-dashboard', component: AdminDashboardComponent,  canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'user-management', component: UserManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'partner-management', component: PartnerManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
@@ -36,12 +49,15 @@ export const routes: Routes = [
     { path: 'edit-service/:id', component: AddServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'sub-service', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'edit-sub-service/:id', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'admin-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'], role: 'admin'} },
+    { path: 'activities', component: ActivitiesComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin']} },
 
-    { path: 'services/:serviceName', component: ServiceDetailsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
-    { path: 'book-service', component: BookingServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['user'] } },
     //partner
     { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin'] } }, 
     { path: 'location', component: LocationComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
+    { path: 'time-slots', component: TimeSlotsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } },
+    { path: 'partner-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'], role: 'partner'} },
+    { path: 'tasks', component: TasksComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
 
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
     { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths

@@ -1,1 +1,160 @@
-<p>time-slots works!</p>
+<app-nav-bar></app-nav-bar>
+<app-partner-side-bar></app-partner-side-bar>
+<div class="time-slot-container">
+  <h2>Manage Your Availability</h2>
+
+  <div *ngIf="errorMessage" class="messages error-message">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="messages success-message">
+    {{ successMessage }}
+  </div>
+
+  <div class="date-selector">
+    <label for="blockDate">Select Date:</label>
+    <input
+      type="date"
+      id="blockDate"
+      class="form-input"
+      [(ngModel)]="selectedDate"
+      (change)="onDateChange()"
+      [min]="minDate"
+      [max]="maxDate"
+      [disabled]="isLoadingSlots"
+    />
+  </div>
+
+  <div class="slot-legend">
+    <div class="legend-item available">
+      <div class="color-box"></div>
+      Available
+    </div>
+    <div class="legend-item tech-blocked">
+      <div class="color-box"></div>
+      Your Block
+    </div>
+    <div class="legend-item customer-booked">
+      <div class="color-box"></div>
+      Customer Booked
+    </div>
+  </div>
+
+  <div *ngIf="isLoadingSlots" class="messages">Loading available slots...</div>
+  <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && !errorMessage" class="messages">
+    No slots available or defined for this day.
+  </div>
+
+  <div class="time-slots-grid">
+    <button
+      *ngFor="let slot of availableSlots"
+      class="slot-button"
+      [ngClass]="{
+        'available': slot.type === 'available',
+        'technician-blocked': slot.type === 'technician-blocked',
+        'customer-booked': slot.type === 'customer-booked',
+        'selected': selectedSlotToBlock?.start === slot.start && selectedSlotToBlock?.end === slot.end
+      }"
+      [disabled]="!slot.isEditable || isLoadingBlocking || isLoadingUnblocking"
+      (click)="onSelectSlot(slot)"
+      [title]="slot.type === 'customer-booked' ? 'Booked by customer (cannot be modified)' : (slot.isEditable ? 'Click to manage' : 'Past slot')"
+    >
+      {{ slot.time }}
+      <span *ngIf="slot.type === 'customer-booked'">(Booked)</span>
+      <span *ngIf="slot.type === 'technician-blocked'">(Blocked)</span>
+    </button>
+  </div>
+
+  <div class="action-section">
+    <div *ngIf="selectedSlotToBlock">
+      <h3>
+        {{ selectedSlotToBlock.type === 'available' ? 'Block' : 'Manage' }} Slot:
+        {{ selectedSlotToBlock.time }}
+      </h3>
+      <div *ngIf="selectedSlotToBlock.type !== 'customer-booked'" class="block-reason-input">
+        <label for="blockReason">Reason:</label>
+        <input
+          type="text"
+          id="blockReason"
+          class="form-input"
+          [(ngModel)]="blockReason"
+          placeholder="e.g., Lunch, Medical Appointment"
+          [disabled]="isLoadingBlocking || isLoadingUnblocking || selectedSlotToBlock.type !== 'available'"
+        />
+      </div>
+
+      <button
+        *ngIf="selectedSlotToBlock.type === 'available'"
+        class="block-action-button"
+        (click)="blockOrUnblockSelectedSlot()"
+        [disabled]="!blockReason || isLoadingBlocking || isLoadingUnblocking"
+      >
+        <span *ngIf="!isLoadingBlocking">Block Selected Slot</span>
+        <span *ngIf="isLoadingBlocking">Blocking...</span>
+      </button>
+
+      <button
+        *ngIf="selectedSlotToBlock.type === 'technician-blocked'"
+        class="unblock-action-button"
+        (click)="blockOrUnblockSelectedSlot()"
+        [disabled]="isLoadingBlocking || isLoadingUnblocking"
+      >
+        <span *ngIf="!isLoadingUnblocking">Unblock Selected Slot</span>
+        <span *ngIf="isLoadingUnblocking">Unblocking...</span>
+      </button>
+    </div>
+
+    <button class="toggle-multi-day" (click)="toggleMultiDayBlock()">
+      {{ isBlockingMultiDay ? 'Hide Multi-Day Blocking' : 'Block Multiple Days' }}
+    </button>
+
+    <div *ngIf="isBlockingMultiDay" class="multi-day-form">
+      <h3>Block a Range of Days</h3>
+      <div class="form-group">
+        <label for="multiDayStartDate">Start Date:</label>
+        <input
+          type="date"
+          id="multiDayStartDate"
+          class="form-input"
+          [(ngModel)]="multiDayStartDate"
+          [min]="minDate"
+          [disabled]="isLoadingBlocking"
+        />
+      </div>
+      <div class="form-group">
+        <label for="multiDayEndDate">End Date:</label>
+        <input
+          type="date"
+          id="multiDayEndDate"
+          class="form-input"
+          [(ngModel)]="multiDayEndDate"
+          [min]="multiDayStartDate"
+          [disabled]="isLoadingBlocking"
+        />
+      </div>
+      <div class="form-group">
+        <label for="multiDayReason">Reason:</label>
+        <input
+          type="text"
+          id="multiDayReason"
+          class="form-input"
+          [(ngModel)]="multiDayReason"
+          placeholder="e.g., Vacation, Medical Leave"
+          [disabled]="isLoadingBlocking"
+        />
+      </div>
+      <button
+        class="block-multi-day-button"
+        (click)="blockMultiDaySlots()"
+        [disabled]="!multiDayStartDate || !multiDayEndDate || !multiDayReason || isLoadingBlocking"
+      >
+        <span *ngIf="!isLoadingBlocking">Block Selected Days</span>
+        <span *ngIf="isLoadingBlocking">Blocking...</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="google-calendar-link">
+    <p>For advanced management or to view all your events:</p>
+    <a [href]="googleCalendarLink" target="_blank" rel="noopener noreferrer">Go to Google Calendar</a>
+  </div>
+</div>

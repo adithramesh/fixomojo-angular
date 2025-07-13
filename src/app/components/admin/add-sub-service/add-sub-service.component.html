@@ -65,17 +65,14 @@
           ></textarea>
         </div>
       <div class="form-group">
-        <label for="image">Image URL (Optional)</label>
-        <input
-            type="text"
-            id="image"
-            class="form-input"
-            formControlName="image"
-            placeholder="Enter image URL"
-        />
-        <div *ngIf="addSubServiceForm.get('image')?.invalid && (addSubServiceForm.get('image')?.dirty || addSubServiceForm.get('image')?.touched)" class="error-message">
-            Please enter a valid URL.
-        </div>
+        <label for="image">Sub Service Image</label>
+         <file-pond
+            name="image"
+            [options]="pondOptions"
+            [files]="pondFiles"
+            (onaddfile)="pondHandleAddFile($event)"
+            (onremovefile)="pondHandleRemoveFile()"
+          ></file-pond>
         </div>
         <div class="form-group">
           <label for="status">Status</label>
@@ -93,7 +90,15 @@
             Parent service status: {{ parentStatus | titlecase }}
           </div> -->
         </div>
-        <button type="submit" class="add-sub-service-button" [disabled]="addSubServiceForm.invalid">{{ mode === 'edit' ? 'Update' : 'Create' }} Sub-Service</button>
+        <!-- <button type="submit" class="add-sub-service-button" [disabled]="addSubServiceForm.invalid">{{ mode === 'edit' ? 'Update' : 'Create' }} Sub-Service</button> -->
+         <button
+          type="submit"
+          class="add-sub-service-button"
+          [disabled]="addSubServiceForm.invalid || isSubmitting"
+        >
+          <span *ngIf="isSubmitting">{{ mode === 'edit' ? 'Updating...' : 'Creating...' }}</span>
+          <span *ngIf="!isSubmitting">{{ mode === 'edit' ? 'Update' : 'Create' }} Sub-Service</span>
+        </button>
       </form>
     </div>
   </div>

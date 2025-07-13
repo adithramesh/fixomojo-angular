@@ -9,6 +9,7 @@ import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.redu
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { SidebarComponent } from "../side-bar/side-bar.component";
 import { Router } from '@angular/router';
+import { ImageUrlService } from '../../../services/image.service';
 
 @Component({
   selector: 'app-service-management',
@@ -23,6 +24,7 @@ export class ServiceManagementComponent {
   private _adminService = inject(AdminService);
   private _subscription: Subscription = new Subscription();
   private searchSubject = new Subject<string>();
+  private _imageUrlService = inject(ImageUrlService)
   searchTerm:string = '';
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; 
@@ -30,7 +32,8 @@ export class ServiceManagementComponent {
   serviceTableColumns: TableColumn[] = [
     { header: 'Service name', key: 'serviceName', type: 'text', width: '20%' },
     { header: 'Description', key: 'description', type: 'text', width: '30%' },
-    { header: 'Created on', key: 'createdAt', type: 'text', width: '20%' },
+    { header: 'Image', key: 'image', type: 'image', width: '10%' },
+    { header: 'Created on', key: 'createdAt', type: 'date', width: '20%' },
     { header: 'Status', key: 'status', type: 'text', width: '10%' },
     { header: 'Edit Service', key: 'edit', type: 'button', buttonText: 'Edit', buttonClass: 'btn-primary', width: '15%' },
     { header: 'Block Service', key: 'block', type: 'button', buttonText: 'Block', buttonClass: 'btn-primary', width: '15%' }
@@ -96,26 +99,13 @@ export class ServiceManagementComponent {
       id: service.id,
       serviceName: service.serviceName ,
       description:service.description, 
+      image: this._imageUrlService.buildImageUrl(service.image),
       status: service.status,
       createdAt:service.createdAt,
       edit: 'edit',
       block: 'block'
     };
   }
-
-  // prevPage(): void {
-  //   if (this.pagination.page > 1) {
-  //     this.pagination.page--;
-  //     this.loadServices();
-  //   }
-  // }
-
-  // nextPage(): void {
-  //   if (this.pagination.page < this.totalPages) {
-  //     this.pagination.page++;
-  //     this.loadServices();
-  //   }
-  // }
 
   
   handleAction(event: { action: string, item: TableData }): void {

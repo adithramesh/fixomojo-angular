@@ -1,6 +1,8 @@
 <app-nav-bar></app-nav-bar>
 <app-partner-side-bar></app-partner-side-bar>
 <div class="location-container">
+  
+  <br>
   <h2>Select Location</h2>
 
   <div class="form-group">
@@ -10,8 +12,9 @@
   </div>
 
   <div *ngIf="currentLatitude && currentLongitude && !showAddressInputField" class="location-info">
-    <p>Latitude: {{ currentLatitude }}</p>
-    <p>Longitude: {{ currentLongitude }}</p>
+    <!-- <p>Latitude: {{ currentLatitude }}</p>
+    <p>Longitude: {{ currentLongitude }}</p> -->
+    <p>Current Location Selected</p>
   </div>
 
   <div class="form-group">

@@ -347,95 +347,201 @@
   }
 }
 
-// Right Panel
+// // Right Panel
+// .booking-right {
+//   .map-container {
+//     background-color: var.$white;
+//     padding: var.$spacing-md;
+//     border-radius: var.$border-radius-md;
+//     box-shadow: var.$box-shadow-sm;
+
+//     h3 {
+//       font-family: var.$title-font;
+//       font-size: var.$font-size-md;
+//       margin-bottom: var.$spacing-sm;
+//     }
+
+//     .map-placeholder {
+//       height: 200px;
+//       background-color: var.$input-bg;
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       justify-content: center;
+//       border-radius: var.$border-radius-sm;
+//       text-align: center;
+
+//       p {
+//         color: var.$gray-text;
+//         font-size: var.$font-size-sm;
+//       }
+//     }
+
+//     .map-loading {
+//       height: 200px;
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       color: var.$gray-text;
+//     }
+//   }
+
+//   .time-slots, .technicians-list {
+//     background-color: var.$white;
+//     padding: var.$spacing-md;
+//     border-radius: var.$border-radius-md;
+//     box-shadow: var.$box-shadow-sm;
+
+//     h3 {
+//       font-family: var.$title-font;
+//       font-size: var.$font-size-md;
+//       margin-bottom: var.$spacing-sm;
+//     }
+
+//     ul {
+//       list-style: none;
+
+//       li {
+//         padding: var.$spacing-sm 0;
+//         font-size: var.$font-size-sm;
+//         color: var.$text-color;
+
+//         &.selected {
+//           font-weight: var.$font-weight-semibold;
+//           color: var.$purple;
+//         }
+//       }
+//     }
+
+//     .technician-card {
+//       padding: var.$spacing-sm 0;
+//       border-bottom: 1px solid var.$border-color;
+
+//       &.selected {
+//         font-weight: var.$font-weight-semibold;
+//         color: var.$purple;
+//       }
+
+//       p {
+//         font-size: var.$font-size-sm;
+//         margin: 0;
+//       }
+//     }
+
+//     .no-technicians {
+//       text-align: center;
+//       color: var.$gray-text;
+//       padding: var.$spacing-md;
+//     }
+    
+//   }
+// }
+
+
 .booking-right {
-  .map-container {
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-lg;
+
+  .map-container,
+  .technicians-list,
+  .time-slots {
     background-color: var.$white;
-    padding: var.$spacing-md;
+    padding: var.$spacing-lg;
     border-radius: var.$border-radius-md;
     box-shadow: var.$box-shadow-sm;
+    font-family: var.$primary-font;
 
     h3 {
-      font-family: var.$title-font;
       font-size: var.$font-size-md;
-      margin-bottom: var.$spacing-sm;
+      font-family: var.$title-font;
+      color: var.$text-color;
+      margin-bottom: var.$spacing-md;
     }
 
-    .map-placeholder {
-      height: 200px;
-      background-color: var.$input-bg;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-radius: var.$border-radius-sm;
-      text-align: center;
-
-      p {
-        color: var.$gray-text;
-        font-size: var.$font-size-sm;
-      }
-    }
-
-    .map-loading {
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    p {
+      font-size: var.$font-size-sm;
       color: var.$gray-text;
-    }
-  }
-
-  .time-slots, .technicians-list {
-    background-color: var.$white;
-    padding: var.$spacing-md;
-    border-radius: var.$border-radius-md;
-    box-shadow: var.$box-shadow-sm;
-
-    h3 {
-      font-family: var.$title-font;
-      font-size: var.$font-size-md;
       margin-bottom: var.$spacing-sm;
     }
 
     ul {
       list-style: none;
+      padding: 0;
+      margin: 0;
 
       li {
-        padding: var.$spacing-sm 0;
-        font-size: var.$font-size-sm;
-        color: var.$text-color;
+        padding: var.$spacing-sm var.$spacing-md;
+        margin-bottom: var.$spacing-sm;
+        border: 1px solid var.$border-color;
+        border-radius: var.$border-radius-sm;
+        background-color: var.$input-bg;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s ease;
 
         &.selected {
+          background-color: rgba(138, 79, 255, 0.1);
+          border-color: var.$purple;
           font-weight: var.$font-weight-semibold;
           color: var.$purple;
+        }
+
+        &:hover {
+          background-color: var.$white;
         }
       }
     }
 
     .technician-card {
-      padding: var.$spacing-sm 0;
-      border-bottom: 1px solid var.$border-color;
+      border: 1px solid var.$border-color;
+      border-radius: var.$border-radius-sm;
+      padding: var.$spacing-sm var.$spacing-md;
+      margin-bottom: var.$spacing-sm;
+      background-color: var.$input-bg;
 
       &.selected {
+        background-color: rgba(138, 79, 255, 0.1);
+        border-color: var.$purple;
         font-weight: var.$font-weight-semibold;
         color: var.$purple;
       }
 
+      .no-technicians {
+        text-align: center;
+        color: var.$gray-text;
+        padding: var.$spacing-md;
+      }
+
       p {
-        font-size: var.$font-size-sm;
         margin: 0;
+        font-size: var.$font-size-sm;
+        color: var.$text-color;
       }
     }
 
-    .no-technicians {
-      text-align: center;
-      color: var.$gray-text;
-      padding: var.$spacing-md;
+    .selected-indicator {
+      color: var.$purple;
+      font-weight: var.$font-weight-bold;
+      margin-left: var.$spacing-xs;
     }
-    
+  }
+
+  .map-placeholder {
+    background-color: var.$input-bg;
+    border-radius: var.$border-radius-sm;
+    padding: var.$spacing-lg;
+    text-align: center;
+
+    p {
+      font-size: var.$font-size-sm;
+      color: var.$gray-text;
+      margin-bottom: var.$spacing-xs;
+    }
   }
 }
+
 
 // Loading States
 .loading-state {
@@ -443,3 +549,4 @@
   padding: var.$spacing-lg;
   color: var.$gray-text;
 }
+

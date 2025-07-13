@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, Observer } from 'rxjs';
 import { UserResponseDTO } from '../models/admin.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -10,8 +11,8 @@ import { UserResponseDTO } from '../models/admin.model';
 export class LocationService {
 
   private http = inject(HttpClient)
-  private locationIqApiKey = 'pk.06165ee01186e3b07b09c63eac711fbb';
-  private apiUrl='http://localhost:3000/admin/'
+  private locationIqApiKey = environment.LOCATION_IQ_API_KEY;
+  private apiUrl=`${environment.BACK_END_API_URL}/admin/`
 
   getBrowserCurrentLocation(): Observable<{ latitude: number, longitude: number }> {
     return new Observable((observer: Observer<{ latitude: number, longitude: number }>) => {
@@ -47,6 +48,10 @@ export class LocationService {
 
   updateTechnicianWithLocation(userId:string|undefined,location:{}){
     return this.http.patch<UserResponseDTO>(`${this.apiUrl}partner/${userId}/location`,location)
+  }
+
+  getSavedLocation(){
+    return this.http.get<string>(`${this.apiUrl}saved-location`)
   }
 
 }

@@ -26,8 +26,7 @@ export class PartnerManagementComponent {
     { header: 'Partner name', key: 'username', type: 'text', width: '15%' },
     { header: 'Phone Number', key: 'phoneNumber', type: 'text', width: '15%' },
     { header: 'Email', key: 'email', type: 'text', width: '15%' },
-    { header: 'Joining Date', key: 'createdAt', type: 'text', width: '15%' },
-    // { header: "Lisence", key:'license', type:'image',width:'15%'},
+    { header: 'Joining Date', key: 'createdAt', type: 'date', width: '15%' },
     { header: 'License Status',key: 'licenseStatus', type: 'dropdown',
       dropdownOptions: [
         { label: 'Pending', value: 'pending' },

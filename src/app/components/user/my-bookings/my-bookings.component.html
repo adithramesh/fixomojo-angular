@@ -1,0 +1,26 @@
+
+
+<app-nav-bar></app-nav-bar>
+<br>
+<main class="bookings-container">
+  <section class="bookings-section">
+    <div class="card">
+        <app-data-table
+            [tableData]="bookingsTableData"
+            [tableColumns]="bookingsTableColumns"
+            title="My Bookings"
+            [isLoading]="isLoading"
+            emptyMessage="No bookings available at the moment."
+            (rowAction)="onRowAction($event)"
+            [currentPage]="pagination.page"
+            [totalPages]="totalPages"
+            (pageChange)="onPageChange($event)"
+            [searchTerm]="searchTerm"
+            (searchChange)="onSearchChange($event)"
+        ></app-data-table>
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+      </div>
+    </div>
+  </section>
+</main>

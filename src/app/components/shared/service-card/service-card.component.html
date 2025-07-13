@@ -1,0 +1,6 @@
+<div class="card">
+  <img *ngIf="imageUrl" [src]="imageUrl" alt="Service image" />
+  <h3>{{ title }}</h3>
+  <p>{{ description }}</p>
+  <span  *ngIf="price" class="price">₹{{ price }}</span>
+</div>

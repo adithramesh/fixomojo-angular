@@ -14,11 +14,40 @@
   min-height: 200px;
   box-sizing: border-box;
 
+ td .image-cell { /* Target specifically the image container within a table cell */
+    display: flex; /* Helps with centering */
+    justify-content: center;
+    align-items: center;
+    width: 80px; /* Or whatever width you allocate to the column */
+    height: 80px; /* Make it square */
+    overflow: hidden; /* Hide overflowing parts if image is too large */
+  }
+
+  td .image-cell img {
+    width: 100%;
+    height: 100%; /* Fill the container */
+    object-fit: cover;
+    border-radius: var.$border-radius-sm;
+    cursor: pointer; /* Keep this for click functionality */
+  }
+
+  td .image-cell .image-placeholder {
+     width: 100%;
+     height: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     background-color: var.$input-bg; /* Light background for placeholder */
+     color: var.$gray-text;
+     border-radius: var.$border-radius-sm;
+     cursor: pointer;
+     font-size: var.$font-size-md; /* Adjust icon size */
+  }
   // Title styling
   h2 {
     font-family: var.$title-font;
     font-size: var.$font-size-xl;
-    color: var.$text-color;
+    color: var.$purple;
     margin-bottom: var.$spacing-md;
   }
 
@@ -89,6 +118,7 @@
         cursor: not-allowed;
       }
     }
+    
   }
 
   // Responsive table wrapper
@@ -131,13 +161,15 @@
         }
 
         td {
-          padding: var.$spacing-sm;
+          // padding: var.$spacing-sm;
           font-size: var.$font-size-sm;
           color: var.$text-color;
           border-bottom: 1px solid var.$border-color;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          padding: var.$spacing-xs var.$spacing-sm; /* Reduce padding from var.$spacing-sm */
+          vertical-align: middle; /* Or 'top' if you prefer text to start at the top */
 
           // Table button styles
           button {
@@ -189,6 +221,53 @@
             color: var.$error-red;
             font-weight: var.$font-weight-semibold;
             text-transform: lowercase;
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: var.$spacing-xs;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start; // or flex-start
+        width: 100%;
+        
+        .btn {
+          padding: 6px 10px;;
+          font-size: var.$font-size-xs;;
+          border-radius: var.$border-radius-sm;
+          white-space: nowrap;
+          transition: background-color 0.3s ease, transform 0.2s ease;
+            &:hover:not(:disabled) {
+              transform: translateY(-1px);
+            }
+            &:disabled {
+              background-color: var.$disabled-bg;
+              cursor: not-allowed;
+              opacity: 0.7;
+            }
+          
+          &.btn-info {
+            background-color: var.$link-color;
+            border: 1px solid var.$link-color;
+            border-color:  1px solid var.$link-color;
+            color: var.$white; 
+          &:hover:not(:disabled) {
+            background-color: color.adjust(var.$link-color, $lightness: -10%);
+            border-color: color.adjust(var.$link-color, $lightness: -10%);
+          }
+          }
+          
+          &.btn-success {
+            background-color: var.$success-green;
+            border: 1px solid var.$success-green;
+            border-color: #28a745;
+            color: var.$white;
+          &:hover:not(:disabled) {
+            background-color: color.adjust(var.$success-green, $lightness: -10%);
+            border-color: color.adjust(var.$success-green, $lightness: -10%);
+          }
           }
         }
       }
@@ -277,3 +356,23 @@
     }
   }
 }
+td .slot-date {
+  
+
+  &.booked-for {
+    color: var.$purple;
+    font-weight: var.$font-weight-semibold;
+  }
+
+  &.booking-date {
+    color: var.$text-color;
+  }
+
+  &.cancelled {
+    color: var.$gray-text;
+    font-style: italic;
+  }
+}
+
+
+

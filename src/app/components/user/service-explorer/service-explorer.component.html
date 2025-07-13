@@ -1,0 +1,46 @@
+<p>service-explorer works!</p>
+<app-nav-bar></app-nav-bar>
+
+<main class="service-explorer-container">
+  <div class="cards-sidebar">
+    <h2>Parent Services</h2>
+    <div class="services-grid">
+      <app-service-card
+        *ngFor="let service of parentServices"
+        [title]="service.serviceName"
+        [imageUrl]="service.image || 'assets/placeholder.png'"
+        [class.selected]="selectedParentServiceId === service.id" (click)="onParentServiceSelect(service)"
+      ></app-service-card>
+    </div>
+    <div class="empty-state" *ngIf="!parentServicesLoading && parentServices.length === 0">
+      <p>No parent services available.</p>
+    </div>
+  </div>
+
+  <div class="sub-service-table-area">
+    <h2 *ngIf="selectedParentService">Sub-services for {{ selectedParentService.serviceName }}</h2>
+    <h2 *ngIf="!selectedParentService">Select a service category to view sub-services</h2>
+
+    <app-data-table
+      [tableData]="subServiceTableData"
+      [tableColumns]="subServiceTableColumns"
+      [isLoading]="subServicesLoading"
+      emptyMessage="No sub-services available for this category."
+      (searchChange)="onSearchChange($event)"
+      [currentPage]="pagination.page"
+      [totalPages]="totalPages"
+      (pageChange)="onPageChange($event)"
+      (rowAction)="onRowAction($event)"
+    ></app-data-table>
+    <div *ngIf="subServiceError" class="error-message">
+      <p>{{ subServiceError }}</p>
+    </div>
+  </div>
+
+  <app-modal
+    [isOpen]="isModalOpen"
+    [serviceData]="selectedSubServiceForModal"
+    (close)="closeModal()"
+    (bookService)="bookSubService($event)"
+  ></app-modal>
+</main>

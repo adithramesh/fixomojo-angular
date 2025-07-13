@@ -29,3 +29,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 # fixomojo
 A home service web app portal which connects user and experts. Built using Anguar 19.
+
+# partners calender and slot management
+https://console.cloud.google.com/
