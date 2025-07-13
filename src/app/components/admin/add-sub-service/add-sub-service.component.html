@@ -1,0 +1,105 @@
+<div class="add-sub-service-container">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{{ mode === 'edit' ? 'Edit Sub-Service' : 'Add Sub-Service' }}</h2>
+      <form [formGroup]="addSubServiceForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="serviceId">Parent Service</label>
+          <select
+            id="serviceId"
+            class="form-input"
+            formControlName="serviceId"
+          >
+            <option value=" " disabled>Select a service</option>
+            <option *ngFor="let service of services$ | async" [value]="service.id" [ngClass]="{'invalid': addSubServiceForm.get('serviceId')?.invalid && addSubServiceForm.get('serviceId')?.touched}">
+              {{ service.serviceName }}
+            </option>
+          </select>
+          <div
+            *ngIf="addSubServiceForm.get('serviceId')?.invalid && (addSubServiceForm.get('serviceId')?.dirty || addSubServiceForm.get('serviceId')?.touched)"
+            class="error-message"
+          >
+            Parent service is required.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="subServiceName">Sub-Service Name</label>
+          <input
+            type="text"
+            id="subServiceName"
+            class="form-input"
+            formControlName="subServiceName"
+            placeholder="Enter sub-service name"
+          />
+          <div
+            *ngIf="addSubServiceForm.get('subServiceName')?.invalid && (addSubServiceForm.get('subServiceName')?.dirty || addSubServiceForm.get('subServiceName')?.touched)"
+            class="error-message"
+          >
+            Sub-service name is required.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input
+            type="number"
+            id="price"
+            class="form-input"
+            formControlName="price"
+            placeholder="Enter price"
+            min="0"
+          />
+          <div
+            *ngIf="addSubServiceForm.get('price')?.invalid && (addSubServiceForm.get('price')?.dirty || addSubServiceForm.get('price')?.touched)"
+            class="error-message"
+          >
+            Price is required and must be positive.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description">Description (Optional)</label>
+          <textarea
+            id="description"
+            class="form-input"
+            formControlName="description"
+            placeholder="Enter sub-service description"
+          ></textarea>
+        </div>
+      <div class="form-group">
+        <label for="image">Sub Service Image</label>
+         <file-pond
+            name="image"
+            [options]="pondOptions"
+            [files]="pondFiles"
+            (onaddfile)="pondHandleAddFile($event)"
+            (onremovefile)="pondHandleRemoveFile()"
+          ></file-pond>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select
+            id="status"
+            class="form-input"
+            formControlName="status"
+          >
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+            <option value="suspended">Suspended</option>
+            <option value="deleted">Deleted</option>
+          </select>
+          <!-- <div class="status-note" *ngIf="parentStatus$ | async as parentStatus">
+            Parent service status: {{ parentStatus | titlecase }}
+          </div> -->
+        </div>
+        <!-- <button type="submit" class="add-sub-service-button" [disabled]="addSubServiceForm.invalid">{{ mode === 'edit' ? 'Update' : 'Create' }} Sub-Service</button> -->
+         <button
+          type="submit"
+          class="add-sub-service-button"
+          [disabled]="addSubServiceForm.invalid || isSubmitting"
+        >
+          <span *ngIf="isSubmitting">{{ mode === 'edit' ? 'Updating...' : 'Creating...' }}</span>
+          <span *ngIf="!isSubmitting">{{ mode === 'edit' ? 'Update' : 'Create' }} Sub-Service</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

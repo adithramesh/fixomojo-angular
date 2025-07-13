@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -27,6 +27,11 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   isOtpValid: boolean = false; // Track OTP validity
 
   @ViewChild('otpForm') otpForm!: ElementRef;
+
+  @Input() isModalMode: boolean = false; // New property
+  @Input() modalContext: 'auth' | 'work-completion' = 'auth'; // New property
+  @Output() otpVerified = new EventEmitter<string>(); // New output
+  @Output() otpCancelled = new EventEmitter<void>(); // New output
 
   constructor(
     private store: Store,
@@ -110,9 +115,34 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  // onSubmit(): void {
+  //   console.log('onSubmit triggered with otpValues:', this.otpValues);
+  //   if (this.isOtpValid) {
+  //     combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
+  //       // console.log('tempUserId:', tempUserId, 'loading:', loading);
+  //       if (tempUserId) {
+  //         const otpData: OtpRequestDTO = {
+  //           tempUserId,
+  //           otp: this.otpValues.join(''),
+  //           context: this.verificationContext
+  //         };
+  //         console.log('Dispatching verifyOtp with:', otpData);
+  //         this.store.dispatch(AuthActions.verifyOtp({ otpData }));
+  //       } else {
+  //         console.error('tempUserId is null or undefined');
+  //       }
+  //     });
+  //   }
+  // }
+
+  
   onSubmit(): void {
     console.log('onSubmit triggered with otpValues:', this.otpValues);
     if (this.isOtpValid) {
+       if (this.isModalMode) {
+      // For modal mode, just emit the OTP
+      this.otpVerified.emit(this.otpValues.join(''));
+      } else {
       combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
         // console.log('tempUserId:', tempUserId, 'loading:', loading);
         if (tempUserId) {
@@ -127,6 +157,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
           console.error('tempUserId is null or undefined');
         }
       });
+    }
     }
   }
 

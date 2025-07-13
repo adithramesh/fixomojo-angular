@@ -1,6 +1,26 @@
 <div class="data-table-container">
   <h2 *ngIf="title">{{ title }}</h2>
 
+    <!-- Table controls: Search and Add button -->
+  <div class="table-controls" *ngIf="!isLoading && tableData.length > 0">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange($event)"
+      placeholder="Search..."
+      class="search-input"
+      aria-label="Search table data"
+    />
+    <button
+      *ngIf="showAddButton"
+      class="btn btn-primary"
+      (click)="onAddClick()"
+      aria-label="Add new item"
+    >
+      Add
+    </button>
+  </div>
+
   <!-- Loading state -->
   <div *ngIf="isLoading" class="loading-indicator">Loading data...</div>
 
@@ -28,14 +48,25 @@
                 {{ item[column.key] }}
               </ng-container>
 
-              <!-- Image content -->
+            <!-- Image content - now clickable -->
               <ng-container *ngSwitchCase="'image'">
-                <img
-                  *ngIf="showImage && item[column.key]"
-                  [src]="imageSource + item[column.key]"
-                  alt="Item Image"
-                  width="50"
-                />
+                <div class="image-cell">
+                  <img
+                    *ngIf="item[column.key]"
+                    [src]="item[column.key]"
+                    alt="Service image"
+                    class="table-image"
+                    (click)="onImageClick(item)"
+                    (error)="onImageError($event)"
+                  />
+                  <div
+                    *ngIf="!item[column.key]"
+                    class="image-placeholder"
+                    (click)="onImageClick(item)"
+                  >
+                    <span>📷</span>
+                  </div>
+                </div>
               </ng-container>
 
               <!-- Button content -->
@@ -50,7 +81,14 @@
 
               <!-- Date formatting -->
               <ng-container *ngSwitchCase="'date'">
-                {{ item[column.key] | date : "medium" }}
+                <ng-container *ngIf="item[column.key]; else noSlot">
+                  <span class="slot-date" [ngClass]="column.className">
+                    {{ item[column.key] | date : 'dd-MM-yy | hh:mm a' }}
+                  </span>
+                </ng-container>
+                <ng-template #noSlot>
+                  <span class="slot-date cancelled">Cancelled</span>
+                </ng-template>
               </ng-container>
 
               <!-- Status with color coding -->
@@ -75,6 +113,38 @@
                     {{ option.label }}
                   </option>
                 </select>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'action-buttons'">
+                <div class="action-buttons">
+                  <!-- Chat button -->
+                  <button 
+                    *ngIf="shouldShowChatButton(item)"
+                    class="btn btn-sm btn-info"
+                    (click)="onButtonClick('chat', item)"
+                    title="Open chat">
+                    Chat
+                      <!-- 💬 -->
+                  </button>
+                  
+                  <!-- Complete button -->
+                  <button 
+                    *ngIf="shouldShowCompleteButton(item)"
+                    class="btn btn-sm btn-success"
+                    (click)="onButtonClick('complete', item)"
+                    title="Mark as complete">
+                    Complete
+                  </button>
+                  
+                  <!-- Rate button (shows after completion) -->
+                  <button 
+                    *ngIf="shouldShowRateButton(item)"
+                    class="btn btn-sm btn-warning"
+                    (click)="onButtonClick('rate', item)"
+                    title="Rate service">
+                    Rate
+                  </button>
+                </div>
               </ng-container>
 
               <!-- Default case -->

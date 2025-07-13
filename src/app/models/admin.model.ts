@@ -3,11 +3,13 @@ export interface PaginationRequestDTO {
     pageSize: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
-    filter?: Record<string, any>;
+    searchTerm?: string;
+    filter?:any;
+    // filter?: Record<string, any>;
   }
   
-  export interface PaginatedResponseDTO<T> {
-    items: T;
+export interface PaginatedResponseDTO<T> {
+    items: T ;
     total: number;
     page: number;
     pageSize: number;
@@ -22,13 +24,19 @@ export interface UserResponseDTO {
     status: string;
     licenseStatus:string;
     role: string;
+    location?: {
+      address?: string;
+      latitude: number;
+      longitude: number;
+    };
+    experience?:number;
+    rating?:number;
     createdAt?: string;
-    // Add other needed properties
 }
 
 export interface ServiceRequestDTO {
   serviceName: string;
-  image: string;
+  image?: string;
   description?: string;
 }
 
@@ -38,7 +46,32 @@ export interface ServiceResponseDTO {
   image?: string;
   description?: string;
   status: string;
+  // subServices: SubServiceResponseDTO[];
   createdAt?: string;
+  updatedAt?: string;
 }
+
+export interface SubServiceRequestDTO {
+  serviceId?:string;
+  subServiceName: string;
+  price: number;
+  description?: string;
+  image?: string;
+  status: 'active' | 'blocked' | 'suspended' | 'deleted';
+}
+
+export interface SubServiceResponseDTO {
+  id: string;
+  serviceId?:string;
+  subServiceName: string;
+  serviceName:string;
+  price: number;
+  description?: string;
+  image?: string;
+  status: 'active' | 'blocked' | 'suspended' | 'deleted';
+  createdAt: string;
+  updatedAt: string;
+}
+
   
  

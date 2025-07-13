@@ -1,0 +1,56 @@
+@use 'variables' as var;
+@use 'buttons' as btn;
+@use 'sass:color';
+
+.payment-success-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: var.$white;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-md;
+  text-align: center;
+
+  .success-title {
+    font-size: var.$font-size-xl;
+    color: var.$success-green;
+    margin-bottom: var.$spacing-lg;
+    font-family: var.$title-font;
+  }
+
+  .booking-details {
+    text-align: left;
+    margin-top: var.$spacing-md;
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin: var.$spacing-sm 0;
+      font-size: var.$font-size-md;
+
+      strong {
+        color: var.$purple;
+      }
+    }
+  }
+
+  .error-message {
+    color: var.$error-red;
+    font-weight: var.$font-weight-semibold;
+    margin: var.$spacing-md 0;
+    font-size: var.$font-size-md;
+  }
+
+  .block-button {
+    @include btn.button-style(var.$purple);
+    margin-top: var.$spacing-lg;
+    width: 200px;
+
+    &:hover {
+      background-color: color.adjust(var.$purple, $lightness: 5%);;
+      
+    }
+  }
+}

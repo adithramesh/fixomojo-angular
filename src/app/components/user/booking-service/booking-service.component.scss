@@ -1,0 +1,552 @@
+@use 'variables' as var;
+@use 'forms' as forms;
+@use 'buttons' as btn;
+
+.booking-container {
+  display: flex;
+  gap: var.$spacing-lg;
+  padding: var.$spacing-xl;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: var.$breakpoint-md) {
+    flex-direction: column;
+  }
+}
+
+.booking-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-lg;
+}
+
+.booking-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-lg;
+}
+
+// Steps Navigation
+.booking-steps {
+  background-color: var.$white;
+  padding: var.$spacing-lg;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+
+  .steps-header {
+    margin-bottom: var.$spacing-lg;
+
+    h2 {
+      font-family: var.$title-font;
+      font-size: var.$font-size-xl;
+      color: var.$text-color;
+    }
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: var.$spacing-sm;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: var.$spacing-sm;
+    padding: var.$spacing-sm;
+    border-radius: var.$border-radius-sm;
+    cursor: default;
+
+    &.active {
+      background-color: var.$input-bg;
+      border: 1px solid var.$button-bg;
+    }
+
+    &.completed {
+      background-color: var.$success-green;
+      color: var.$white;
+    }
+
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: var.$input-bg;
+      }
+    }
+  }
+
+  .step-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var.$gray-text;
+    color: var.$white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var.$font-size-sm;
+    font-weight: var.$font-weight-semibold;
+
+    .step-check {
+      font-size: var.$font-size-md;
+    }
+  }
+
+  .step-content {
+    .step-title {
+      font-family: var.$title-font;
+      font-size: var.$font-size-md;
+      color: inherit;
+    }
+  }
+}
+
+// Step Panels
+.booking-content {
+  background-color: var.$white;
+  padding: var.$spacing-lg;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+}
+
+.step-panel {
+  .panel-header {
+    margin-bottom: var.$spacing-lg;
+
+    h3 {
+      font-family: var.$title-font;
+      font-size: var.$font-size-md;
+      margin-bottom: var.$spacing-sm;
+    }
+
+    p {
+      font-size: var.$font-size-sm;
+      color: var.$gray-text;
+    }
+  }
+}
+
+// Step 1: Location
+.location-content {
+  .location-actions {
+    margin-top: var.$spacing-md;
+  }
+}
+
+// Step 2: Time Slots
+.timeslot-content {
+  .timeslot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var.$spacing-sm;
+  }
+
+  .timeslot-item {
+    padding: var.$spacing-md;
+    border: 1px solid var.$border-color;
+    border-radius: var.$border-radius-sm;
+    text-align: center;
+    cursor: pointer;
+
+    &.selected {
+      border-color: var.$purple;
+      background-color: var.$input-bg;
+    }
+
+    &.disabled {
+      background-color: var.$disabled-bg;
+      color: var.$gray-text;
+      cursor: not-allowed;
+    }
+
+    .slot-time {
+      font-size: var.$font-size-sm;
+      font-weight: var.$font-weight-semibold;
+    }
+
+    .slot-status {
+      display: block;
+      font-size: var.$font-size-xs;
+      color: var.$error-red;
+    }
+  }
+}
+
+// Step 3: Technicians
+.technician-content {
+  .technician-list {
+    display: flex;
+    flex-direction: column;
+    gap: var.$spacing-sm;
+  }
+
+  .technician-card {
+    display: flex;
+    align-items: center;
+    gap: var.$spacing-sm;
+    padding: var.$spacing-md;
+    border: 1px solid var.$border-color;
+    border-radius: var.$border-radius-sm;
+    cursor: pointer;
+
+    &.selected {
+      border-color: var.$purple;
+      background-color: var.$input-bg;
+    }
+
+    .technician-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .technician-info {
+      flex: 1;
+
+      .technician-name {
+        font-family: var.$title-font;
+        font-size: var.$font-size-sm;
+        margin-bottom: var.$spacing-xs;
+      }
+
+      .technician-rating {
+        display: flex;
+        gap: var.$spacing-xs;
+        font-size: var.$font-size-xs;
+        color: var.$gray-text;
+
+        .rating {
+          color: var.$text-color;
+        }
+      }
+
+      .technician-distance {
+        font-size: var.$font-size-xs;
+        color: var.$gray-text;
+      }
+    }
+
+    .selection-indicator {
+      .checkmark {
+        color: var.$purple;
+        font-size: var.$font-size-md;
+      }
+    }
+  }
+
+  .no-technicians {
+    text-align: center;
+    padding: var.$spacing-lg;
+    color: var.$gray-text;
+  }
+}
+
+// Step 4: Payment
+.payment-content {
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-lg;
+
+  .booking-summary {
+    h4 {
+      font-family: var.$title-font;
+      font-size: var.$font-size-md;
+      margin-bottom: var.$spacing-md;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var.$spacing-sm;
+
+      .label {
+        font-weight: var.$font-weight-semibold;
+        color: var.$gray-text;
+      }
+
+      .value {
+        color: var.$text-color;
+      }
+    }
+  }
+
+  .payment-methods {
+    h4 {
+      font-family: var.$title-font;
+      font-size: var.$font-size-md;
+      margin-bottom: var.$spacing-md;
+    }
+
+    .payment-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var.$spacing-sm;
+    }
+
+    .payment-option {
+      flex: 1 1 100px;
+      padding: var.$spacing-md;
+      border: 1px solid var.$border-color;
+      border-radius: var.$border-radius-sm;
+      text-align: center;
+      cursor: pointer;
+
+      &.selected {
+        border-color: var.$purple;
+        background-color: var.$input-bg;
+      }
+
+      .payment-icon {
+        display: block;
+        font-size: var.$font-size-xl;
+        margin-bottom: var.$spacing-xs;
+      }
+
+      .payment-label {
+        font-size: var.$font-size-sm;
+      }
+    }
+  }
+}
+
+// Navigation Buttons
+.step-navigation {
+  display: flex;
+  gap: var.$spacing-md;
+  margin-top: var.$spacing-lg;
+
+  .nav-button {
+    flex: 1;
+  }
+
+  .secondary-button {
+    background-color: var.$white;
+    border: 1px solid var.$button-bg;
+    color: var.$button-bg;
+    padding: 14px;
+    border-radius: var.$border-radius-md;
+    font-family: var.$title-font;
+    font-size: 16px;
+    font-weight: var.$font-weight-semibold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var.$input-bg;
+    }
+  }
+}
+
+// // Right Panel
+// .booking-right {
+//   .map-container {
+//     background-color: var.$white;
+//     padding: var.$spacing-md;
+//     border-radius: var.$border-radius-md;
+//     box-shadow: var.$box-shadow-sm;
+
+//     h3 {
+//       font-family: var.$title-font;
+//       font-size: var.$font-size-md;
+//       margin-bottom: var.$spacing-sm;
+//     }
+
+//     .map-placeholder {
+//       height: 200px;
+//       background-color: var.$input-bg;
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       justify-content: center;
+//       border-radius: var.$border-radius-sm;
+//       text-align: center;
+
+//       p {
+//         color: var.$gray-text;
+//         font-size: var.$font-size-sm;
+//       }
+//     }
+
+//     .map-loading {
+//       height: 200px;
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       color: var.$gray-text;
+//     }
+//   }
+
+//   .time-slots, .technicians-list {
+//     background-color: var.$white;
+//     padding: var.$spacing-md;
+//     border-radius: var.$border-radius-md;
+//     box-shadow: var.$box-shadow-sm;
+
+//     h3 {
+//       font-family: var.$title-font;
+//       font-size: var.$font-size-md;
+//       margin-bottom: var.$spacing-sm;
+//     }
+
+//     ul {
+//       list-style: none;
+
+//       li {
+//         padding: var.$spacing-sm 0;
+//         font-size: var.$font-size-sm;
+//         color: var.$text-color;
+
+//         &.selected {
+//           font-weight: var.$font-weight-semibold;
+//           color: var.$purple;
+//         }
+//       }
+//     }
+
+//     .technician-card {
+//       padding: var.$spacing-sm 0;
+//       border-bottom: 1px solid var.$border-color;
+
+//       &.selected {
+//         font-weight: var.$font-weight-semibold;
+//         color: var.$purple;
+//       }
+
+//       p {
+//         font-size: var.$font-size-sm;
+//         margin: 0;
+//       }
+//     }
+
+//     .no-technicians {
+//       text-align: center;
+//       color: var.$gray-text;
+//       padding: var.$spacing-md;
+//     }
+    
+//   }
+// }
+
+
+.booking-right {
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-lg;
+
+  .map-container,
+  .technicians-list,
+  .time-slots {
+    background-color: var.$white;
+    padding: var.$spacing-lg;
+    border-radius: var.$border-radius-md;
+    box-shadow: var.$box-shadow-sm;
+    font-family: var.$primary-font;
+
+    h3 {
+      font-size: var.$font-size-md;
+      font-family: var.$title-font;
+      color: var.$text-color;
+      margin-bottom: var.$spacing-md;
+    }
+
+    p {
+      font-size: var.$font-size-sm;
+      color: var.$gray-text;
+      margin-bottom: var.$spacing-sm;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: var.$spacing-sm var.$spacing-md;
+        margin-bottom: var.$spacing-sm;
+        border: 1px solid var.$border-color;
+        border-radius: var.$border-radius-sm;
+        background-color: var.$input-bg;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s ease;
+
+        &.selected {
+          background-color: rgba(138, 79, 255, 0.1);
+          border-color: var.$purple;
+          font-weight: var.$font-weight-semibold;
+          color: var.$purple;
+        }
+
+        &:hover {
+          background-color: var.$white;
+        }
+      }
+    }
+
+    .technician-card {
+      border: 1px solid var.$border-color;
+      border-radius: var.$border-radius-sm;
+      padding: var.$spacing-sm var.$spacing-md;
+      margin-bottom: var.$spacing-sm;
+      background-color: var.$input-bg;
+
+      &.selected {
+        background-color: rgba(138, 79, 255, 0.1);
+        border-color: var.$purple;
+        font-weight: var.$font-weight-semibold;
+        color: var.$purple;
+      }
+
+      .no-technicians {
+        text-align: center;
+        color: var.$gray-text;
+        padding: var.$spacing-md;
+      }
+
+      p {
+        margin: 0;
+        font-size: var.$font-size-sm;
+        color: var.$text-color;
+      }
+    }
+
+    .selected-indicator {
+      color: var.$purple;
+      font-weight: var.$font-weight-bold;
+      margin-left: var.$spacing-xs;
+    }
+  }
+
+  .map-placeholder {
+    background-color: var.$input-bg;
+    border-radius: var.$border-radius-sm;
+    padding: var.$spacing-lg;
+    text-align: center;
+
+    p {
+      font-size: var.$font-size-sm;
+      color: var.$gray-text;
+      margin-bottom: var.$spacing-xs;
+    }
+  }
+}
+
+
+// Loading States
+.loading-state {
+  text-align: center;
+  padding: var.$spacing-lg;
+  color: var.$gray-text;
+}
+

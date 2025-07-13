@@ -1,49 +1,63 @@
-<div class="container">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">Add Service</h2>
-        <form [formGroup]="addServiceForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="serviceName">Service Name</label>
-            <input
-              type="text"
-              id="serviceName"
-              class="form-control"
-              formControlName="serviceName"
-              placeholder="Enter service name"
-            />
-            <div
-              *ngIf="
-                addServiceForm.get('serviceName')?.invalid &&
-                (addServiceForm.get('serviceName')?.dirty ||
-                  addServiceForm.get('serviceName')?.touched)
-              "
-              class="text-danger"
-            >
-              Service name is required.
-            </div>
+<div class="add-service-container">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{{ mode === 'edit' ? 'Edit Service' : 'Add Service' }}</h2>
+
+      <form [formGroup]="addServiceForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="serviceName">Service Name</label>
+          <input
+            type="text"
+            id="serviceName"
+            formControlName="serviceName"
+            class="form-input"
+            placeholder="Enter service name"
+          />
+          <div
+            *ngIf="addServiceForm.get('serviceName')?.invalid && addServiceForm.get('serviceName')?.touched"
+            class="error-message"
+          >
+            Service name is required.
           </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea
-              id="description"
-              class="form-control"
-              formControlName="description"
-              placeholder="Enter service description"
-            ></textarea>
-            <div
-              *ngIf="
-                addServiceForm.get('description')?.invalid &&
-                (addServiceForm.get('description')?.dirty ||
-                  addServiceForm.get('description')?.touched)
-              "
-              class="text-danger"
-            >
-              Description is required.
-            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-input"
+            placeholder="Enter service description"
+            rows="4"
+          ></textarea>
+          <div
+            *ngIf="addServiceForm.get('description')?.invalid && addServiceForm.get('description')?.touched"
+            class="error-message"
+          >
+            Description is required.
           </div>
-          <button type="submit" class="btn btn-primary">Add Service</button>
-        </form>
-      </div>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Service Image</label>
+          <file-pond
+            name="image"
+            [options]="pondOptions"
+            [files]="pondFiles"
+            (onaddfile)="pondHandleAddFile($event)"
+            (onremovefile)="pondHandleRemoveFile()"
+          ></file-pond>
+        </div>
+
+        <button
+          type="submit"
+          class="add-service-button"
+          [disabled]="addServiceForm.invalid || isSubmitting"
+        >
+          <span *ngIf="isSubmitting">{{ mode === 'edit' ? 'Updating...' : 'Creating...' }}</span>
+          <span *ngIf="!isSubmitting">{{ mode === 'edit' ? 'Update' : 'Create' }} Service</span>
+        </button>
+      </form>
     </div>
   </div>
+</div>

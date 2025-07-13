@@ -7,6 +7,7 @@ $white: #ffffff;
 $background-color: #f4f7f6;
 $text-color: #333;
 $purple: #8a4fff;
+$gray-dark: #4a4a4a;
 $border-color: #d1d5db;
 $input-bg: #f9fafb;
 $button-bg: #000;
@@ -28,6 +29,7 @@ $spacing-xl: 2rem;
 $font-size-xs: 0.75rem;
 $font-size-sm: 0.875rem;
 $font-size-md: 1rem;
+$font-size-lg: 1.25rem; 
 $font-size-xl: 1.5rem;
 
 // Font weights
@@ -40,6 +42,7 @@ $border-radius-md: 8px;
 
 // Box shadow
 $box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$box-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
 
 // Breakpoints
 $breakpoint-md: 768px;

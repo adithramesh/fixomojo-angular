@@ -22,8 +22,11 @@ export class SidebarComponent {
 
   menuItems: SidebarItem[] = [
     { label: 'Dashboard', route: '/admin-dashboard', icon:'dashboard' },
-    { label: 'User Management', route: '/user-management', icon:'persons' },
-    { label: 'Partner Management', route: '/partner-management',icon:'group' },
-    { label: 'Service Management', route: '/service-management',icon: 'build' }
+    { label: 'Users', route: '/user-management', icon:'persons' },
+    { label: 'Partners', route: '/partner-management',icon:'group' },
+    { label: 'Services', route: '/service-management',icon: 'category' },
+    { label: 'Sub-Services', route: '/sub-service-management',icon: 'build' },
+    { label: 'Activities', route: '/activities',icon: 'task_alt'},
+    { label: 'Revenue', route: '/admin-wallet',icon: 'money' },
   ];
 }

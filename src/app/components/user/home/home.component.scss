@@ -1,90 +1,367 @@
 
-@use 'variables' as var;
-@use '../../shared/nav-bar/nav-bar.component.scss';
-@use '../../shared/data-table/data-table.component.scss';
+// @use 'variables' as var;
+// @use 'sass:color';
+// @use '../../shared/nav-bar/nav-bar.component.scss';
+// @use '../../shared/data-table/data-table.component.scss';
 
-// Main container for the homepage
+// // Main container for the homepage
+// .view-toggle {
+//   display: flex;
+//   justify-content: center;
+//   gap: 1rem;
+//   margin-bottom: 1rem;
+
+//   button {
+//     padding: 0.5rem 1.2rem;
+//     background-color: var.$purple;
+//     color: white;
+//     border: none;
+//     border-radius: 4px;
+//     font-weight: bold;
+//     cursor: pointer;
+//     transition: background-color 0.2s ease;
+
+//     &:hover {
+//        background-color: color.adjust(var.$purple, $lightness: -10%);
+      
+//     }
+
+//     &:disabled {
+//       background-color: var.$gray-text;
+//       cursor: not-allowed;
+//     }
+    
+//   }
+//   button.active {
+//       background-color: color.adjust(var.$purple, $lightness: -15%);
+//     }
+// }
+
+// .home-container {
+//   min-height: calc(100vh - 48px); // Account for navbar height
+//   background-color: var.$background-color;
+//   padding: 2rem;
+//   padding-top: 48px; // Match navbar height to prevent overlap
+//   display: flex;
+//   flex-direction: column;
+//   gap: 2rem; // Space between sections
+
+//   // User info section
+//   .user-info-section {
+//     .card {
+//       background-color: white;
+//       border-radius: 8px;
+//       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+//       padding: 1.5rem;
+//       max-width: 400px; // Limit width for better readability
+//       margin: 0 auto; // Center the card
+
+//       h2 {
+//         font-family: var.$title-font;
+//         font-size: 1.5rem;
+//         color: var.$text-color;
+//         margin-bottom: 0.5rem;
+//       }
+
+//       p {
+//         font-family: var.$primary-font;
+//         font-size: 1rem;
+//         color: var.$gray-text;
+//       }
+//     }
+     
+//   }
+
+//   // Services table section
+//   .services-section,
+//   .offers-section,
+//   .subservices-section {
+//     .card {
+//       background-color: white;
+//       border-radius: 8px;
+//       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+//       padding: 1.5rem;
+//       width: 100%; // Full width for the table
+
+//       // Ensure the data-table component fits within the card
+//       app-data-table {
+//         display: block; // Ensure it behaves as a block element
+//         width: 100%;
+//       }
+//       .card-grid {
+//         display: grid;
+//         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+//         gap: 1.5rem;
+//         padding-top: 1rem;
+//       }
+     
+//     }
+
+//     // Error message styling
+//     .error-message {
+//       margin-top: 1rem;
+//       text-align: center;
+
+//       p {
+//         font-family: var.$primary-font;
+//         font-size: 0.875rem;
+//         color: #ef4444; // Red for error
+//       }
+//     }
+//   }
+
+//   // Responsive adjustments
+//   @media (max-width: 768px) {
+//     padding: 1rem;
+//     padding-top: 48px;
+
+//     .user-info-section {
+//       .card {
+//         max-width: 100%; // Full width on mobile
+//         padding: 1rem;
+//       }
+//     }
+
+//     .services-section {
+//       .card {
+//         padding: 1rem;
+//       }
+//     }
+//   }
+// }
+
+@use 'variables' as var;
+@use 'sass:color';
+
 .home-container {
-  min-height: calc(100vh - 48px); // Account for navbar height
+  min-height: calc(100vh - 48px);
   background-color: var.$background-color;
-  padding: 2rem;
-  padding-top: 48px; // Match navbar height to prevent overlap
+  padding: var.$spacing-xl;
+  padding-top: calc(48px + #{var.$spacing-xl}); // Navbar height + padding
   display: flex;
   flex-direction: column;
-  gap: 2rem; // Space between sections
+  gap: var.$spacing-xl;
 
-  // User info section
-  .user-info-section {
-    .card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      max-width: 400px; // Limit width for better readability
-      margin: 0 auto; // Center the card
+  // Welcome Section - Centered and prominent
+  .welcome-section {
+    text-align: center;
+    
+    .welcome-card {
+      background-color: var.$white;
+      border-radius: var.$border-radius-md;
+      box-shadow: var.$box-shadow-sm;
+      padding: var.$spacing-xl;
+      max-width: 600px;
+      margin: 0 auto;
+
+      h1 {
+        font-family: var.$title-font;
+        font-size: 2rem;
+        color: var.$text-color;
+        margin-bottom: var.$spacing-sm;
+        font-weight: var.$font-weight-bold;
+      }
+
+      p {
+        font-family: var.$primary-font;
+        font-size: var.$font-size-md;
+        color: var.$gray-text;
+        margin-bottom: var.$spacing-xs;
+      }
+
+      .subtitle {
+        font-size: var.$font-size-xl;
+        color: var.$text-color;
+        font-weight: var.$font-weight-semibold;
+        margin-top: var.$spacing-md;
+      }
+    }
+  }
+
+  // Featured Services Section
+  .featured-services-section {
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var.$spacing-lg;
 
       h2 {
         font-family: var.$title-font;
-        font-size: 1.5rem;
+        font-size: var.$font-size-xl;
         color: var.$text-color;
-        margin-bottom: 0.5rem;
+        font-weight: var.$font-weight-bold;
       }
 
-      p {
+      .view-all-btn {
+        background-color: var.$purple;
+        color: var.$white;
+        border: none;
+        border-radius: var.$border-radius-sm;
+        padding: var.$spacing-sm var.$spacing-md;
         font-family: var.$primary-font;
-        font-size: 1rem;
-        color: var.$gray-text;
-      }
-    }
-  }
+        font-weight: var.$font-weight-semibold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
 
-  // Services table section
-  .services-section,
-  .offers-section,
-  .subservices-section {
-    .card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      width: 100%; // Full width for the table
-
-      // Ensure the data-table component fits within the card
-      app-data-table {
-        display: block; // Ensure it behaves as a block element
-        width: 100%;
+        &:hover {
+          background-color: color.adjust(var.$purple, $lightness: -10%);
+        }
       }
     }
 
-    // Error message styling
-    .error-message {
-      margin-top: 1rem;
+    // Services Grid Layout
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var.$spacing-lg;
+      margin-bottom: var.$spacing-xl;
+    }
+
+    // Loading State
+    .loading {
       text-align: center;
+      padding: var.$spacing-xl;
+      
+      p {
+        font-family: var.$primary-font;
+        color: var.$gray-text;
+        font-size: var.$font-size-md;
+      }
+    }
+
+    // Error State
+    .error-message {
+      text-align: center;
+      padding: var.$spacing-xl;
+      background-color: var.$white;
+      border-radius: var.$border-radius-md;
+      box-shadow: var.$box-shadow-sm;
 
       p {
         font-family: var.$primary-font;
-        font-size: 0.875rem;
-        color: #ef4444; // Red for error
+        color: var.$error-red;
+        font-size: var.$font-size-md;
+        margin-bottom: var.$spacing-md;
+      }
+
+      .retry-btn {
+        background-color: var.$purple;
+        color: var.$white;
+        border: none;
+        border-radius: var.$border-radius-sm;
+        padding: var.$spacing-sm var.$spacing-md;
+        font-family: var.$primary-font;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: color.adjust(var.$purple, $lightness: -10%);
+        }
+      }
+    }
+
+    // Empty State
+    .empty-state {
+      text-align: center;
+      padding: var.$spacing-xl;
+      background-color: var.$white;
+      border-radius: var.$border-radius-md;
+      box-shadow: var.$box-shadow-sm;
+
+      p {
+        font-family: var.$primary-font;
+        color: var.$gray-text;
+        font-size: var.$font-size-md;
       }
     }
   }
 
-  // Responsive adjustments
-  @media (max-width: 768px) {
-    padding: 1rem;
-    padding-top: 48px;
+  // Quick Actions Section
+  .quick-actions-section {
+    .section-header {
+      margin-bottom: var.$spacing-lg;
 
-    .user-info-section {
-      .card {
-        max-width: 100%; // Full width on mobile
-        padding: 1rem;
+      h2 {
+        font-family: var.$title-font;
+        font-size: var.$font-size-xl;
+        color: var.$text-color;
+        font-weight: var.$font-weight-bold;
       }
     }
 
-    .services-section {
-      .card {
-        padding: 1rem;
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var.$spacing-md;
+
+      .action-card {
+        background-color: var.$white;
+        border: 2px solid var.$border-color;
+        border-radius: var.$border-radius-md;
+        padding: var.$spacing-lg;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+
+        &:hover {
+          border-color: var.$purple;
+          box-shadow: var.$box-shadow-sm;
+          transform: translateY(-2px);
+        }
+
+        h3 {
+          font-family: var.$title-font;
+          font-size: var.$font-size-md;
+          color: var.$text-color;
+          margin-bottom: var.$spacing-xs;
+          font-weight: var.$font-weight-semibold;
+        }
+
+        p {
+          font-family: var.$primary-font;
+          color: var.$gray-text;
+          font-size: var.$font-size-sm;
+          margin: 0;
+        }
       }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: var.$breakpoint-md) {
+    padding: var.$spacing-md;
+    padding-top: calc(48px + #{var.$spacing-md});
+    gap: var.$spacing-lg;
+
+    .welcome-section .welcome-card {
+      padding: var.$spacing-lg;
+      
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+
+    .featured-services-section {
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var.$spacing-sm;
+
+        .view-all-btn {
+          align-self: stretch;
+          text-align: center;
+        }
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: var.$spacing-md;
+      }
+    }
+
+    .quick-actions-section .actions-grid {
+      grid-template-columns: 1fr;
     }
   }
 }

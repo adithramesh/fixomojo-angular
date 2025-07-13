@@ -7,7 +7,14 @@
       [tableColumns]="serviceTableColumns"
       [isLoading]="isLoading"
       [emptyMessage]="'No services found'"
+      [showAddButton]="true"
+      [searchTerm]="searchTerm"
       (rowAction)="handleAction($event)"
+      (searchChange)="onSearchChange($event)"
+      (addItem)="onAddService()"
+      [currentPage]="pagination.page"
+      [totalPages]="totalPages"
+      (pageChange)="onPageChange($event)"
     ></app-data-table>
   </div>
 </div>

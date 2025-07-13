@@ -1,6 +1,10 @@
 
+
 export interface HomeResponseDTO {
-  serviceNames?: string[];
-  subSevice?: string[];
-  offers?: string[];
+  services: {
+    serviceId: string;
+    serviceName: string;
+  }[];
+  subServices?: string[]; // keep if needed
+  offers?: string[];      // keep if needed
 }

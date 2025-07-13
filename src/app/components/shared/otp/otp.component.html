@@ -1,4 +1,4 @@
-<div class="otp-container">
+<!-- <div class="otp-container">
   <div class="otp-left">
     <div class="logo-container">
       <svg width="40" height="40" viewBox="0 0 100 100">
@@ -51,4 +51,97 @@
       </div>
     </div>
   </div>
+</div>
+
+
+ -->
+
+ <div class="otp-container" [ngClass]="{ 'modal-mode': isModalMode && modalContext === 'work-completion' }">
+  <ng-container *ngIf="!(isModalMode && modalContext === 'work-completion'); else modalOtpOnly">
+    <div class="otp-left">
+      <div class="logo-container">
+        <svg width="40" height="40" viewBox="0 0 100 100">
+          <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black"/>
+          <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">FM</text>
+        </svg>
+        <h1>FixoMojo</h1>
+      </div>
+      <h2 class="otp-title">Verify OTP</h2>
+      <p class="otp-subtitle">
+        Enter the 4-digit OTP sent to your phone
+        <span class="highlight-phone">{{ phoneNumber$ | async }}</span>.
+        Time remaining: {{ formattedTimeLeft }}.
+      </p>
+    </div>
+    <div class="otp-right">
+      <div class="otp-card">
+        <form #otpForm>
+          <div class="otp-group">
+            <input
+              *ngFor="let i of [0, 1, 2, 3]; let index = index"
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              [id]="'otp-' + index"
+              [attr.aria-label]="'OTP digit ' + (index + 1)"
+              (input)="handleInput($event, index)"
+              (keydown)="handleKeydown($event, index)"
+              (paste)="handlePaste($event)"
+              autocomplete="one-time-code"
+            >
+          </div>
+          <div class="error-message" *ngIf="error$ | async as error">
+            {{ error.message || 'Invalid OTP. Please try again.' }}
+          </div>
+          <div class="loading-overlay" *ngIf="loading$ | async">
+            <div class="spinner"></div>
+          </div>
+          <button type="button" class="otp-button" aria-label="Verify OTP" [disabled]="!isOtpValid" (click)="onVerifyButtonClick()">
+            Verify OTP
+          </button>
+        </form>
+        <div class="resend-link">
+          Didn't receive OTP? <a (click)="onResendOtp()" [class.disabled]="timeLeft === 0" class="link-purple">Resend OTP</a>
+        </div>
+        <div class="forgot-password-link">
+          <a routerLink="/forgot-password" class="link-purple">Back to Forgot Password</a>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #modalOtpOnly>
+    <div class="otp-modal-content">
+      <div class="brand-logo">
+        <svg width="40" height="40" viewBox="0 0 100 100">
+          <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black"/>
+          <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">FM</text>
+        </svg>
+        <h2>FixoMojo</h2>
+      </div>
+      <div class="otp-group centered">
+        <input *ngFor="let i of [0, 1, 2, 3]; let index = index"
+          type="text"
+          class="otp-input"
+          maxlength="1"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [id]="'otp-' + index"
+          [attr.aria-label]="'OTP digit ' + (index + 1)"
+          (input)="handleInput($event, index)"
+          (keydown)="handleKeydown($event, index)"
+          (paste)="handlePaste($event)"
+          autocomplete="one-time-code"
+        >
+      </div>
+      <div class="error-message" *ngIf="error$ | async as error">
+        {{ error.message || 'Invalid OTP. Please try again.' }}
+      </div>
+      <button type="button" class="otp-button modal-mode-button" aria-label="Verify OTP" [disabled]="!isOtpValid" (click)="onVerifyButtonClick()">
+        Verify OTP
+      </button>
+    </div>
+  </ng-template>
 </div>

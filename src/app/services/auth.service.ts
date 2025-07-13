@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SignupUserRequestDTO, SignupResponseDTO, OtpRequestDTO, OtpResendRequestDTO, ForgotPasswordRequestDTO, ResetPasswordRequestDTO, LoginRequestDTO, RefreshTokenResponse} from '../models/auth.model';
 import { catchError, Observable, of, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class AuthService {
 
   constructor(private http:HttpClient) { }
 
-  private apiUrl='http://localhost:3000/auth/'
+  private apiUrl=`${environment.BACK_END_API_URL}/auth/`
   signup(signUpData: SignupUserRequestDTO): Observable<SignupResponseDTO> {
     return this.http.post<SignupResponseDTO>(`${this.apiUrl}signup`, signUpData);
   }

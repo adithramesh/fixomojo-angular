@@ -1,0 +1,47 @@
+@use 'variables' as var;
+@use 'buttons' as btn;
+@use 'forms' as forms;
+
+.add-sub-service-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var.$input-bg;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  width: 100%;
+  /* Remove @include forms.form-group */
+  /* Inherit styles from _forms.scss .form-group */
+}
+
+.add-sub-service-button {
+  @include btn.button-style;
+  margin-top: var.$spacing-md;
+  width: 100%;
+  max-width: 200px;
+}
+
+.status-note {
+  font-size: 14px;
+  color: var.$gray-text;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: var.$purple;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .add-sub-service-container {
+    padding: 15px;
+    margin: 10px;
+  }
+}
