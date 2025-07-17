@@ -1,4 +1,4 @@
-<app-nav-bar></app-nav-bar>
+<!-- <app-nav-bar></app-nav-bar>
 
 <main class="home-container">
 
@@ -37,3 +37,76 @@
     (bookService)="bookSubService($event)"
   ></app-modal>
 </main>
+<app-footer></app-footer> -->
+
+
+<app-nav-bar></app-nav-bar>
+
+<main class="home-container">
+  <section class="user-info-section">
+    <div class="card">
+      <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
+      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
+    </div>
+  </section>
+
+  <section class="services-section">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search services..."
+        (input)="onSearchChange($event)"
+        [value]="searchTerm"
+      />
+      <button *ngIf="searchTerm" class="clear-search" (click)="clearSearch()">✖</button>
+    </div>
+    
+    <div class="cards-container" @cardAnimation>
+      <app-service-card
+        *ngFor="let service of subServiceTableData"
+        [title]="service.subServiceName || ''"
+        [description]="service.description || ''"
+        [price]="service.price || ''"
+        [imageUrl]="service.image || ''"
+        [status]="service.status || ''"
+        [showBookButton]="true"
+        [isHomePage]="false"
+        [searchTerm]="searchTerm"
+        (bookClicked)="bookSubService(service)"
+        (click)="openModal(service)"
+      ></app-service-card>
+    </div>
+    
+    <div *ngIf="isLoading" class="spinner">Loading...</div>
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- Simplified pagination without complex logic -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        [disabled]="pagination.page === 1"
+        (click)="onPageChange(pagination.page - 1)"
+      >
+        Previous
+      </button>
+      <span>Page {{ pagination.page }} of {{ totalPages }}</span>
+      <button
+        [disabled]="pagination.page === totalPages"
+        (click)="onPageChange(pagination.page + 1)"
+      >
+        Next
+      </button>
+    </div>
+  </section>
+
+  <app-modal
+    [isOpen]="isModalOpen"
+    [modalType]="modalType"
+    [serviceData]="selectedService"
+  
+    (close)="closeModal()"
+    (bookService)="bookSubService($event)"
+  ></app-modal>
+</main>
+<app-footer></app-footer>

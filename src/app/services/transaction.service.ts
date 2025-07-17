@@ -20,7 +20,7 @@ export class TransactionService {
     }
 
     countTransactions(){
-      return this.http.get<number>(`${this.apiUrl}count`)
+      return this.http.get<any>(`${this.apiUrl}count`)
     }
 
     private buildPaginationParams(pagination: PaginationRequestDTO): HttpParams {

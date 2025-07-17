@@ -195,6 +195,9 @@ export class TasksComponent {
           isCompleted: 'Yes'
         };
 
+        console.log("updated", updated);
+        
+
         this.bookingService.emitBookingUpdate(updated)
         
         this.closeModal();

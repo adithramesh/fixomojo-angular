@@ -443,12 +443,43 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
 }
 
 
-  onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id:string }): void {
-    // 1. Update the form control
-    console.log("selectedSlot",selectedSlot);
-    this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
+  // onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id:string }): void {
+  //   // 1. Update the form control
+  //   console.log("selectedSlot",selectedSlot);
+  //   this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
+  //    
+  // }
 
-  }
+  onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id: string }): void {
+  this.http.post<{ success: boolean; message: string }>('http://localhost:3000/user/timeslot/check-availability', {
+    technicianId: this.bookingForm.get('technician')?.value,
+    startTime: selectedSlot.startTime,
+    endTime: selectedSlot.endTime,
+  }).subscribe({
+    next: (response) => {
+      if (!response.success) {
+        alert(response.message);
+        this.bookingForm.patchValue({ timeSlot: null });
+
+   
+        this._router.navigate(['/payment-success'], {
+          queryParams: { error: response.message }
+        });
+      } else {
+      
+        console.log("selectedSlot", selectedSlot);
+        this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
+        console.log('Slot is available.');
+      }
+    },
+    error: (err) => {
+      console.error('Error checking slot availability:', err);
+      alert('Failed to check slot availability.');
+      this.bookingForm.patchValue({ timeSlot: null });
+    }
+  });
+}
+
 
   
   // Step 4: Payment
@@ -488,7 +519,10 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
         this.http.post<BookServiceResponseDTO>('http://localhost:3000/user/book-service', data)
             .subscribe({
                 next: (response) => {
+                  console.log("response",response)
                     if (response.success) {
+                      ;
+                      
                       const bookingData=response.data;
                       console.log("bookingData",bookingData );
                       
@@ -516,6 +550,10 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                           this.blockSlotAfterPayment()
                           // this.showBookingConfirmation()
                         }
+                    }else{
+                      this._router.navigate(['/payment-success'],{
+                        queryParams: { error: response.message }
+                      })
                     }
                 },
                 error: (err) => {

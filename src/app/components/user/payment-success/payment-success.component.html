@@ -1,3 +1,4 @@
+<app-nav-bar></app-nav-bar>
 <div class="payment-success-container">
   <h1 class="success-title" *ngIf="bookingDetails">Booking Success</h1>
   <h1 class="success-title" *ngIf="walletMessage">{{ walletMessage }}</h1>
@@ -21,6 +22,8 @@
   <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
   <!-- CTA -->
-  <button class="block-button" (click)="goHome()">Go to Wallet</button>
+  <button class="block-button" (click)="goHome()">Go Home</button>
 </div>
+
+<app-footer></app-footer>
 

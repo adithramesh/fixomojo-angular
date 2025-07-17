@@ -1,9 +1,11 @@
+
 <div class="data-table-container">
   <h2 *ngIf="title">{{ title }}</h2>
 
     <!-- Table controls: Search and Add button -->
   <div class="table-controls" *ngIf="!isLoading && tableData.length > 0">
     <input
+      *ngIf="showSearch"
       type="text"
       [(ngModel)]="searchTerm"
       (input)="onSearchChange($event)"
