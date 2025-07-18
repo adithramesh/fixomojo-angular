@@ -1,6 +1,24 @@
 <div class="card">
   <img *ngIf="imageUrl" [src]="imageUrl" alt="Service image" />
-  <h3>{{ title }}</h3>
-  <p>{{ description }}</p>
-  <span  *ngIf="price" class="price">₹{{ price }}</span>
+  <span *ngIf="status && !isHomePage" class="status-badge" [ngClass]="{'available': status === 'Available', 'unavailable': status !== 'Available'}">
+    {{ status }}
+  </span>
+  
+  <div class="card-content">
+    <div class="card-header">
+      <h3 [innerHTML]="highlightSearch(title, searchTerm)"></h3>
+      <p *ngIf="!isHomePage" [innerHTML]="highlightSearch(description, searchTerm)"></p>
+    </div>
+    
+    <div *ngIf="!isHomePage" class="card-footer">
+      <span *ngIf="price" class="price">{{ price }}</span>
+      <button
+        *ngIf="showBookButton"
+        class="book-button"
+        (click)="bookClicked.emit()"
+      >
+        Book Now
+      </button>
+    </div>
+  </div>
 </div>

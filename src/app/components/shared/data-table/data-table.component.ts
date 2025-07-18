@@ -64,6 +64,7 @@ export class DataTableComponent {
   @Input() totalPages: number = 1;
   @Input() showAddButton: boolean = false;
   @Input() searchTerm: string = '';
+  @Input() showSearch: boolean = true;
   
   // Events for buttons or row actions
   @Output() rowAction = new EventEmitter<{action: string, item: TableData}>();
@@ -148,6 +149,6 @@ private isToday(dateString: string): boolean {
   const today = new Date();
   const bookingDate = new Date(dateString);
 
-  return today.toDateString() !== bookingDate.toDateString();
+  return today.toDateString() === bookingDate.toDateString();
 }
 }

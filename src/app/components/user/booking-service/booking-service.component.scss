@@ -36,12 +36,14 @@
   box-shadow: var.$box-shadow-sm;
 
   .steps-header {
+    
     margin-bottom: var.$spacing-lg;
 
     h2 {
       font-family: var.$title-font;
       font-size: var.$font-size-xl;
-      color: var.$text-color;
+      color: var.$purple;
+      // color: var.$text-color;
     }
   }
 
@@ -120,6 +122,7 @@
       font-family: var.$title-font;
       font-size: var.$font-size-md;
       margin-bottom: var.$spacing-sm;
+      color:var.$purple
     }
 
     p {
@@ -265,6 +268,7 @@
     }
 
     .summary-item {
+      color:var.$purple;
       display: flex;
       justify-content: space-between;
       margin-bottom: var.$spacing-sm;
@@ -455,7 +459,7 @@
     h3 {
       font-size: var.$font-size-md;
       font-family: var.$title-font;
-      color: var.$text-color;
+      color: var.$purple;
       margin-bottom: var.$spacing-md;
     }
 

@@ -1,7 +1,6 @@
 
- <app-nav-bar></app-nav-bar>
-
-<!-- Main layout container for sidebars and content -->
+<app-nav-bar></app-nav-bar>
+<br>
 <div class="main-layout-container">
   <!-- Sidebars (conditionally rendered) -->
   <div *ngIf="role === 'admin'" class="sidebar-container">
@@ -19,11 +18,7 @@
       <!-- Wallet Balance Section -->
       <div class="wallet-balance">
         <p>Balance: <span class="currency-amount">{{ currency }} {{ walletBalance | number:'1.2-2' }}</span></p>
-
-        <!-- <button *ngIf="role !== 'admin'" (click)="onAddMoney()" class="add-money-button">
-          Add Money
-        </button> -->
-        <button *ngIf="!showRechargeInput && role !== 'admin'" (click)="toggleRechargeInput()" class="add-money-button">
+        <button *ngIf="!showRechargeInput && role === 'user'" (click)="toggleRechargeInput()" class="add-money-button">
           Add Money
         </button>
       </div>
@@ -36,36 +31,24 @@
       <!-- Transaction History Section -->
       <div class="transaction-history">
         <h3>Transactions</h3>
-        
         <div *ngIf="isLoading" class="loading-message">
+          <div class="spinner"></div>
           <p>Loading transactions...</p>
-          <!-- You can add a spinner here if you have one -->
         </div>
-
-        <div *ngIf="!isLoading && transactionTableData.length > 0" class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Booking Number</th>
-                <th>Date & Time</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Purpose</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let t of transactionTableData">
-                <td>{{ t._id }}</td>
-                <td>{{ t.createdAt | date: 'short' }}</td>
-                <td>{{ t.transactionType }}</td>
-                <td>{{ currency }} {{ t.amount | number:'1.2-2' }}</td>
-                <td>{{ t.purpose }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p *ngIf="!isLoading && transactionTableData.length === 0" class="no-transactions-message">No transactions found.</p>
-        <p *ngIf="!isLoading && error" class="error-message">{{ error }}</p>
+        <app-data-table
+          [tableData]="transactionTableData"
+          [tableColumns]="tableColumns"
+          [isLoading]="isLoading"
+          [emptyMessage]="'No transactions found.'"
+          [currentPage]="pagination.page"
+          [pageSize]="pagination.pageSize"
+          [totalPages]="totalPages"
+          [showSearch]="false"
+          [searchTerm]="searchTerm"
+          (pageChange)="onPageChange($event)"
+          (searchChange)="onSearchChange($event)"
+        ></app-data-table>
+        <p *ngIf="error" class="error-message">{{ error }}</p>
       </div>
     </div>
   </div>

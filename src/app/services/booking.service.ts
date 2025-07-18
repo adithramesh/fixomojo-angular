@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { PaginatedResponseDTO, PaginationRequestDTO } from '../models/admin.model';
 import { environment } from '../../environments/environment';
 import { IBooking } from '../models/book-service.model';
@@ -21,7 +21,7 @@ export interface BookingResponse {
 export class BookingService {
   private apiUrl =`${environment.BACK_END_API_URL}/booking`
   private bookingData!: any
-  private bookingUpdatedSubject = new Subject<TableData>()
+  private bookingUpdatedSubject = new BehaviorSubject<TableData | null>(null)
   bookingUpdated$ = this.bookingUpdatedSubject.asObservable()
   constructor(private http: HttpClient) {}
 

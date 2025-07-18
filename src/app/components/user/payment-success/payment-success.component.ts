@@ -4,11 +4,13 @@ import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../../services/booking.service';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 
 
 @Component({
   selector: 'app-payment-success',
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, FooterComponent, NavBarComponent],
   templateUrl: './payment-success.component.html',
   styleUrl: './payment-success.component.scss'
 })
@@ -27,8 +29,12 @@ ngOnInit() {
     const type = this._route.snapshot.queryParamMap.get('type');
     const sessionId = this._route.snapshot.queryParamMap.get('session_id');
     const bookingId = this._route.snapshot.queryParamMap.get('booking_id');
+    const error = this._route.snapshot.queryParamMap.get('error')
 
-    if (type === 'card' && sessionId) {
+
+    if (error) {
+      this.errorMessage = error; 
+    } else if (type === 'card' && sessionId) {
       this.verifyCardPayment(sessionId);
     } else if (type === 'wallet' && sessionId) {
       this.confirmWalletRecharge(sessionId);

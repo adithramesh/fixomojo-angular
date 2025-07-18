@@ -1,53 +1,3 @@
-<!-- <app-nav-bar></app-nav-bar>
-
-<main class="home-container">
-  <section class="user-info-section">
-    <div class="card">
-      <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
-      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
-    </div>
-  </section>
-  <div class="view-toggle">
-    <button [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">
-      Table View
-    </button>
-    <button [class.active]="viewMode === 'card'" (click)="viewMode = 'card'">
-      Card View
-    </button>
-  </div>
-  <section class="services-section">
-    <div class="card">
-      <ng-container *ngIf="viewMode === 'table'">
-       <app-data-table
-          (searchChange)="onSearchChange($event)"
-          [tableData]="serviceTableData"
-          [tableColumns]="serviceTableColumns"
-          title="Available Services"
-          [isLoading]="isLoading"
-          [emptyMessage]="'No services available at the moment.'"  (rowAction)="onServiceAction($event)"
-          [currentPage]="pagination.page"
-          [totalPages]="totalPages"
-          (pageChange)="onPageChange($event)"
-        ></app-data-table>
-      </ng-container>
-
-      <ng-container *ngIf="viewMode === 'card'">
-        <div class="card-grid" *ngIf="services.length > 0">
-          <app-service-card
-            *ngFor="let service of services"
-            [title]="service.subServiceName || service.serviceName"
-            [description]="service.description"
-            [imageUrl]="service.image || 'assets/placeholder.png'"
-          ></app-service-card>
-        </div>
-        <div class="empty-message" *ngIf="!isLoading && services.length === 0">
-          No services available at the moment.
-        </div>
-      </ng-container>
-    </div>
-  </section>
-</main> -->
-
 <app-nav-bar></app-nav-bar>
 
 <main class="home-container">
@@ -86,6 +36,8 @@
         *ngFor="let service of featuredServices"
         [title]="service.serviceName"
         [imageUrl]="_imageUrlService.buildImageUrl(service.image)"
+        [isHomePage]="true"
+       [showBookButton]="false"
         (click)="viewService(service)"
       ></app-service-card>
     </div>
@@ -110,3 +62,5 @@
     </div>
   </section>
 </main>
+
+<app-footer></app-footer>

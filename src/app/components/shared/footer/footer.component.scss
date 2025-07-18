@@ -1,118 +1,100 @@
-/* Footer Container Styles */
-footer {
-    background-color: #f4f4f4;
-    color: #333;
-    padding: 30px 0;
-    font-family: Arial, sans-serif;
-}
+@use 'variables' as var;
+@use 'forms' as forms;
+@use 'buttons' as btn;
+@use 'sass:color';
 
-.footer-container {
-    display: flex;
-    justify-content: space-between;
+
+.footer {
+  background-color: #f4f7f6;
+  padding: 2rem 1rem;
+  font-family: var.$primary-font;
+  border-top: 1px solid var.$border-color;
+
+  .footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var.$spacing-lg;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
+    margin: auto;
+    padding: var.$spacing-lg 0;
+  }
 
-/* Company Info Section */
-.company-info h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #000;
-}
+  .footer-section {
+    h3, h4 {
+      font-family: var.$title-font;
+      margin-bottom: var.$spacing-sm;
+      color: var.$gray-dark;
+    }
 
-.company-info p {
-    color: #666;
-    margin-bottom: 15px;
-}
+    p, a {
+      font-size: var.$font-size-sm;
+      color: var.$text-color;
+      line-height: 1.8;
+      text-decoration: none;
+    }
 
-.company-links a {
-    color: #333;
-    text-decoration: none;
-    margin-right: 15px;
-    transition: color 0.3s ease;
-}
+    a:hover {
+      text-decoration: underline;
+    }
 
-.company-links a:hover {
-    color: #007bff;
-}
+    .social-icons a {
+      margin-right: var.$spacing-sm;
+      color: var.$text-color;
 
-/* Social Links Section */
-.social-links h4 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
+      mat-icon {
+        font-size: 24px;
+        vertical-align: middle;
+      }
 
-.social-icons {
-    display: flex;
-    gap: 15px;
-}
+      &:hover {
+        color: var.$purple;
+      }
+    }
 
-.social-icons a {
-    color: #333;
-    font-size: 24px;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
+    .newsletter-form {
+      display: flex;
+      gap: var.$spacing-sm;
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var.$border-color;
+        border-radius: var.$border-radius-sm;
+        font-size: var.$font-size-sm;
+      }
 
-.social-icons a:hover {
-    color: #007bff;
-}
+    //   .subscribe-btn {
+    //     background-color: var.$purple;
+    //     color: var.$white;
+    //     border: none;
+    //     border-radius: var.$border-radius-sm;
+    //     padding: var.$spacing-sm var.$spacing-md;
+    //     font-family: var.$primary-font;
+    //     font-weight: var.$font-weight-semibold;
+    //     cursor: pointer;
+    //     transition: background-color 0.3s ease;
 
-/* Newsletter Section */
-.newsletter h4 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
+    //     &:hover {
+    //       background-color: color.adjust(var.$purple, $lightness: -10%);
+    //     }
+    //   }
+    .subscribe-btn {
+        @include btn.button-style;
+        color:var.$purple;  
+        width: auto;
+        padding: var.$spacing-sm var.$spacing-md;
+        }
+    }
 
-.newsletter-form {
-    display: flex;
-}
+    
 
-.newsletter-form input {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-right: none;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
+  }
+  
 
-.newsletter-form button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: 1px solid #007bff;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.newsletter-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Contact Info */
-.contact-info {
+  .footer-bottom {
     text-align: center;
-    margin-top: 20px;
-    color: #666;
-    font-size: 14px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .footer-container > div {
-        margin-bottom: 20px;
-    }
-
-    .social-icons {
-        justify-content: center;
-    }
+    padding-top: var.$spacing-md;
+    border-top: 1px solid var.$border-color;
+    font-size: var.$font-size-xs;
+    color: var.$gray-text;
+  }
 }

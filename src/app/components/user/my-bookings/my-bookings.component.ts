@@ -5,14 +5,15 @@ import { BookingResponse, BookingService } from '../../../services/booking.servi
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { PaginatedResponseDTO, PaginationRequestDTO } from '../../../models/admin.model';
 import { Component, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, Subject, Subscription } from 'rxjs';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 // Define the expected backend response structure
 
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent, FooterComponent],
   templateUrl: './my-bookings.component.html',
   styleUrls: ['./my-bookings.component.scss']
 })
@@ -55,6 +56,8 @@ export class MyBookingsComponent implements OnInit {
     //   }
     // });
 
+     console.log('🔁 ngOnInit called in MyBookingsComponent');
+
     this.subscription.add(this.searchSubject.pipe(
               debounceTime(300),
               distinctUntilChanged()
@@ -66,16 +69,32 @@ export class MyBookingsComponent implements OnInit {
             }))
         this.getBookings();
 
+    // this.subscription.add(
+    //   this.bookingService.bookingUpdated$.subscribe((updatedBooking:TableData)=>{
+    //     console.log('📥 Received booking update via Subject:', updatedBooking);
+    //     const index =this.bookingsTableData.findIndex(b=>b.id===updatedBooking.id)
+    //     if(index!==-1){
+    //       console.log("booking status updated to ", updatedBooking.bookingStatus);
+    //       this.bookingsTableData[index].bookingStatus=updatedBooking.bookingStatus
+    //       this.bookingsTableData[index].isCompleted=updatedBooking.isCompleted
+    //     }
+    //   })
+    // )
+
     this.subscription.add(
-      this.bookingService.bookingUpdated$.subscribe((updatedBooking:TableData)=>{
-        const index =this.bookingsTableData.findIndex(b=>b.id===updatedBooking.id)
-        if(index!==-1){
-          console.log("booking status updated to ", updatedBooking.bookingStatus);
-          this.bookingsTableData[index].bookingStatus=updatedBooking.bookingStatus
-          this.bookingsTableData[index].isCompleted=updatedBooking.isCompleted
-        }
-      })
-    )
+      this.bookingService.bookingUpdated$
+        .pipe(filter(updatedBooking => updatedBooking !== null))
+        .subscribe((updatedBooking: TableData) => {
+          console.log('📥 Received booking update via Subject:', updatedBooking);
+          const index = this.bookingsTableData.findIndex(b => b.id === updatedBooking.id)
+          if (index !== -1) {
+            console.log("booking status updated to ", updatedBooking.bookingStatus);
+            this.bookingsTableData[index].bookingStatus = updatedBooking.bookingStatus
+            this.bookingsTableData[index].isCompleted = updatedBooking.isCompleted
+          }
+        })
+)
+    
   }
 
   getBookings(): void {

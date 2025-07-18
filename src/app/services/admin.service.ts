@@ -59,32 +59,6 @@ export class AdminService {
     return this.http.get<SubServiceResponseDTO>(`${this.apiUrl}sub-service/${subServiceId}`)
   }
 
-  // private buildPaginationParams(pagination: PaginationRequestDTO): HttpParams {
-  //   let params = new HttpParams()
-  //     .set('page', pagination.page.toString())
-  //     .set('pageSize', pagination.pageSize.toString())
-  //    params = params.set('searchTerm', pagination.searchTerm || '') 
-
-  //   if (pagination.sortBy) {
-  //     params = params.set('sortBy', pagination.sortBy);
-  //     params = params.set('sortOrder', pagination.sortOrder || 'asc');
-  //   }
-    
-  //   // if (pagination.filter) {
-  //   //   Object.keys(pagination.filter).forEach(key => {
-  //   //     if (pagination.filter?.[key] !== undefined && pagination.filter?.[key] !== null) {
-  //   //       params = params.set(key, pagination.filter[key].toString());
-  //   //     }
-  //   //   });
-  //   // }
-  //   if (pagination.filter && Object.keys(pagination.filter).length > 0) {
-  //   // Stringify the entire filter object to send it as one query parameter
-  //   console.log("JSON.stringify(pagination.filter)",pagination.filter);
-    
-  //   params = params.set('filter', pagination.filter) ;
-  // }
-  //   return params;
-  // }
 
   private buildPaginationParams(pagination: PaginationRequestDTO): HttpParams {
     let params = new HttpParams()

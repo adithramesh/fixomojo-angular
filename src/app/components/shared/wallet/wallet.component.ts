@@ -8,14 +8,16 @@ import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-
 import { TransactionService } from '../../../services/transaction.service';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
-import { TableData } from '../data-table/data-table.component';
+import { DataTableComponent, TableColumn, TableData } from '../data-table/data-table.component';
 import { Transaction } from '../../../models/wallet.model';
 import { FormsModule } from '@angular/forms';
+import { selectTempUserId } from '../../../store/auth/auth.reducer';
+import { Store } from '@ngrx/store';
 
 
 @Component({
   selector: 'app-wallet',
-  imports: [CommonModule, NavBarComponent, SidebarComponent, PartnerSideBarComponent, FormsModule],
+  imports: [CommonModule, NavBarComponent, SidebarComponent, PartnerSideBarComponent, FormsModule, DataTableComponent],
   templateUrl: './wallet.component.html',
   styleUrl: './wallet.component.scss',
   standalone: true
@@ -41,11 +43,12 @@ export class WalletComponent implements OnInit {
   private walletService=inject(WalletService)
   private transactionService=inject(TransactionService)
   private _subscription: Subscription = new Subscription();
+  private _store = inject(Store)
   private searchSubject = new Subject<string>();
 
   pagination: PaginationRequestDTO = {
       page: 1,
-      pageSize: 10,
+      pageSize: 8,
       sortBy: 'createdAt',
       sortOrder: 'desc',
       searchTerm: '',
@@ -53,6 +56,15 @@ export class WalletComponent implements OnInit {
     };
     totalTransactions = 0;
     totalPages = 0;
+
+  // Define table columns for DataTableComponent
+  tableColumns: TableColumn[] = [
+    { header: 'Transaction Id', key: '_id', type: 'text', width: '15%' },
+    { header: 'Date & Time', key: 'createdAt', type: 'date', width: '20%' },
+    { header: 'Type', key: 'transactionType', type: 'status', width: '15%' },
+    { header: 'Amount', key: 'amount', type: 'text', width: '15%' },
+    { header: 'Purpose', key: 'purpose', type: 'text', width: '35%' }
+  ];  
   
   ngOnInit(): void {
     this.isLoading=true;
@@ -60,9 +72,13 @@ export class WalletComponent implements OnInit {
       this.role = data['role'] || 'user';
     });
 
+    // this.userId=this._store.select(selectTempUserId)
+
     this.transactionService.countTransactions().subscribe(count=>{
       if(count){
-        this.totalTransactions=count
+        // console.log("count", count.count );
+        
+        this.totalTransactions=count.count
       }
     })
 
@@ -121,7 +137,9 @@ export class WalletComponent implements OnInit {
           
           this.transactionTableData=response.transaction.map(transaction=>this.mapTransactionToTableData(transaction))
               this.isLoading=false
-              this.totalPages = Math.ceil( this.totalTransactions/this.pagination.page);
+              this.totalPages = Math.ceil( this.totalTransactions/this.pagination.pageSize);
+              console.log("this.totalTransactions/this.pagination.pageSize",this.totalTransactions,this.pagination.pageSize);
+              
               // this.totalPages = response.totalPages;
               // this.transactionTableData=response.transactionList
             
@@ -177,5 +195,16 @@ export class WalletComponent implements OnInit {
     }
   });
   }
-  // ... rest of component logic
+
+  onPageChange(page: number): void {
+    this.pagination.page = page;
+    this.fetchTransactions();
+  }
+
+  
+  onSearchChange(searchTerm: string): void {
+    this.searchSubject.next(searchTerm);
+  }
+
+  
 }
