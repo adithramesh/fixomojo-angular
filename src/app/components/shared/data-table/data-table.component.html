@@ -9,7 +9,7 @@
       type="text"
       [(ngModel)]="searchTerm"
       (input)="onSearchChange($event)"
-      placeholder="Search..."
+      [placeholder]="searchPlaceholder"
       class="search-input"
       aria-label="Search table data"
     />

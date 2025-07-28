@@ -1,0 +1,19 @@
+.task-layout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+
+  app-partner-side-bar {
+    width: 250px;
+    flex-shrink: 0;
+  }
+
+  .table-wrapper {
+    flex-grow: 1;
+    min-width: 0;
+  }
+}
+main.bookings-container {
+    margin: 20px; // Adjust as needed
+}
+

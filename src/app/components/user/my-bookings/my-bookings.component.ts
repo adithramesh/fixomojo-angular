@@ -3,10 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { DataTableComponent, TableColumn, TableData } from '../../shared/data-table/data-table.component';
 import { BookingResponse, BookingService } from '../../../services/booking.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
-import { PaginatedResponseDTO, PaginationRequestDTO } from '../../../models/admin.model';
-import { Component, OnInit } from '@angular/core';
+import { PaginationRequestDTO } from '../../../models/admin.model';
+import { Component, inject, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged, filter, Subject, Subscription } from 'rxjs';
 import { FooterComponent } from '../../shared/footer/footer.component';
+import { ChatService } from '../../../services/chat.service';
+import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
+import { Store } from '@ngrx/store';
 
 // Define the expected backend response structure
 
@@ -23,12 +26,13 @@ export class MyBookingsComponent implements OnInit {
     { header: 'Booking Number', key: 'displayId', type: 'text', width: '20%' },
     { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, // Changed to subServiceId
     { header: 'Service Name', key: 'subServiceName', type: 'text', width: '30%' },
-    { header: 'Amount', key: 'totalAmount', type: 'text', width: '20%' },
-    { header: 'Paid', key: 'paymentStatus', type: 'text', width: '20%' },
-    { header: 'Status', key: 'bookingStatus', type: 'text', width: '20%' },
-    { header: 'Booking Date', key: 'createdAt', type: 'date', width: '20%', className: 'booking-date' },
+    { header: 'Amount', key: 'totalAmount', type: 'text', width: '15%' },
+    { header: 'Paid', key: 'paymentStatus', type: 'text', width: '15%' },
+    { header: 'Status', key: 'bookingStatus', type: 'text', width: '15%' },
+    { header: 'Booking Date', key: 'createdAt', type: 'date', width: '25%', className: 'booking-date' },
     { header: 'Booked For', key: 'timeSlotStart', type: 'date', width: '20%', className: 'booked-for' },
-    { header: 'Work Completed', key: 'isCompleted', type: 'text', width: '20%' }
+    // { header: 'Work Completed', key: 'isCompleted', type: 'text', width: '20%' }
+    { header: 'Action', key: 'actions', type: 'action-buttons', width: '15%' },
   ];
 
   bookingsTableData: TableData[] = [];
@@ -44,7 +48,16 @@ export class MyBookingsComponent implements OnInit {
   error: string | null = null;
   private searchSubject = new Subject<string>()
   private subscription: Subscription = new Subscription;
+  private _store = inject(Store)
+   private chatService = inject(ChatService)
+   private _currentUserId:string = ''
+   private _role:string = ''
+   private _username:string = ''
+  // _authToken = localStorage.getItem('access_token');
   searchTerm: string=''
+
+  isModalOpen:boolean=false
+  modalType:'service' | 'otp' |'chat' = 'chat';
 
   constructor(private bookingService: BookingService) {}
 
@@ -57,7 +70,21 @@ export class MyBookingsComponent implements OnInit {
     // });
 
      console.log('🔁 ngOnInit called in MyBookingsComponent');
-
+   this._store.select(selectTempUserId).subscribe(id => {
+                  if (id) {
+                    this._currentUserId = id;
+                  }
+                });
+   this._store.select(selectUsername).subscribe(name => {
+                  if (name) {
+                    this._username = name;
+                  }
+                });
+     this._store.select(selectUserRole).subscribe(role => {
+                  if (role) {
+                    this._role = role;
+                  }
+                });    
     this.subscription.add(this.searchSubject.pipe(
               debounceTime(300),
               distinctUntilChanged()
@@ -159,5 +186,50 @@ export class MyBookingsComponent implements OnInit {
 
   onRowAction(event: { action: string; item: TableData }): void {
     console.log('Row action:', event);
+    this.openChat(event.item);
   }
+
+    // openChat(booking: TableData): void {
+    //   this.isModalOpen=true
+    //   this.modalType = 'chat'
+    //   // this._router.navigate(['/chat'])
+    //   console.log('Opening chat for booking:', booking.id);
+    // }
+
+    async openChat(booking: TableData): Promise<void> {
+    const _authToken=this.getValidToken()
+    if (!_authToken || !this._currentUserId || !this._role) {
+      console.error('Missing user authentication data');
+      return;
+    }
+
+    try {
+      // Open chat using the service
+      await this.chatService.openChat({
+        bookingId: booking.id as string,
+        userId: this._currentUserId,
+        userRole: this._role as 'user' | 'partner',
+        customerName: this._username as string,
+        serviceName: booking.subServiceName as string
+      }, _authToken);
+
+      console.log('Chat opened for booking:', booking.id);
+    } catch (error) {
+      console.error('Failed to open chat:', error);
+      // You could show a toast notification here
+    }
+  }
+
+  private getValidToken(): string | null {
+  const _authToken = localStorage.getItem('access_token');
+  console.log('Token from localStorage:', _authToken);
+  
+  if (!_authToken) {
+    console.error('No token found');
+    return null;
+  }
+
+    return _authToken;
+  }
+
 }

@@ -1,76 +1,67 @@
-/* partner-dashboard.component.scss */
+
 
 @use 'variables' as var;
 
-.home-container {
+.dashboard {
   display: flex;
   flex-direction: column;
+  gap: var.$spacing-lg;
   padding: var.$spacing-xl;
-  gap: var.$spacing-xl;
   background-color: var.$background-color;
-  min-height: calc(100vh - (var.$spacing-xl * 2)); /* Adjust based on nav/sidebar height if fixed */
+  min-height: 100vh;
 
   @media (min-width: var.$breakpoint-md) {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start; /* Align items to the top */
-    gap: var.$spacing-xl;
+    align-items: flex-start;
   }
 }
 
-.user-info-section {
-  flex: 1; /* Allows this section to grow */
-  display: flex;
-  flex-direction: column;
-  gap: var.$spacing-md;
-
-  .card {
-    background-color: var.$white;
-    border-radius: var.$border-radius-md;
-    box-shadow: var.$box-shadow-sm;
-    padding: var.$spacing-xl;
-    text-align: center;
-    
-    h2 {
-      font-family: var.$title-font;
-      font-size: var.$font-size-xl;
-      color: var.$button-bg; /* Darker color for headings */
-      margin-bottom: var.$spacing-sm;
-    }
-
-    p {
-      font-size: var.$font-size-md;
-      color: var.$gray-text;
-      margin-bottom: var.$spacing-xs;
-    }
-  }
-}
-
-.location-section {
-  background-color: var.$purple; /* Highlight the location section */
-  color: var.$white;
+.user-card,
+.location-card {
+  background-color: var.$white;
   border-radius: var.$border-radius-md;
   box-shadow: var.$box-shadow-sm;
-  padding: var.$spacing-lg;
+  padding: var.$spacing-xl;
   text-align: center;
-  flex-shrink: 0; /* Prevents it from shrinking */
-  width: 100%; /* Full width on small screens */
+ 
+}
+
+/* user-card takes flexible space */
+.user-card {
+  flex: 1;
+ 
+  h2 {
+    font-family: var.$title-font;
+    font-size: var.$font-size-xl;
+    color: var.$button-bg;
+    margin-bottom: var.$spacing-sm;
+  }
+
+  p {
+    font-size: var.$font-size-md;
+    color: var.$gray-text;
+  }
+}
+
+/* location-card has fixed width on desktop */
+.location-card {
+  background-color: var.$purple;
+  color: var.$white;
+  flex-shrink: 0;
+  width: 100%;
 
   @media (min-width: var.$breakpoint-md) {
-    width: 250px; /* Fixed width on larger screens */
-    align-self: flex-start; /* Align to the top of its row */
+    width: 250px;
   }
 
   h2 {
     font-family: var.$title-font;
     font-size: var.$font-size-lg;
     margin-bottom: var.$spacing-sm;
-    color: var.$white;
   }
 
   p {
     font-size: var.$font-size-md;
     font-weight: var.$font-weight-bold;
-    color: var.$white;
   }
 }

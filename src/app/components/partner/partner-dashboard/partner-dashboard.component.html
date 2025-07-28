@@ -1,15 +1,17 @@
+
 <app-nav-bar></app-nav-bar>
 <app-partner-side-bar></app-partner-side-bar>
-<main class="home-container">
-  <section class="user-info-section">
+
+<main class="dashboard">
+  <section class="user-card">
     <div class="card">
       <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
       <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
     </div>
-    </section>
+  </section>
 
-  <section class="location-section">
-    <h2>Your Selected Working Location/Area</h2>
-    <p>{{savedLocation || 'Location not set'}}</p>
+  <section class="location-card">
+    <h2>Working Location/Area</h2>
+    <p>{{ savedLocation || 'Location not set' }}</p>
   </section>
 </main>

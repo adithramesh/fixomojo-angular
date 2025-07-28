@@ -87,6 +87,11 @@
       border-radius: var.$border-radius-sm;
       outline: none;
       transition: border-color 0.3s ease;
+      // ✅ Add these for better alignment and cursor stability
+      display: block;             // prevents layout shift
+      line-height: 1.5;           // matches typical input line height
+      height: auto;               // lets padding decide height naturally
+      box-sizing: border-box;     // ensures padding doesn’t overflow
 
       &:focus {
         border-color: var.$purple;

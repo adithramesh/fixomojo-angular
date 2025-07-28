@@ -1,0 +1,77 @@
+<div class="floating-chat-container" *ngIf="chatState.isOpen">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-title">
+          <span class="chat-icon">💬</span>
+          <span>Support Chat</span>
+        </div>
+        <button class="close-btn" (click)="closeChat()" aria-label="Close chat">
+          ×
+        </button>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-messages" #messagesContainer>
+        <div *ngIf="chatState.isLoading" class="loading-message">
+          <span class="loading-spinner"></span>
+          Loading chat...
+        </div>
+        
+        <div *ngIf="chatState.error" class="error-message">
+          {{ chatState.error }}
+        </div>
+
+        <div *ngIf="!chatState.isLoading && !chatState.error">
+          <div *ngIf="chatState.messages.length === 0" class="empty-message">
+            No messages yet. Start the conversation!
+          </div>
+          
+          <!-- <div 
+            *ngFor="let message of chatState.messages" 
+            class="message"
+            [ngClass]="{
+              'my-message': isMyMessage(message.senderId),
+              'other-message': !isMyMessage(message.senderId)
+            }"
+          > -->
+          <div 
+            *ngFor="let message of chatState.messages" 
+            class="message"
+            [ngClass]="{
+                'my-message': isMyMessage(message),
+                'other-message': !isMyMessage(message)
+            }"
+            >
+
+            <div class="message-content">
+              <div class="message-text">{{ message.messageText }}</div>
+              <div class="message-time">
+                {{ formatTime(message.createdAt) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="chat-input-container">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            [(ngModel)]="newMessage"
+            (keyup.enter)="sendMessage()"
+            placeholder="Type your message..."
+            class="chat-input"
+            [disabled]="chatState.isLoading"
+          />
+          <button 
+            (click)="sendMessage()"
+            class="send-btn"
+            [disabled]="!newMessage.trim() || chatState.isLoading"
+            aria-label="Send message"
+          >
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+      </div>
+    </div>

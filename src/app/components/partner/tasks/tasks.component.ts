@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataTableComponent, TableColumn, TableData } from '../../shared/data-table/data-table.component';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
@@ -7,10 +7,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { ModalComponent } from '../../shared/modal/modal.component';
+import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
+import { Router } from '@angular/router';
+import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
+import { Store } from '@ngrx/store';
+import { ChatService } from '../../../services/chat.service';
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent,ModalComponent],
+  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent,ModalComponent, PartnerSideBarComponent],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })
@@ -25,8 +30,8 @@ export class TasksComponent {
       { header: 'Schedule', key: 'timeSlotStart', type: 'date', width: '20%' },
       { header: 'Status', key: 'bookingStatus', type: 'text', width: '10%' },
       { header: 'Work Location', key: 'location', type: 'text', width: '20%' },
-      { header: 'Action', key: 'actions', type: 'action-buttons', width: '15%' },
-      { header: 'WC', key: 'isCompleted', type: 'text', width: '15%' }
+      { header: 'Action', key: 'actions', type: 'action-buttons', width: '10%' },
+
     ];
   
     bookingsTableData: TableData[] = [];
@@ -42,18 +47,38 @@ export class TasksComponent {
     error: string | null = null;
     private searchSubject = new Subject<string>()
     private subscription: Subscription = new Subscription;
+    private _router = inject(Router)
+    private _store = inject(Store)
+    private chatService = inject(ChatService)
+    private _currentUserId:string = ''
+    private _role:string = ''
+    private _username:string = ''
     searchTerm: string=''
 
     isModalOpen:boolean=false
-    modalType:'service' | 'otp' = 'otp';
+    modalType:'service' | 'otp' |'chat' = 'otp';
     otpData:any
     bookingId!:string
-    // selectedBooking!:string
-    selectedBooking: TableData | null = null
-  
+    selectedBooking: TableData | null = null  
     constructor(private bookingService: BookingService) {}
   
     ngOnInit(): void {
+
+       this._store.select(selectTempUserId).subscribe(id => {
+                  if (id) {
+                    this._currentUserId = id;
+                  }
+                });
+      this._store.select(selectUsername).subscribe(name => {
+                  if (name) {
+                    this._username = name;
+                  }
+                });
+      this._store.select(selectUserRole).subscribe(role => {
+                  if (role) {
+                    this._role = role;
+                  }
+                });
    
       this.subscription.add(this.searchSubject.pipe(
                 debounceTime(300),
@@ -143,9 +168,47 @@ export class TasksComponent {
       }
     }
 
-    openChat(booking: TableData): void {
-      // Navigate to chat or open chat modal
-      console.log('Opening chat for booking:', booking.id);
+    // openChat(booking: TableData): void {
+    //   this.isModalOpen=true
+    //   this.modalType = 'chat'
+    //   // this._router.navigate(['/chat'])
+    //   console.log('Opening chat for booking:', booking.id);
+    // }
+
+    async openChat(booking: TableData): Promise<void> {
+    const _authToken=this.getValidToken()
+    if (!_authToken || !this._currentUserId || !this._role) {
+      console.error('Missing user authentication data');
+      return;
+    }
+
+    try {
+      // Open chat using the service
+      await this.chatService.openChat({
+        bookingId: booking.id as string,
+        userId: this._currentUserId,
+        userRole: this._role as 'user' | 'partner',
+        customerName: this._username as string,
+        serviceName: booking.subServiceName as string
+      }, _authToken);
+
+      console.log('Chat opened for booking:', booking.id);
+    } catch (error) {
+      console.error('Failed to open chat:', error);
+      // You could show a toast notification here
+    }
+  }
+
+    private getValidToken(): string | null {
+    const _authToken = localStorage.getItem('access_token');
+    console.log('Token from localStorage:', _authToken);
+    
+    if (!_authToken) {
+      console.error('No token found');
+      return null;
+    }
+
+      return _authToken;
     }
 
     openOtpModal(booking: TableData): void {

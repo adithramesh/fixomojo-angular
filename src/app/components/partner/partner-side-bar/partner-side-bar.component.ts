@@ -24,7 +24,7 @@ menuItems: SidebarItem[] = [
     { label: 'Location', route: '/location', icon:'location_on' },
     { label: 'Time slots', route: '/time-slots',icon:'schedule' },
     { label: 'Tasks', route: '/tasks',icon: 'task_alt' },
-    { label: 'Requests', route: '/service-requests',icon: 'handyman' },
+    // { label: 'Requests', route: '/service-requests',icon: 'handyman' },
     { label: 'Wallet', route: '/partner-wallet', icon:'wallet'}
   ];
 }

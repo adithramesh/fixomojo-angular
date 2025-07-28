@@ -4,7 +4,9 @@
 <br>
 <main class="bookings-container">
   <section class="bookings-section">
-    <div class="card">
+    <div class="task-layout">
+      <app-partner-side-bar></app-partner-side-bar>
+      <div class="table-wrapper">
         <app-data-table
             [tableData]="bookingsTableData"
             [tableColumns]="bookingsTableColumns"
@@ -17,9 +19,11 @@
             (pageChange)="onPageChange($event)"
             [searchTerm]="searchTerm"
             (searchChange)="onSearchChange($event)"
+            [searchPlaceholder]="'Search service name...'"
         ></app-data-table>
       <div *ngIf="error" class="error-message">
         <p>{{ error }}</p>
+        </div>
       </div>
     </div>
   </section>
@@ -32,3 +36,6 @@
   (close)="closeModal()"
   (otpVerified)="onOtpVerified($event)">
 </app-modal>
+
+
+

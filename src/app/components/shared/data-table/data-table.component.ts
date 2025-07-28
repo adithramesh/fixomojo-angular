@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { selectUserRole } from '../../../store/auth/auth.reducer';
 
 
 export interface TableData {
@@ -65,6 +67,8 @@ export class DataTableComponent {
   @Input() showAddButton: boolean = false;
   @Input() searchTerm: string = '';
   @Input() showSearch: boolean = true;
+  @Input() searchPlaceholder: string = 'Search...';
+  
   
   // Events for buttons or row actions
   @Output() rowAction = new EventEmitter<{action: string, item: TableData}>();
@@ -73,6 +77,16 @@ export class DataTableComponent {
   @Output() searchChange = new EventEmitter<string>();
   @Output() addItem = new EventEmitter<void>();
   // Method to handle button clicks
+
+  private _store = inject(Store)
+  private _role!:string
+  ngOnInit(){
+     this._store.select(selectUserRole).subscribe(role => {
+                if (role) {
+                  this._role = role;
+                }
+              });
+  }
   onButtonClick(action: string, item: TableData): void {
     this.rowAction.emit({action, item});
   }
@@ -132,7 +146,7 @@ export class DataTableComponent {
 }
 
 shouldShowCompleteButton(item: TableData): boolean {
-  if(item.timeSlotStart){
+  if(item.timeSlotStart && this._role==='partner'){
   return item.bookingStatus === 'Confirmed'  && 
          this.isToday(item.timeSlotStart.toString());
         //  && !item.isCompleted
@@ -149,6 +163,6 @@ private isToday(dateString: string): boolean {
   const today = new Date();
   const bookingDate = new Date(dateString);
 
-  return today.toDateString() === bookingDate.toDateString();
+  return today.toDateString() !== bookingDate.toDateString();
 }
 }

@@ -37,7 +37,6 @@
       </div>
 
       <!-- OTP MODAL -->
-      <!-- OTP MODAL -->
       <div *ngIf="modalType === 'otp'" class="otp-modal">
         <h3 class="modal-heading">🔒 Complete Work - OTP Verification</h3>
         <p class="modal-subtext">Enter the OTP sent to the customer to verify work completion.</p>
@@ -56,6 +55,18 @@
         </app-otp>
       </div>
 
+      <!-- CHAT MODAL -->
+      <!-- <div *ngIf="modalType === 'chat'" class="chat-modal">
+        <app-chat 
+          [bookingId]="chatData!.bookingId"
+          [senderId]="chatData!.senderId"
+          [role]="chatData!.role">
+        </app-chat>
+      </div> -->
+
     </div>
   </div>
 </div>
+
+
+
