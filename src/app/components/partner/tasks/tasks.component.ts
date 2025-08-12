@@ -15,7 +15,7 @@ import { ChatService } from '../../../services/chat.service';
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent,ModalComponent, PartnerSideBarComponent],
+  imports: [CommonModule, FormsModule,  DataTableComponent,ModalComponent, PartnerSideBarComponent],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })

@@ -141,8 +141,9 @@ export class DataTableComponent {
   }
 
   shouldShowChatButton(item: TableData): boolean {
-  return item.bookingStatus === 'Confirmed' ;
-  // && !item.isCompleted
+  return item.bookingStatus === 'Confirmed'  
+  // && !item.isCompleted;
+  
 }
 
 shouldShowCompleteButton(item: TableData): boolean {
@@ -163,6 +164,6 @@ private isToday(dateString: string): boolean {
   const today = new Date();
   const bookingDate = new Date(dateString);
 
-  return today.toDateString() !== bookingDate.toDateString();
+  return today.toDateString() === bookingDate.toDateString();
 }
 }

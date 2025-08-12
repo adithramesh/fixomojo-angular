@@ -12,6 +12,8 @@ import { HttpClient } from '@angular/common/http';
 import { BookServiceRequestDTO, BookServiceResponseDTO } from '../../../models/book-service.model';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { BookingService } from '../../../services/booking.service';
+import { ImageUrlService } from '../../../services/image.service';
+import { BookingPageService } from '../../../services/booking.page.service';
 
 
 interface BackendSlotResponse {
@@ -75,6 +77,7 @@ export class BookingServiceComponent {
   
   private addressInputChanges = new Subject<string>();
   private _locationService=inject(LocationService)
+  private _bookingPageService=inject(BookingPageService)
   private _adminService = inject(AdminService)
   private _store = inject(Store)
   // private _userId!:Observable<string|null>
@@ -86,6 +89,7 @@ export class BookingServiceComponent {
   private fb = inject(FormBuilder)
   private http = inject(HttpClient)
   private _bookingService = inject(BookingService)
+  public _imageUrlService = inject(ImageUrlService)
 
   constructor () {
     this.bookingForm = this.fb.group({
@@ -309,7 +313,8 @@ export class BookingServiceComponent {
             lat: partner.location.latitude,
             lng: partner.location.longitude
           }:undefined,
-          profileImage: ''
+          // profileImage: partner.image
+          profileImage: this._imageUrlService.buildImageUrl(partner.image)
         }));
         
         console.log('Processed technicians:', this.allTechnicians);
@@ -400,9 +405,12 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
     return;
   }
 
-  this.http.get<{ success: boolean; slots: BackendSlotResponse[] }>(
-      `http://localhost:3000/partner/available-slots?technicianId=${technicianId}&date=${selectedDate.toISOString()}`
-  ).subscribe({
+  // this.http.get<{ success: boolean; slots: BackendSlotResponse[] }>(
+  //     `http://localhost:3000/partner/available-slots?technicianId=${technicianId}&date=${selectedDate.toISOString()}`
+  // ).
+
+  this._bookingPageService.loadTimeSlotsForTechnicianAndDate(technicianId, date)
+    .subscribe({
       next: (response) => {
           this.availableTimeSlots = response.slots
               .filter(slot => {
@@ -451,11 +459,14 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
   // }
 
   onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id: string }): void {
-  this.http.post<{ success: boolean; message: string }>('http://localhost:3000/user/timeslot/check-availability', {
-    technicianId: this.bookingForm.get('technician')?.value,
-    startTime: selectedSlot.startTime,
-    endTime: selectedSlot.endTime,
-  }).subscribe({
+    const technicianId=this.bookingForm.get('technician')?.value
+  // this.http.post<{ success: boolean; message: string }>('http://localhost:3000/user/timeslot/check-availability', {
+  //   technicianId: this.bookingForm.get('technician')?.value,
+  //   startTime: selectedSlot.startTime,
+  //   endTime: selectedSlot.endTime,
+  // })
+  this._bookingPageService.checkTimeSlotAvailability(technicianId, selectedSlot.startTime,selectedSlot.endTime)
+  .subscribe({
     next: (response) => {
       if (!response.success) {
         alert(response.message);
@@ -516,7 +527,10 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
         
     
         // Create booking record in "Pending" state
-        this.http.post<BookServiceResponseDTO>('http://localhost:3000/user/book-service', data)
+        // this.http.post<BookServiceResponseDTO>('http://localhost:3000/user/book-service', data)
+
+        this._bookingPageService.submitData(data)
+
             .subscribe({
                 next: (response) => {
                   console.log("response",response)
@@ -599,7 +613,9 @@ private blockSlotAfterPayment(): void {
   
     };
     
-    this.http.post<{success: boolean, eventId: string, calendarId: string}>('http://localhost:3000/partner/block-slot', blockSlotPayload)
+    // this.http.post<{success: boolean, eventId: string, calendarId: string}>('http://localhost:3000/partner/block-slot', blockSlotPayload)
+
+    this._bookingPageService.blockSlotAfterPayment(blockSlotPayload)
         .subscribe({
             next: (response) => {
                 if (response.success) {

@@ -23,6 +23,7 @@ import { MyBookingsComponent } from './components/user/my-bookings/my-bookings.c
 import { WalletComponent } from './components/shared/wallet/wallet.component';
 import { TasksComponent } from './components/partner/tasks/tasks.component';
 import { ActivitiesComponent } from './components/admin/activities/activities.component';
+import { UserProfileComponent } from './components/shared/user-profile/user-profile.component';
 // import { ChatComponent } from './components/shared/chat/chat.component';
 
 export const routes: Routes = [
@@ -61,6 +62,9 @@ export const routes: Routes = [
     { path: 'tasks', component: TasksComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
     // { path: 'chat', component: ChatComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
 
+    //shared
+    { path: 'my-profile', component: UserProfileComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'user']} },
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
     { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
+    
 ];

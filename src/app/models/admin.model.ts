@@ -21,6 +21,7 @@ export interface UserResponseDTO {
     username: string;
     phoneNumber: string;
     email:string;
+    image?:string
     status: string;
     licenseStatus:string;
     role: string;

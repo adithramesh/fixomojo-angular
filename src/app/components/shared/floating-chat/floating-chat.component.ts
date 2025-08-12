@@ -31,13 +31,13 @@ export class FloatingChatComponent {
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
-    // Subscribe to chat state changes
+
     this.chatSubscription = this.chatService.getChatState().subscribe(state => {
       console.log('Chat state updated:', state);
       const previousMessageCount = this.chatState.messages.length;
       this.chatState = state;
       
-      // Scroll to bottom if new message arrived
+      
       if (state.messages.length > previousMessageCount) {
         this.shouldScrollToBottom = true;
       }

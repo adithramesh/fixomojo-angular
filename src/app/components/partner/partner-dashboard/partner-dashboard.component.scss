@@ -9,6 +9,8 @@
   padding: var.$spacing-xl;
   background-color: var.$background-color;
   min-height: 100vh;
+  margin-top: 45px;
+  margin-left: 160px;
 
   @media (min-width: var.$breakpoint-md) {
     flex-direction: row;
@@ -17,13 +19,14 @@
 }
 
 .user-card,
+
 .location-card {
   background-color: var.$white;
   border-radius: var.$border-radius-md;
   box-shadow: var.$box-shadow-sm;
   padding: var.$spacing-xl;
   text-align: center;
- 
+  margin-left: 160px;
 }
 
 /* user-card takes flexible space */

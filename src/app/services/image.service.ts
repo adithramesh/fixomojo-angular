@@ -1,4 +1,3 @@
-// src/app/services/image-url.service.ts
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { FloatingChatComponent } from './components/shared/floating-chat/floating-chat.component';
 
 
@@ -11,4 +11,13 @@ import { FloatingChatComponent } from './components/shared/floating-chat/floatin
 })
 export class AppComponent {
   title = 'front-end';
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        console.log('Navigating to:', event.url);
+      }
+    });
+  }
 }

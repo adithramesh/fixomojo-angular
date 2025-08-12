@@ -87,27 +87,7 @@ export class SocketService {
     this.socket.emit('message', data);
   }
 
-  // Listen for messages - FIXED EVENT NAME
-  // onMessage(): Observable<ChatMessage> {
-  //   return new Observable(observer => {
-  //     if (!this.socket) {
-  //       observer.error('Socket not connected');
-  //       return;
-  //     }
-
-  //     // Fixed: Listen for 'message' from backend
-  //     this.socket.on('message', (message: ChatMessage) => {
-  //       observer.next(message);
-  //     });
-
-  //     // Cleanup on unsubscribe
-  //     return () => {
-  //       if (this.socket) {
-  //         this.socket.off('message');
-  //       }
-  //     };
-  //   });
-  // }
+ 
   onMessage(): Observable<ChatMessage> {
   console.log('🔌 SocketService: onMessage() called - creating observable');
   

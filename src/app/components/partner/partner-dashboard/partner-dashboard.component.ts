@@ -10,7 +10,7 @@ import { LocationService } from '../../../services/location.service';
 
 @Component({
   selector: 'app-partner-dashboard',
-  imports: [NavBarComponent, CommonModule, PartnerSideBarComponent],
+  imports: [ CommonModule, PartnerSideBarComponent],
   templateUrl: './partner-dashboard.component.html',
   styleUrl: './partner-dashboard.component.scss'
 })
