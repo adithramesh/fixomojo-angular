@@ -168,13 +168,6 @@ export class TasksComponent {
       }
     }
 
-    // openChat(booking: TableData): void {
-    //   this.isModalOpen=true
-    //   this.modalType = 'chat'
-    //   // this._router.navigate(['/chat'])
-    //   console.log('Opening chat for booking:', booking.id);
-    // }
-
     async openChat(booking: TableData): Promise<void> {
     const _authToken=this.getValidToken()
     if (!_authToken || !this._currentUserId || !this._role) {
@@ -212,8 +205,7 @@ export class TasksComponent {
     }
 
     openOtpModal(booking: TableData): void {
-      // Open your existing modal with OTP component
-      // Pass booking data to modal
+    
       this.isModalOpen=true
       this.modalType = 'otp'
       this.selectedBooking = booking;

@@ -146,3 +146,8 @@ export const selectUserRole = createSelector(
   selectUser,
   (user) => user?.data?.role || null
 );
+
+export const selectIsLoggedIn = createSelector(
+  selectUser,
+  (user) => !!user 
+)

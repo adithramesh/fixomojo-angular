@@ -97,19 +97,6 @@ export class UserManagementComponent {
     };
   }
 
-  // prevPage(): void {
-  //   if (this.pagination.page > 1) {
-  //     this.pagination.page--;
-  //     this.loadUsers();
-  //   }
-  // }
-
-  // nextPage(): void {
-  //   if (this.pagination.page < this.totalPages) {
-  //     this.pagination.page++;
-  //     this.loadUsers();
-  //   }
-  // }
 
   handleAction(event: { action: string, item: TableData }): void {
     const userId = event.item.id;

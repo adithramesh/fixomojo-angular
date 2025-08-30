@@ -57,7 +57,7 @@ export class SubServiceManagementComponent {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber);
 
-    // Get serviceId from route if navigating from service
+ 
     this._subscription.add(
       this._route.queryParams.subscribe(params => {
         this.serviceId = params['serviceId'] || null;

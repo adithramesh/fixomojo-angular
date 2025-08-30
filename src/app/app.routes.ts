@@ -24,6 +24,7 @@ import { WalletComponent } from './components/shared/wallet/wallet.component';
 import { TasksComponent } from './components/partner/tasks/tasks.component';
 import { ActivitiesComponent } from './components/admin/activities/activities.component';
 import { UserProfileComponent } from './components/shared/user-profile/user-profile.component';
+import { VideoCallComponent } from './components/shared/video-call/video-call.component';
 // import { ChatComponent } from './components/shared/chat/chat.component';
 
 export const routes: Routes = [
@@ -64,6 +65,8 @@ export const routes: Routes = [
 
     //shared
     { path: 'my-profile', component: UserProfileComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'user']} },
+    { path: 'video-call/:id', component: VideoCallComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin']} },
+    { path: 'video-call/join/:callId', component: VideoCallComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin']} },
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
     { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
     

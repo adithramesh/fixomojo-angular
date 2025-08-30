@@ -4,6 +4,7 @@
         <div class="chat-title">
           <span class="chat-icon">💬</span>
           <span>Support Chat</span>
+            <span class="online-indicator" *ngIf="isOnline"></span>
         </div>
         <button class="close-btn" (click)="closeChat()" aria-label="Close chat">
           ×

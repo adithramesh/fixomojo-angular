@@ -7,6 +7,7 @@ import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.redu
 import { TableColumn, TableData, DataTableComponent } from '../../shared/data-table/data-table.component';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { SidebarComponent } from "../side-bar/side-bar.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-partner-management',
@@ -17,6 +18,7 @@ import { SidebarComponent } from "../side-bar/side-bar.component";
 export class PartnerManagementComponent {
   private _store = inject(Store);
   private _adminService = inject(AdminService);
+  private _router = inject(Router)
   private subscription: Subscription = new Subscription;
   searchTerm:string=''
   username$!: Observable<string | null>;
@@ -34,7 +36,8 @@ export class PartnerManagementComponent {
         { label: 'Blocked', value: 'blocked' },
       ],width: '15%'},
     { header: 'Status', key: 'status', type: 'text', width: '10%' },
-    { header: 'Change Status', key: 'block', type: 'button', buttonText: 'Change', buttonClass: 'btn-primary', width: '15%' }
+    { header: 'Change Status', key: 'block', type: 'button', buttonText: 'Change', buttonClass: 'btn-primary', width: '15%' },
+    { header: 'Video Call', key: 'videoCall', type: 'button',  buttonText: 'Call',buttonClass: 'btn-success', width: '10%' },
   ];
 
   userTableData: TableData[] = [];
@@ -99,26 +102,15 @@ export class PartnerManagementComponent {
       licenseStatus: user.licenseStatus || '',
       createdAt: user.createdAt || '',
       edit: 'edit',
-      block: 'block'
+      block: 'block',
+      videoCall: 'videoCall'
     };
   }
 
-  // prevPage(): void {
-  //   if (this.pagination.page > 1) {
-  //     this.pagination.page--;
-  //     this.loadUsers();
-  //   }
-  // }
-
-  // nextPage(): void {
-  //   if (this.pagination.page < this.totalPages) {
-  //     this.pagination.page++;
-  //     this.loadUsers();
-  //   }
-  // }
 
   handleAction(event: { action: string, item: TableData }): void {
     const userId = event.item.id;
+    const userName = event.item.username;
       switch (event.action) {
         case 'edit':
           console.log('Editing user:', userId);
@@ -134,6 +126,17 @@ export class PartnerManagementComponent {
             }
           });
           break;
+        case 'videoCall':
+          console.log('Starting video call with:', userName, userId);
+        //   this._router.navigate(['/video-call'], { 
+        //   queryParams: { 
+        //     partnerId: userId, 
+        //     // partnerName: userName,
+        //     // action: 'start'
+        //   } 
+        // });
+        this._router.navigate(['/video-call', userId]);
+          break
     }
   }
 

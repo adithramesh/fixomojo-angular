@@ -1,33 +1,28 @@
-
-
-<!-- <app-nav-bar></app-nav-bar> -->
-<br>
-<main class="bookings-container">
-  <section class="bookings-section">
-    <div class="task-layout">
-      <app-partner-side-bar></app-partner-side-bar>
-      <div class="table-wrapper">
-        <app-data-table
-            [tableData]="bookingsTableData"
-            [tableColumns]="bookingsTableColumns"
-            title="Tasks"
-            [isLoading]="isLoading"
-            emptyMessage="No bookings available at the moment."
-            (rowAction)="onRowAction($event)"
-            [currentPage]="pagination.page"
-            [totalPages]="totalPages"
-            (pageChange)="onPageChange($event)"
-            [searchTerm]="searchTerm"
-            (searchChange)="onSearchChange($event)"
-            [searchPlaceholder]="'Search service name...'"
-        ></app-data-table>
+<div class="partner-dashboard-layout">
+  <app-partner-side-bar></app-partner-side-bar>
+  
+  <main class="partner-main-content">
+    <div class="table-wrapper">
+      <app-data-table
+        [tableData]="bookingsTableData"
+        [tableColumns]="bookingsTableColumns"
+        title="Tasks"
+        [isLoading]="isLoading"
+        emptyMessage="No bookings available at the moment."
+        (rowAction)="onRowAction($event)"
+        [currentPage]="pagination.page"
+        [totalPages]="totalPages"
+        (pageChange)="onPageChange($event)"
+        [searchTerm]="searchTerm"
+        (searchChange)="onSearchChange($event)"
+        [searchPlaceholder]="'Search service name...'"
+      ></app-data-table>
       <div *ngIf="error" class="error-message">
         <p>{{ error }}</p>
-        </div>
       </div>
     </div>
-  </section>
-</main>
+  </main>
+</div>
 
 <app-modal
   [isOpen]="isModalOpen"
@@ -36,6 +31,3 @@
   (close)="closeModal()"
   (otpVerified)="onOtpVerified($event)">
 </app-modal>
-
-
-

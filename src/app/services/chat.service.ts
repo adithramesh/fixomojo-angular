@@ -169,31 +169,6 @@ export class ChatService {
     }
   }
 
-  // Subscribe to real-time messages
-//   private subscribeToMessages(): void {
-//     if (this.messageSubscription) {
-//       this.messageSubscription.unsubscribe();
-//     }
-
-//     this.messageSubscription = this.socketService.onMessage().subscribe({
-//       next: (message: ChatMessage) => {
-//         const currentState = this.getCurrentChatState();
-        
-//         // Add message to current messages
-//         const updatedMessages = [...currentState.messages, message];
-        
-//         this.updateChatState({
-//           messages: updatedMessages
-//         });
-//       },
-//       error: (error) => {
-//         console.error('Error receiving message:', error);
-//         this.updateChatState({
-//           error: 'Error receiving messages'
-//         });
-//       }
-//     });
-//   }
 
 private subscribeToMessages(): void {
   console.log('🔄 ChatService: subscribeToMessages() called');

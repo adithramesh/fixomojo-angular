@@ -1,49 +1,39 @@
-// src/app/core/services/notification-socket.service.ts
-
 import { Injectable } from "@angular/core";
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from "../../environments/environment";
 import { INotification } from "./notification.service";
 
+//real-time
 
-// Define a simple interface for chat notification data for a toast/summary
 export interface ChatNotificationData {
   bookingId: string;
   senderId: string;
   message: string;
   senderType: 'user' | 'technician';
-  // Add any other fields useful for a notification pop-up
 }
 
 @Injectable({ providedIn: 'root' })
-export class NotificationSocketService { // Renamed from SocketService
-  private socket: Socket | null = null;
+export class NotificationSocketService { 
+  public socket: Socket | null = null;
   private isConnected = false;
   private apiUrl = `${environment.BACK_END_API_URL}`;
 
-  // Subject to track connection status (BehaviorSubject for initial state)
+  
   private connectionStatus$ = new BehaviorSubject<boolean>(false);
-  // Subject for new general notifications (e.g., booking updates, system alerts)
   private newNotificationSubject = new Subject<INotification>();
-  // Subject for new chat message notifications (for toasts/summary, not full chat)
   private newChatNotificationSubject = new Subject<ChatNotificationData>();
+  private endCallSubject = new Subject<void>()
 
   constructor() {}
 
-  /**
-   * Initializes the socket connection for general user-specific notifications.
-   * Connects with the user's ID to join their personal notification room.
-   * @param token Auth token for authentication.
-   * @param userId The ID of the currently logged-in user.
-   */
   connect(token: string, userId: string): void {
-    // Only connect if not already connected
+
     if (this.isConnected && this.socket && (this.socket.io.opts.query as any)?.userId === userId) {
       console.log('Notification Socket already connected for this user.');
       return;
     }
-    // If connected for a different user or not connected, ensure clean slate
+    // Clean up existing connection
     if (this.socket) {
       this.disconnect();
     }
@@ -85,62 +75,62 @@ export class NotificationSocketService { // Renamed from SocketService
     });
   }
 
-  /**
-   * Sets up the listeners for various notification events from the backend.
-   */
+
   private setupListeners(): void {
     if (!this.socket) {
       console.error('Socket not connected, cannot set up listeners.');
       return;
     }
 
-    // Listener for general system notifications (from backend 'newNotification' event)
+    // General notifications
     this.socket.on('newNotification', (notification: INotification) => {
       console.log('Received new general notification:', notification);
       this.newNotificationSubject.next(notification);
     });
 
-    // Listener for chat message notifications (e.g., for toasts/pop-ups, from backend 'newChatMessage' event)
-    // The backend should emit this when a new chat message arrives for a recipient not currently in the chat room
+    // Chat message notifications
     this.socket.on('newChatMessage', (data: ChatNotificationData) => {
         console.log('Received new chat message notification:', data);
         this.newChatNotificationSubject.next(data);
     });
 
-    // Add other specific notification event listeners here if needed (e.g., 'newAdminNotification')
+    // Admin notifications
     this.socket.on('newAdminNotification', (notification: INotification) => {
         console.log('Received new admin notification:', notification);
         this.newNotificationSubject.next(notification); // Or a separate subject if admin notifications need different UI
     });
+
+    this.socket.on('end-call', () => {
+      console.log('Received end-call signal from server.');
+      this.endCallSubject.next();
+    });
   }
 
-  /**
-   * Provides an observable for components to subscribe to new general notifications.
-   * @returns An Observable of INotification.
-   */
+
   onNewNotification(): Observable<INotification> {
+    console.log("onNewNotification");
     return this.newNotificationSubject.asObservable();
   }
 
-  /**
-   * Provides an observable for components to subscribe to new chat message notifications (for toasts).
-   * @returns An Observable of ChatNotificationData.
-   */
+  onNewAdminNotification(): Observable<INotification> {
+    console.log("onNewAdminNotification");
+    return this.newNotificationSubject.asObservable();
+  }
+
   onNewChatNotification(): Observable<ChatNotificationData> {
       return this.newChatNotificationSubject.asObservable();
   }
 
-  /**
-   * Provides an observable for components to get the current socket connection status.
-   * @returns An Observable of boolean indicating connection status.
-   */
+
   getConnectionStatus(): Observable<boolean> {
     return this.connectionStatus$.asObservable();
   }
 
-  /**
-   * Disconnects the notification socket.
-   */
+  onEndCall(): Observable<void> {
+    return this.endCallSubject.asObservable();
+  }
+
+
   disconnect(): void {
     if (this.socket) {
       console.log('Disconnecting Notification Socket...');
@@ -151,14 +141,27 @@ export class NotificationSocketService { // Renamed from SocketService
       // Re-initialize subjects so new subscriptions after disconnect don't get stale data
       this.newNotificationSubject = new Subject<INotification>();
       this.newChatNotificationSubject = new Subject<ChatNotificationData>();
+      this.endCallSubject = new Subject<void>();
     }
   }
 
-  /**
-   * Checks if the notification socket is currently connected.
-   * @returns True if connected, false otherwise.
-   */
+ 
   isSocketConnected(): boolean {
     return this.isConnected && this.socket?.connected === true;
   }
+
+//   setupCallListeners(): void {
+//   this.socket?.on('newNotification', (notification: INotification) => {
+//     if (notification.type === 'video-call') {
+//       console.log('Received video call notification:', notification);
+//       this.newNotificationSubject.next(notification);
+//     }
+//   });
+
+//   this.socket?.on('end-call', ({ callId }) => {
+ 
+//     console.log('Call ended remotely:', callId);
+    
+//   });
+// }
 }

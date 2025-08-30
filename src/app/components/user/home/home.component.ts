@@ -23,18 +23,16 @@ import { FooterComponent } from '../../shared/footer/footer.component';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  // User information from store
+ 
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>;
-  
-  // Data and status properties
-  featuredServices: ServiceResponseDTO[] = []; // Only featured services for home
+
+  featuredServices: ServiceResponseDTO[] = []; 
   isLoading = true;
   error: string | null = null;
 
-  // Dependency injection
   private _store = inject(Store);
-  private _adminService = inject(AdminService); // Changed from HomeService
+  private _adminService = inject(AdminService); 
   private _subscription: Subscription = new Subscription();
   private _router = inject(Router)
   public _imageUrlService = inject(ImageUrlService)
@@ -42,23 +40,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
-    // Get user data from store
+ 
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber);
     
-    // Load featured services for home page
+
     this.loadFeaturedServices();
   }
   
-  /**
-   * Loads only the first 6 services to display as "featured" on home page
-   * This keeps the home page simple and fast-loading
-   */
+ 
   loadFeaturedServices() {
-    // Call existing getServices API but limit to first 6 items
+  
     const pagination = {
       page: 1,
-      pageSize: 6, // Only show 6 featured services
+      pageSize: 6, 
       sortBy: 'serviceName',
       sortOrder: 'asc' as const,
       searchTerm: '',
@@ -84,16 +79,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
 
-  /**
-   * Navigate to full services page where user can search, paginate, etc.
-   */
   viewAllServices(): void {
     this._router.navigate(['/services']);
   }
 
-  /**
-   * Navigate to specific service details
-   */
+ 
   viewService(service: ServiceResponseDTO): void {
     this._router.navigate(['/services'], {
       queryParams: {

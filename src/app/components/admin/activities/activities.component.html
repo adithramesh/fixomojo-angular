@@ -1,9 +1,9 @@
 
 
 <app-nav-bar></app-nav-bar>
-<br>
-<main class="bookings-container">
-  <section class="bookings-section">
+<main class="admin-dashboard">
+  <app-side-bar></app-side-bar>
+  <section class="main-content">
     <div class="card">
         <app-data-table
             [tableData]="bookingsTableData"

@@ -1,0 +1,17 @@
+@use 'sass:color';
+@use 'variables' as var;
+
+
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: var.$background-color;
+  padding-top: 48px; 
+}
+
+.main-content {
+  flex: 1; 
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}

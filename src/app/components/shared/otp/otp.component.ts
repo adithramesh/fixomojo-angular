@@ -115,25 +115,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // onSubmit(): void {
-  //   console.log('onSubmit triggered with otpValues:', this.otpValues);
-  //   if (this.isOtpValid) {
-  //     combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
-  //       // console.log('tempUserId:', tempUserId, 'loading:', loading);
-  //       if (tempUserId) {
-  //         const otpData: OtpRequestDTO = {
-  //           tempUserId,
-  //           otp: this.otpValues.join(''),
-  //           context: this.verificationContext
-  //         };
-  //         console.log('Dispatching verifyOtp with:', otpData);
-  //         this.store.dispatch(AuthActions.verifyOtp({ otpData }));
-  //       } else {
-  //         console.error('tempUserId is null or undefined');
-  //       }
-  //     });
-  //   }
-  // }
 
   
   onSubmit(): void {

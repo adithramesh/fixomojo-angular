@@ -117,9 +117,7 @@ export class DataTableComponent {
     }
   }
 
-  // onSearchChange(searchTerm: string): void {
-  //   this.searchChange.emit(searchTerm);
-  // }
+
 
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -140,7 +138,7 @@ export class DataTableComponent {
     this.addItem.emit();
   }
 
-  shouldShowChatButton(item: TableData): boolean {
+shouldShowChatButton(item: TableData): boolean {
   return item.bookingStatus === 'Confirmed'  
   // && !item.isCompleted;
   

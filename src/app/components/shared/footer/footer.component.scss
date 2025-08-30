@@ -62,21 +62,6 @@
         font-size: var.$font-size-sm;
       }
 
-    //   .subscribe-btn {
-    //     background-color: var.$purple;
-    //     color: var.$white;
-    //     border: none;
-    //     border-radius: var.$border-radius-sm;
-    //     padding: var.$spacing-sm var.$spacing-md;
-    //     font-family: var.$primary-font;
-    //     font-weight: var.$font-weight-semibold;
-    //     cursor: pointer;
-    //     transition: background-color 0.3s ease;
-
-    //     &:hover {
-    //       background-color: color.adjust(var.$purple, $lightness: -10%);
-    //     }
-    //   }
     .subscribe-btn {
         @include btn.button-style;
         color:var.$purple;  

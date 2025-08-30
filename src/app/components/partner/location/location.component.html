@@ -1,5 +1,7 @@
 <app-nav-bar></app-nav-bar>
+<div class="partner-dashboard-layout">
 <app-partner-side-bar></app-partner-side-bar>
+<main class="partner-main-content">
 <div class="location-container">
   
   <br>
@@ -12,8 +14,7 @@
   </div>
 
   <div *ngIf="currentLatitude && currentLongitude && !showAddressInputField" class="location-info">
-    <!-- <p>Latitude: {{ currentLatitude }}</p>
-    <p>Longitude: {{ currentLongitude }}</p> -->
+ 
     <p>Current Location Selected</p>
   </div>
 
@@ -41,8 +42,7 @@
 
     <p *ngIf="selectedAddressDetails" class="location-info">
       <strong>Selected Address:</strong> {{ selectedAddressDetails.address }}<br>
-      <!-- <strong>Latitude:</strong> {{ selectedAddressDetails.latitude }}<br>
-      <strong>Longitude:</strong> {{ selectedAddressDetails.longitude }} -->
+ 
     </p>
     <p *ngIf="typedLocationErrorMessage" class="error-message">{{ typedLocationErrorMessage }}</p>
   </div>
@@ -53,4 +53,8 @@
     Confirm Location
   </button>
 </div>
+</main>
+</div>
+
+
 

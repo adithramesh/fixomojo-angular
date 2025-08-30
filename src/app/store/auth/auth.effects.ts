@@ -100,45 +100,7 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  // resendOtp$=createEffect(()=>
-  //   this.actions$.pipe(ofType(AuthActions.resendOtp),
-  //     mergeMap(action=>this.authService.resendOtp(action.resendData).pipe(
-  //       map((response)=>AuthActions.resendOtpSuccess({response})),
-  //       catchError(error=>of(AuthActions.resendOtpFailure({error})))
-  //     ))
-  //   )
-  // )
 
-  // resendOtpSuccess$ = createEffect(
-  //   () =>
-  //     this.actions$.pipe(
-  //       ofType(AuthActions.resendOtpSuccess),
-  //       tap(action => {
-  //         const { response } = action;
-  //         console.log('resendOtpSuccess response:', response);
-  //         // No navigation, stay on current page (/signup/verify-otp)
-  //         // Optionally update UI (e.g., timer or message) via store
-  //       })
-  //     ),
-  //   { dispatch: false }
-  // );
-
-  // resendOtp$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(AuthActions.resendOtp),
-  //     tap(action => console.log('resendOtp$ triggered with:', action.resendData)),
-  //     mergeMap(action =>
-  //       this.authService.resendOtp(action.resendData).pipe(
-  //         tap(response => console.log('resendOtp$ response:', response)),
-  //         map(response => AuthActions.resendOtpSuccess({response})),
-  //         catchError(error => {
-  //           console.log('resendOtp$ error:', error);
-  //           return of(AuthActions.resendOtpFailure({ error }));
-  //         })
-  //       )
-  //     )
-  //   )
-  // );
   resendOtp$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.resendOtp),
@@ -152,41 +114,7 @@ export class AuthEffects {
     )
   );
 
-  // resendOtpSuccess$ = createEffect(
-  //   () =>
-  //     this.actions$.pipe(
-  //       ofType(AuthActions.resendOtpSuccess),
-  //       tap(action => {
-  //         console.log('resendOtpSuccess$ triggered with action:', action);
-  //         localStorage.setItem('resendOtpSuccess_received', JSON.stringify({
-  //           response: action.response,
-  //           timestamp: new Date().toISOString()
-  //         }));
-  //         //  DO NOT perform navigation here. Effects should not be used for navigation.
-  //         //  Navigation should be handled in a component, after the store has been updated.
-  //       })
-  //     ),
-  //   { dispatch: false } //  Correct:  This effect does not dispatch an action.
-  // );
-  // resendOtpSuccess$ = createEffect(
-  //   () =>
-  //     this.actions$.pipe(
-  //       ofType(AuthActions.resendOtpSuccess),
-  //       tap(action => {
-  //         const { context } =action.response;
-  //         console.log("context",context);
-  //         setTimeout(() => {
-  //           if (context === 'signup') {
-  //             this.router.navigate(['/signup/verify-otp']);
-  //           } else if (context === 'forgot-password') {
-  //             this.router.navigate(['/forgot-password/verify-otp']);
-  //           }
-  //         }, 10000); // delay 1 sec so logs stay
 
-  //       })
-  //     ),
-  //   { dispatch: false }
-  // );
 
   resendOtpFailure$ = createEffect(
     () =>

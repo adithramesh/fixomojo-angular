@@ -1,19 +1,16 @@
-.task-layout {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
+@use 'variables' as var;
+@use '../partner-dashboard/partner-dashboard.component.scss';
 
-  app-partner-side-bar {
-    width: 250px;
-    flex-shrink: 0;
-  }
-
-  .table-wrapper {
-    flex-grow: 1;
-    min-width: 0;
-  }
-}
-main.bookings-container {
-    margin: 20px; // Adjust as needed
+.table-wrapper {
+  background-color: var.$white;
+  padding: var.$spacing-md;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+  flex-grow: 1;
 }
 
+.error-message {
+  color: red;
+  font-weight: bold;
+  padding-top: var.$spacing-sm;
+}

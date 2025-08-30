@@ -11,7 +11,6 @@ import { ChatService } from '../../../services/chat.service';
 import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { Store } from '@ngrx/store';
 
-// Define the expected backend response structure
 
 @Component({
   selector: 'app-my-bookings',
@@ -63,11 +62,6 @@ export class MyBookingsComponent implements OnInit {
 
   ngOnInit(): void {
  
-    // this.bookingService.countBookings().subscribe(count => {
-    //   if (count) {
-    //    this.totalBookings = count;
-    //   }
-    // });
 
      console.log('🔁 ngOnInit called in MyBookingsComponent');
    this._store.select(selectTempUserId).subscribe(id => {
@@ -96,17 +90,7 @@ export class MyBookingsComponent implements OnInit {
             }))
         this.getBookings();
 
-    // this.subscription.add(
-    //   this.bookingService.bookingUpdated$.subscribe((updatedBooking:TableData)=>{
-    //     console.log('📥 Received booking update via Subject:', updatedBooking);
-    //     const index =this.bookingsTableData.findIndex(b=>b.id===updatedBooking.id)
-    //     if(index!==-1){
-    //       console.log("booking status updated to ", updatedBooking.bookingStatus);
-    //       this.bookingsTableData[index].bookingStatus=updatedBooking.bookingStatus
-    //       this.bookingsTableData[index].isCompleted=updatedBooking.isCompleted
-    //     }
-    //   })
-    // )
+  
 
     this.subscription.add(
       this.bookingService.bookingUpdated$
@@ -188,13 +172,6 @@ export class MyBookingsComponent implements OnInit {
     console.log('Row action:', event);
     this.openChat(event.item);
   }
-
-    // openChat(booking: TableData): void {
-    //   this.isModalOpen=true
-    //   this.modalType = 'chat'
-    //   // this._router.navigate(['/chat'])
-    //   console.log('Opening chat for booking:', booking.id);
-    // }
 
     async openChat(booking: TableData): Promise<void> {
     const _authToken=this.getValidToken()

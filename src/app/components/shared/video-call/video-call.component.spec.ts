@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ServiceExplorerComponent } from './service-explorer.component';
+import { VideoCallComponent } from './video-call.component';
 
-describe('ServiceExplorerComponent', () => {
-  let component: ServiceExplorerComponent;
-  let fixture: ComponentFixture<ServiceExplorerComponent>;
+describe('VideoCallComponent', () => {
+  let component: VideoCallComponent;
+  let fixture: ComponentFixture<VideoCallComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServiceExplorerComponent]
+      imports: [VideoCallComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ServiceExplorerComponent);
+    fixture = TestBed.createComponent(VideoCallComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

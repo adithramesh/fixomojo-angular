@@ -1,11 +1,8 @@
-// @use '../../../styles/variables' as var; 
-// @use '../../../styles/forms' as forms;   
-// @use '../../../styles/buttons' as btn;   
-
 @use 'variables' as var;
 @use 'buttons' as btn;
 @use 'forms' as forms;
 @use 'sass:color';
+@use '../partner-dashboard/partner-dashboard.component.scss';
 
 .time-slot-container {
   max-width: 900px;
@@ -16,6 +13,7 @@
   box-shadow: var.$box-shadow-sm;
   font-family: var.$primary-font;
   color: var.$text-color;
+
 
   h2 {
     font-family: var.$title-font;
@@ -92,7 +90,7 @@
       }
 
       &.available .color-box { background-color: var.$success-green; }
-      &.tech-blocked .color-box { background-color: #ff9800; } // Orange for technician blocked
+      &.tech-blocked .color-box { background-color: #ff9800; } 
       &.customer-booked .color-box { background-color: var.$error-red; }
     }
   }

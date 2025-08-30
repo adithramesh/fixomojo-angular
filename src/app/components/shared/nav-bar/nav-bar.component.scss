@@ -1,153 +1,3 @@
-// @use 'sass:color';
-// @use 'variables' as var;
-// @use 'buttons' as btn;
-
-// .navbar {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   background-color: var.$white;
-//   padding: 0.75rem 1.5rem;
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   z-index: 100;
-//   box-shadow: var.$box-shadow-sm;
-//   height: 48px;
-
-//   .navbar-left {
-//     display: flex;
-//     align-items: center;
-//     gap: 1rem;
-
-//     .logo-container {
-//       display: flex;
-//       align-items: center;
-//       justify-content: center;
-//       cursor: pointer;
-
-//       svg {
-//         display: block;
-//       }
-//     }
-
-//     .welcome-message {
-//       font-family: var.$primary-font;
-//       font-size: var.$font-size-sm;
-//       color: var.$text-color;
-//       line-height: 1.2;
-//     }
-//   }
-
-//   .navbar-right {
-//     position: relative; // Essential for positioning the dropdown
-//     display: flex;
-//     align-items: center;
-
-//     .user-menu-trigger {
-//       background: none;
-//       border: none;
-//       cursor: pointer;
-//       padding: 0;
-//       display: flex;
-//       align-items: center;
-//       justify-content: center;
-//       width: 36px; // Size of the circular button
-//       height: 36px;
-//       border-radius: 50%; // Makes it circular
-//       transition: background-color 0.2s ease;
-
-//       svg {
-//         fill: var.$text-color; // Color for the SVG icon
-//         width: 24px;
-//         height: 24px;
-//       }
-
-//       &:hover {
-//         background-color: color.adjust(var.$input-bg, $lightness: 5%); // Subtle hover effect
-//       }
-//     }
-
-//     .user-menu-dropdown {
-//       position: absolute;
-//       top: calc(100% + var.$spacing-sm); // Position below the trigger, with some spacing
-//       right: 0; // Align to the right of the trigger button
-//       background-color: var.$white;
-//       border-radius: var.$border-radius-md;
-//       box-shadow: var.$box-shadow-sm;
-//       padding: var.$spacing-sm 0;
-//       min-width: 180px; // Minimum width for the dropdown
-//       z-index: 101; // Higher than navbar z-index to appear on top
-
-//       // Hidden by default
-//       visibility: hidden;
-//       opacity: 0;
-//       transform: translateY(var.$spacing-sm); // Start slightly below, then animate up
-//       transition: visibility 0.2s, opacity 0.2s ease, transform 0.2s ease;
-
-//       &.open {
-//         visibility: visible;
-//         opacity: 1;
-//         transform: translateY(0); // Animate to its final position
-//       }
-
-//       .dropdown-item {
-//         @include btn.button-style(transparent); // Use transparent background from your mixin
-//         color: var.$text-color;
-//         width: 100%;
-//         text-align: left;
-//         padding: var.$spacing-sm var.$spacing-md;
-//         border-radius: 0; // Remove border-radius for individual items
-//         font-size: var.$font-size-md;
-//         font-weight: normal; // Override button-style bold if you want
-//         display: flex; // For icon and text alignment
-//         align-items: center;
-//         gap: var.$spacing-sm; // Space between icon and text
-//         transition: background-color 0.2s ease, color 0.2s ease;
-
-//         svg {
-//           fill: var.$text-color; // Color for dropdown item SVGs
-//           transition: fill 0.2s ease;
-//         }
-
-//         &:hover {
-//           background-color: var.$input-bg; // Hover background
-//           color: var.$purple; // Highlight text on hover
-//           svg {
-//             fill: var.$purple; // Highlight icon on hover
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   @media (max-width: var.$breakpoint-md) {
-//     padding: 0.5rem 1rem;
-//     flex-direction: column;
-//     gap: 0.5rem;
-//     height: auto;
-
-//     .navbar-left,
-//     .navbar-right {
-//       width: 100%;
-//       text-align: center;
-//       justify-content: center;
-//     }
-
-//     .navbar-right {
-//       .user-menu-dropdown {
-//         left: 50%; // Center on small screens
-//         right: auto;
-//         transform: translateX(-50%) translateY(var.$spacing-sm); // Adjust for centering
-//         &.open {
-//           transform: translateX(-50%) translateY(0);
-//         }
-//       }
-//     }
-//   }
-// }
-  
 @use 'sass:color';
 @use 'variables' as var;
 @use 'buttons' as btn;
@@ -261,6 +111,44 @@
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
+        .notification-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            // ...
+          }
+
+          .video-call-notif {
+  .notification-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    .notification-message {
+      flex: 1;
+    }
+  }
+  .notification-actions {
+    display: flex;
+    gap: 0.5rem;
+    .accept-btn, .decline-btn {
+      padding: 0.25rem 0.75rem;
+      border: none;
+      border-radius: var.$border-radius-sm;
+      font-size: var.$font-size-sm;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .accept-btn {
+      background-color: var.$success-green;
+      color: var.$white;
+    }
+    .decline-btn {
+      background-color: var.$error-red;
+      color: var.$white;
+    }
+  }
+}
 
         &.unread {
           background-color: var.$gray-light;

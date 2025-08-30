@@ -5,10 +5,11 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 import { BookingResponse, BookingService } from '../../../services/booking.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from '../side-bar/side-bar.component';
 
 @Component({
   selector: 'app-activities',
-  imports: [NavBarComponent, DataTableComponent, CommonModule],
+  imports: [NavBarComponent, DataTableComponent, CommonModule,SidebarComponent],
   templateUrl: './activities.component.html',
   styleUrl: './activities.component.scss'
 })
@@ -45,11 +46,7 @@ export class ActivitiesComponent {
     
       ngOnInit(): void {
      
-        // this.bookingService.countBookings().subscribe(count => {
-        //   if (count) {
-        //    this.totalBookings = count;
-        //   }
-        // });
+       
     
         this.subscription.add(this.searchSubject.pipe(
                   debounceTime(300),
@@ -68,12 +65,12 @@ export class ActivitiesComponent {
         
         this.bookingService.getAllBookingsForAdmin(this.pagination).subscribe({
           next: (response: BookingResponse) => {
-            // Check if response and bookingList exist
+           
            if (response.success && response.bookingList?.items) {
             console.log("bookingList", response.bookingList.items);
             
               this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
-              // this.totalBookings = response.bookingList.length; // Fallback; update if backend provides total
+            
               this.totalBookings = response.bookingList.total;
               this.totalPages = response.bookingList.totalPages;
               this.error = null;

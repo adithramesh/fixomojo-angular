@@ -451,20 +451,11 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
 }
 
 
-  // onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id:string }): void {
-  //   // 1. Update the form control
-  //   console.log("selectedSlot",selectedSlot);
-  //   this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
-  //    
-  // }
+
 
   onTimeSlotSelected(selectedSlot: { startTime: string; endTime: string; id: string }): void {
     const technicianId=this.bookingForm.get('technician')?.value
-  // this.http.post<{ success: boolean; message: string }>('http://localhost:3000/user/timeslot/check-availability', {
-  //   technicianId: this.bookingForm.get('technician')?.value,
-  //   startTime: selectedSlot.startTime,
-  //   endTime: selectedSlot.endTime,
-  // })
+
   this._bookingPageService.checkTimeSlotAvailability(technicianId, selectedSlot.startTime,selectedSlot.endTime)
   .subscribe({
     next: (response) => {

@@ -25,6 +25,7 @@ export class FloatingChatComponent {
   };
 
   newMessage: string = '';
+  isOnline: boolean = true;
   private chatSubscription: Subscription | null = null;
   private shouldScrollToBottom = false;
 
@@ -71,12 +72,9 @@ export class FloatingChatComponent {
     this.chatService.closeChat();
   }
 
-  // isMyMessage(senderId: string): boolean {
-  //   return senderId === this.chatState.currentUserId;
-  // }
+
   isMyMessage(message: ChatMessage): boolean {
-  // If current user is 'user' and message senderType is 'user' = my message
-  // If current user is 'partner' and message senderType is 'technician' = my message
+
     if (this.chatState.currentUserRole === 'user') {
       return message.senderType === 'user';
     } else if (this.chatState.currentUserRole === 'partner') {
