@@ -15,7 +15,6 @@ export class ModalComponent {
   @Input() serviceData: TableData | null = null;
   @Input() modalType: 'service' | 'otp' |'chat' = 'service';
   @Input() otpData?: TableData | null = null;
-  // @Input() chatData: { bookingId: string; senderId: string; role: string } | null = null;
 
   @Output() otpVerified = new EventEmitter<{otp: string, bookingData: TableData}>();
   @Output() close = new EventEmitter<void>();

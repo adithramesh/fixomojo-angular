@@ -30,15 +30,14 @@ export class SignUpComponent implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    // Initialize observables
+  
     this.error$ = this.store.select(selectError);
     this.loading$ = this.store.select(selectLoading);
 
-    // Initialize form
     this.initBaseForm();
     this.updateFormForRole(this.signUpForm.get('role')?.value || 'user');
 
-    // Listen for role changes
+   
     this.signUpForm.get('role')?.valueChanges.subscribe(role => {
       this.updateFormForRole(role);
     });

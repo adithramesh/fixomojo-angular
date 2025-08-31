@@ -24,14 +24,14 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   error$!: Observable<any>;
   loading$!: Observable<boolean>;
   verificationContext: 'signup' | 'forgot-password' = 'signup';
-  isOtpValid: boolean = false; // Track OTP validity
+  isOtpValid: boolean = false; 
 
   @ViewChild('otpForm') otpForm!: ElementRef;
 
-  @Input() isModalMode: boolean = false; // New property
-  @Input() modalContext: 'auth' | 'work-completion' = 'auth'; // New property
-  @Output() otpVerified = new EventEmitter<string>(); // New output
-  @Output() otpCancelled = new EventEmitter<void>(); // New output
+  @Input() isModalMode: boolean = false; 
+  @Input() modalContext: 'auth' | 'work-completion' = 'auth'; 
+  @Output() otpVerified = new EventEmitter<string>();
+  @Output() otpCancelled = new EventEmitter<void>(); 
 
   constructor(
     private store: Store,
@@ -51,7 +51,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.loading$.subscribe(loading => console.log('loading state:', loading));
-    this.updateOtpValidity(); // Initial check
+    this.updateOtpValidity(); 
     console.log('Initial isOtpValid:', this.isOtpValid);
   }
 
@@ -111,7 +111,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
       this.otpForm.nativeElement.querySelectorAll('.otp-input').forEach((input: HTMLInputElement, i: number) => {
         input.value = this.otpValues[i];
       });
-      this.updateOtpValidity(); // Update validity on paste
+      this.updateOtpValidity(); 
     }
   }
 
@@ -121,7 +121,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('onSubmit triggered with otpValues:', this.otpValues);
     if (this.isOtpValid) {
        if (this.isModalMode) {
-      // For modal mode, just emit the OTP
+      
       this.otpVerified.emit(this.otpValues.join(''));
       } else {
       combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
@@ -144,7 +144,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onVerifyButtonClick(): void {
     console.log('Verify button was clicked!');
-    this.onSubmit(); // Trigger onSubmit on click
+    this.onSubmit();
   }
 
   

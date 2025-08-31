@@ -188,7 +188,7 @@ export class TasksComponent {
       console.log('Chat opened for booking:', booking.id);
     } catch (error) {
       console.error('Failed to open chat:', error);
-      // You could show a toast notification here
+      // can show toast notification here
     }
   }
 
@@ -212,7 +212,7 @@ export class TasksComponent {
       this.bookingService.initiateWorkComplete(booking.id as string).subscribe({
       next: (result) => {
         console.log("Work completion initiated:", result);
-        // You can store any additional data from the result if needed
+        //can store any additional data from the result if needed
       },
       error: (error) => {
         console.error('Failed to initiate work completion:', error);
@@ -256,13 +256,11 @@ export class TasksComponent {
         this.bookingService.emitBookingUpdate(updated)
         
         this.closeModal();
-        // Optionally refresh the entire list
         // this.getBookings();
       },
       error: (error: any) => {
         console.error('OTP verification failed:', error);
-        // Handle error - you might want to show an error message in the modal
-        // instead of closing it immediately
+        
       }
     });
   }

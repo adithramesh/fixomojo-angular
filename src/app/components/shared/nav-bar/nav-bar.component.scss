@@ -199,9 +199,9 @@
       }
 
       &:hover {
-        background-color: var.$input-bg; // Subtle background on hover
+        background-color: var.$input-bg; 
         mat-icon {
-          color: var.$purple; // Consistent purple highlight
+          color: var.$purple; 
         }
       }
   }

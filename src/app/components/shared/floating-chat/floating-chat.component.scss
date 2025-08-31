@@ -66,7 +66,7 @@
   padding: var.$spacing-md;
   overflow-y: auto;
   background: #f8fafc;
-  max-height: calc(500px - 120px); // Adjust for header and input
+  max-height: calc(500px - 120px); 
 
   .loading-message {
     display: flex;
@@ -221,7 +221,7 @@
   100% { transform: rotate(360deg); }
 }
 
-// Scrollbar styling
+
 .chat-messages::-webkit-scrollbar {
   width: 6px;
 }

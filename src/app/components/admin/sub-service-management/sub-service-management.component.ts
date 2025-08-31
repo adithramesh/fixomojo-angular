@@ -39,14 +39,14 @@ export class SubServiceManagementComponent {
 
   subServiceTableData: TableData[] = [];
   searchTerm: string = '';
-  serviceId: string | null = null; // For filtering by service
+  serviceId: string | null = null; 
   pagination: PaginationRequestDTO = {
     page: 1,
     pageSize: 10,
     sortBy: 'subServiceName',
     sortOrder: 'asc',
     searchTerm: '',
-    filter: {} // Will include serviceId if provided
+    filter: {} 
   };
   totalSubServices = 0;
   totalPages = 0;
@@ -140,10 +140,7 @@ export class SubServiceManagementComponent {
     const subServiceId = event.item.id;
     switch (event.action) {
       case 'edit':
-        // console.log('Editing sub-service:', subServiceId);
-        // this._router.navigate(['/edit-sub-service', subServiceId], {
-        //   queryParams: { subServiceId: this.subServiceId }
-        // });
+      
         console.log('Editing sub-service:', subServiceId);
         this._router.navigate([`/edit-sub-service/${subServiceId}`]).then(success => {
         if (!success) {

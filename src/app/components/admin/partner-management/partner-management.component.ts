@@ -128,13 +128,6 @@ export class PartnerManagementComponent {
           break;
         case 'videoCall':
           console.log('Starting video call with:', userName, userId);
-        //   this._router.navigate(['/video-call'], { 
-        //   queryParams: { 
-        //     partnerId: userId, 
-        //     // partnerName: userName,
-        //     // action: 'start'
-        //   } 
-        // });
         this._router.navigate(['/video-call', userId]);
           break
     }

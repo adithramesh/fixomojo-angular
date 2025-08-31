@@ -43,10 +43,10 @@
   // Styles for the autocomplete dropdown
   .autocomplete-suggestions {
     position: absolute;
-    top: 100%; // Position below the input
+    top: 100%; 
     left: 0;
     right: 0;
-    z-index: 10; // Ensure it's above other content
+    z-index: 10; 
     background-color: var.$white;
     border: 1px solid var.$border-color;
     border-top: none;
@@ -55,7 +55,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 200px; // Limit height and enable scrolling
+    max-height: 200px; 
     overflow-y: auto;
 
     li {

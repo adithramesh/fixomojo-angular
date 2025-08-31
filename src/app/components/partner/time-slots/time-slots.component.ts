@@ -3,13 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { selectTempUserId } from '../../../store/auth/auth.reducer'; // Adjust path if needed
+import { selectTempUserId } from '../../../store/auth/auth.reducer'; 
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
-import { SidebarComponent } from '../../admin/side-bar/side-bar.component';
 import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
 
-// Define an interface for the slots returned by the backend
+
 interface TimeSlotDisplay {
   start: string; 
   end: string;   
@@ -17,8 +16,8 @@ interface TimeSlotDisplay {
   type: 'available' | 'customer-booked' | 'technician-blocked';
   isAvailable: boolean; 
   isEditable: boolean;  
-  googleEventId?: string; // Google Calendar event ID, if blocked
-  reason?: string; // Reason for blocking, if technician-blocked
+  googleEventId?: string; 
+  reason?: string; 
 }
 
 @Component({
@@ -26,21 +25,21 @@ interface TimeSlotDisplay {
   standalone: true,
   imports: [CommonModule, FormsModule,NavBarComponent, PartnerSideBarComponent],
   templateUrl: './time-slots.component.html',
-  styleUrl: './time-slots.component.scss' // Create this SCSS file as well
+  styleUrl: './time-slots.component.scss' 
 })
 export class TimeSlotsComponent implements OnInit, OnDestroy {
 
-  private readonly API_BASE_URL = 'http://localhost:3000/partner'; // Adjust to your backend URL
+  private readonly API_BASE_URL = 'http://localhost:3000/partner'; 
 
   selectedDate: string;
   minDate: string;
   maxDate: string;
 
   availableSlots: TimeSlotDisplay[] = [];
-  selectedSlotToBlock?: TimeSlotDisplay; // For single slot interaction
+  selectedSlotToBlock?: TimeSlotDisplay; 
   blockReason: string = '';
 
-  isBlockingMultiDay: boolean = false; // Toggle for multi-day blocking
+  isBlockingMultiDay: boolean = false; 
   multiDayStartDate: string;
   multiDayEndDate: string;
   multiDayReason: string = '';
@@ -57,15 +56,15 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject<void>();
 
   private http = inject(HttpClient);
-  private store = inject(Store); // Inject the ngrx store
+  private store = inject(Store); 
 
   constructor() {
-    // Initialize dates
+
     const today = new Date();
     this.minDate = this.formatDate(today);
 
     const maxDate = new Date();
-    maxDate.setMonth(today.getMonth() + 3); // Allow booking up to 3 months in advance
+    maxDate.setMonth(today.getMonth() + 3); 
     this.maxDate = this.formatDate(maxDate);
 
     this.selectedDate = this.minDate; // Default to today
@@ -83,7 +82,7 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
     ).subscribe(id => {
       this._technicianId = id;
       if (this._technicianId) {
-        this.onDateChange(); // Load slots for default date if technician ID is available
+        this.onDateChange(); 
       } else {
         this.errorMessage = 'Technician ID not found. Please log in.';
       }
@@ -95,11 +94,11 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  // --- Date and Time Slot Management ---
+ 
 
   onDateChange(): void {
-    this.selectedSlotToBlock = undefined; // Clear any selected slot
-    this.blockReason = ''; // Clear reason
+    this.selectedSlotToBlock = undefined; 
+    this.blockReason = ''; 
     this.errorMessage = null;
     this.successMessage = null;
     if (this._technicianId && this.selectedDate) {
@@ -121,7 +120,7 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingSlots = true;
-    this.availableSlots = []; // Clear previous slots
+    this.availableSlots = []; 
 
     this.http.get<{ success: boolean; slots: { start: string; end: string; id?: string; type: string; reason?: string }[] }>(
       `${this.API_BASE_URL}/available-slots?technicianId=${this._technicianId}&date=${date}`
@@ -139,10 +138,10 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
             let isAvailable = slot.type === 'available';
             let isEditable = slot.type === 'available' || slot.type === 'technician-blocked';
 
-            // Override availability for past slots on the current day
+           
             if (isPastSlot) {
               isAvailable = false;
-              isEditable = false; // Cannot block/unblock past slots
+              isEditable = false; 
             }
             
             return {
@@ -152,11 +151,11 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
               type: slot.type as 'available' | 'customer-booked' | 'technician-blocked',
               isAvailable: isAvailable,
               isEditable: isEditable,
-              googleEventId: slot.id, // Assuming 'id' from backend is Google's event ID
+              googleEventId: slot.id, 
               reason: slot.reason
             };
           });
-          // Sort slots by start time
+        
           this.availableSlots.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
         } else {
@@ -174,15 +173,15 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
 
   onSelectSlot(slot: TimeSlotDisplay): void {
     if (!slot.isEditable) {
-      return; // Cannot interact with customer-booked or past slots
+      return; 
     }
     this.selectedSlotToBlock = slot;
     this.blockReason = slot.type === 'technician-blocked' && slot.reason ? slot.reason : ''; // Pre-fill reason if unblocking
-    this.errorMessage = null; // Clear previous errors
-    this.successMessage = null; // Clear previous success
+    this.errorMessage = null; 
+    this.successMessage = null; 
   }
 
-  // --- Single Slot Blocking/Unblocking ---
+  
 
   blockOrUnblockSelectedSlot(): void {
     if (!this.selectedSlotToBlock || !this._technicianId) {
@@ -222,8 +221,8 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success) {
           this.successMessage = response.message;
-          this.onDateChange(); // Reload slots to reflect changes
-          this.selectedSlotToBlock = undefined; // Clear selected
+          this.onDateChange(); 
+          this.selectedSlotToBlock = undefined; 
           this.blockReason = '';
         } else {
           this.errorMessage = response.message || 'Failed to block slot.';
@@ -245,7 +244,7 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.successMessage = null;
 
-    // You would typically send a DELETE request for unblocking
+   
     this.http.delete<{ success: boolean; message: string }>(
       `${this.API_BASE_URL}/unblock-slot/${this._technicianId}/${googleEventId}`
     ).subscribe({
@@ -299,20 +298,20 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
 
     const payload = {
       technicianId: this._technicianId,
-      startDate: this.multiDayStartDate, // These are dates only
-      endDate: this.multiDayEndDate,     // These are dates only
+      startDate: this.multiDayStartDate, 
+      endDate: this.multiDayEndDate,     
       reason: this.multiDayReason,
-      isFullDay: true // Indicate to backend it's a full-day block for multiple days
+      isFullDay: true 
     };
 
     this.http.post<{ success: boolean; message: string }>(
-      `${this.API_BASE_URL}/block-multi-day-slots`, payload // New backend endpoint needed
+      `${this.API_BASE_URL}/block-multi-day-slots`, payload 
     ).subscribe({
       next: (response) => {
         if (response.success) {
           this.successMessage = response.message;
-          this.onDateChange(); // Reload current day's slots, other days will reflect when viewed
-          this.toggleMultiDayBlock(); // Collapse multi-day form
+          this.onDateChange();
+          this.toggleMultiDayBlock(); 
         } else {
           this.errorMessage = response.message || 'Failed to block multiple days.';
         }

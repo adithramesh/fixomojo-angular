@@ -65,7 +65,6 @@ export const authFeature = createFeature({
     on(AuthActions.resendOtp, state => ({ ...state, loading: true })),
     on(AuthActions.resendOtpSuccess, (state ) => ({
       ...state,
-      // tempUserId: response.tempUserId || state.tempUserId,
       loading: false,
       error: null,
     })),
@@ -92,8 +91,6 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.resetPassword, (state,{resetData}) => ({ 
       ...state, 
-      // resetToken:state.resetToken,
-      // tempUserId:resetData.tempUserId,
       loading: true 
     })),
     on(AuthActions.resetPasswordSuccess, (state) => ({

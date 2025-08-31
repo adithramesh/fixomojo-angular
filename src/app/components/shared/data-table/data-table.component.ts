@@ -18,8 +18,6 @@ export interface TableData {
   book?: any;
   edit?: any;
   totalAmount?: any;
-  // paymentStatus?: any;
-  // bookingStatus?: any;
   bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed";
   paymentStatus?: "Pending" | "Success" | "Failed";
   isCompleted?: any;
@@ -76,7 +74,7 @@ export class DataTableComponent {
   @Output() pageChange = new EventEmitter<number>();
   @Output() searchChange = new EventEmitter<string>();
   @Output() addItem = new EventEmitter<void>();
-  // Method to handle button clicks
+ 
 
   private _store = inject(Store)
   private _role!:string
@@ -104,7 +102,7 @@ export class DataTableComponent {
     this.dropdownChange.emit({ itemId, field, newValue });
   }
 
-  // Methods to handle pagination
+
   prevPage(): void {
     if (this.currentPage > 1) {
       this.pageChange.emit(this.currentPage - 1);
@@ -122,7 +120,7 @@ export class DataTableComponent {
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target) {
-        this.searchTerm = target.value; // Update searchTerm for two-way binding
+        this.searchTerm = target.value; 
         this.searchChange.emit(target.value);
       }
     } 
@@ -155,7 +153,7 @@ shouldShowCompleteButton(item: TableData): boolean {
 }
 
 shouldShowRateButton(item: TableData): boolean {
-  return item.bookingStatus === 'Completed'; // or item.isCompleted === 'Yes'
+  return item.bookingStatus === 'Completed'; 
 }
 
 private isToday(dateString: string): boolean {

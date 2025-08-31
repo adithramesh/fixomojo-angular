@@ -25,7 +25,6 @@ import { TasksComponent } from './components/partner/tasks/tasks.component';
 import { ActivitiesComponent } from './components/admin/activities/activities.component';
 import { UserProfileComponent } from './components/shared/user-profile/user-profile.component';
 import { VideoCallComponent } from './components/shared/video-call/video-call.component';
-// import { ChatComponent } from './components/shared/chat/chat.component';
 
 export const routes: Routes = [
     //user

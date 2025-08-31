@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 interface SidebarItem {
   label: string;
   route: string;
-  icon?: string; // For future use with icons
+  icon?: string; 
   children?: SidebarItem[];
 }
 

@@ -30,8 +30,6 @@ export class WalletComponent implements OnInit {
   currency = 'INR';
   isLoading!:boolean;
   error: string | null = null;
-  // transactions: any[] = [];
-  // transactionTableData: TableData[] = [];
   transactions!: Transaction; 
   transactionTableData: Transaction[] = []; 
   searchTerm: string = '';
@@ -52,12 +50,12 @@ export class WalletComponent implements OnInit {
       sortBy: 'createdAt',
       sortOrder: 'desc',
       searchTerm: '',
-      filter: {} // Will include serviceId if provided
+      filter: {} 
     };
     totalTransactions = 0;
     totalPages = 0;
 
-  // Define table columns for DataTableComponent
+
   tableColumns: TableColumn[] = [
     { header: 'Transaction Id', key: '_id', type: 'text', width: '15%' },
     { header: 'Date & Time', key: 'createdAt', type: 'date', width: '20%' },
@@ -72,7 +70,7 @@ export class WalletComponent implements OnInit {
       this.role = data['role'] || 'user';
     });
 
-    // this.userId=this._store.select(selectTempUserId)
+
 
     this.transactionService.countTransactions().subscribe(count=>{
       if(count){
@@ -140,8 +138,6 @@ export class WalletComponent implements OnInit {
               this.totalPages = Math.ceil( this.totalTransactions/this.pagination.pageSize);
               console.log("this.totalTransactions/this.pagination.pageSize",this.totalTransactions,this.pagination.pageSize);
               
-              // this.totalPages = response.totalPages;
-              // this.transactionTableData=response.transactionList
             
             } else {
                 console.error('Failed to fetch wallet transactions:', response);
@@ -150,7 +146,7 @@ export class WalletComponent implements OnInit {
       },
       error:(err)=>{
         console.error('Error loading transaction:', err);
-        //  this.walletBalance = 0;
+       
       }
     })
   }
@@ -175,7 +171,6 @@ export class WalletComponent implements OnInit {
   }
 
   onAddMoney(): void {
-    // Only for user/partner → redirect to Stripe/trigger payment
     if (!this.amountToAdd || this.amountToAdd < 10) {
     alert("Please enter a valid amount (₹10 or more)");
     return;
@@ -184,7 +179,7 @@ export class WalletComponent implements OnInit {
   this.walletService.rechargeWallet(this.amountToAdd).subscribe({
     next: (res) => {
       if (res.success && res.checkoutUrl) {
-        window.location.href = res.checkoutUrl; // redirect to Stripe
+        window.location.href = res.checkoutUrl; 
       } else {
         alert(res.message || "Something went wrong!");
       }

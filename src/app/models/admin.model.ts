@@ -5,7 +5,6 @@ export interface PaginationRequestDTO {
     sortOrder?: 'asc' | 'desc';
     searchTerm?: string;
     filter?:any;
-    // filter?: Record<string, any>;
   }
   
 export interface PaginatedResponseDTO<T> {
@@ -47,7 +46,6 @@ export interface ServiceResponseDTO {
   image?: string;
   description?: string;
   status: string;
-  // subServices: SubServiceResponseDTO[];
   createdAt?: string;
   updatedAt?: string;
 }

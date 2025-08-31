@@ -38,7 +38,3 @@ export const AuthActions = createActionGroup({
 export function signUpUser(signUpUser: any): import("rxjs").OperatorFunction<any, any> {
   throw new Error('Function not implemented.');
 }
-// export function signUpUser(signUpUser: any): import("rxjs").OperatorFunction<any, any> {
-//   throw new Error('Function not implemented.');
-// }
-// props<{ response: SignupResponseDTO }>

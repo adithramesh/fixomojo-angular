@@ -9,9 +9,9 @@ export interface SignupUserRequestDTO{
     phoneNumber: string; 
     password: string;
     role?: Role
-    serviceType?: string; // Optional field
-    adminCode?: string; // Optional, maybe for admin signup
-    department?: string; // Optional
+    serviceType?: string; 
+    adminCode?: string; 
+    department?: string; 
 }
 
 export interface SignupResponseDTO {

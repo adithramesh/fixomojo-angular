@@ -17,7 +17,7 @@ export class ActivitiesComponent {
    isLoading: boolean = true;
       bookingsTableColumns: TableColumn[] = [
         { header: 'Booking Number', key: 'id', type: 'text', width: '20%' },
-        { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, // Changed to subServiceId
+        { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, 
         { header: 'Service Name', key: 'subServiceName', type: 'text', width: '30%' },
         { header: 'Amount', key: 'totalAmount', type: 'text', width: '20%' },
         { header: 'Paid', key: 'paymentStatus', type: 'text', width: '20%' },
@@ -99,7 +99,7 @@ export class ActivitiesComponent {
         
         return {
           id: booking._id.toString().slice(18),
-          subServiceId: booking.subServiceId.slice(18), // Use subServiceId instead of serviceName
+          subServiceId: booking.subServiceId.slice(18), 
           subServiceName:booking.subServiceName,
           totalAmount: booking.totalAmount.toString(),
           paymentStatus: booking.paymentStatus,

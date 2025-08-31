@@ -12,7 +12,7 @@ type PaginatedBookingResponse = PaginatedResponseDTO<IBooking[]>;
 export interface BookingResponse {
   success: boolean;
   message: string;
-  bookingList?: PaginatedBookingResponse; // Use IBooking interface if available
+  bookingList?: PaginatedBookingResponse; 
 }
 
 @Injectable({

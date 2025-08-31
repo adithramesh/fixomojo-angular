@@ -20,7 +20,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private store = inject(Store);
-  private injector = inject(Injector); // Inject the Injector
+  private injector = inject(Injector); 
   private subscriptions: Subscription = new Subscription();
 
   // Expose service signals
@@ -45,10 +45,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   private unbindLocalVideo?: () => void;
   private unbindRemoteVideo?: () => void;
   private unbindRemoteAudio?: () => void;
-  private isInitialized = false; // Flag to prevent multiple runs
+  private isInitialized = false; 
 
   constructor() {
-    // No effects here to avoid multiple calls on constructor
+    
   }
 
   ngOnInit() {

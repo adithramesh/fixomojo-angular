@@ -531,12 +531,7 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                       const bookingData=response.data;
                       console.log("bookingData",bookingData );
                       
-                      // this._bookingService.setBookingData({
-                      //         bookingId: bookingData._id,
-                      //         technicianId: this.bookingForm.get('technician')?.value,
-                      //         startTime: bookingData.startTime,
-                      //         endTime: bookingData.endTime
-                      //       });
+                    
                         localStorage.setItem('bookingData', JSON.stringify({
                           bookingId: bookingData._id,
                           username:bookingData.username,
@@ -545,15 +540,14 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                           startTime: bookingData.timeSlotStart,
                           endTime: bookingData.timeSlotEnd
                         }));
-                        // this.currentBookingId = bookingData?._id;
-                        // console.log('Booking created with ID:', this.currentBookingId);
+                       
                         console.log("requires cash", bookingData?.requiresCash )
                         if(bookingData?.requiresCash=== false){
                           this.proceedToPayment(bookingData);
                         }else{
                           console.log("in else condition onSubmit()");
                           this.blockSlotAfterPayment()
-                          // this.showBookingConfirmation()
+                       
                         }
                     }else{
                       this._router.navigate(['/payment-success'],{
@@ -574,7 +568,7 @@ proceedToPayment(bookingData:any){
     if (bookingData.checkoutUrl) {
         console.log('Redirecting to payment page:', bookingData.checkoutUrl);
         window.location.href = bookingData.checkoutUrl;
-        // this._router.navigate(['/payment-success'])
+      
         //wallet logic
     } else {
         // console.error('No checkout URL provided:', bookingData);
@@ -600,11 +594,10 @@ private blockSlotAfterPayment(): void {
         end: selectedSlot.endTime,
         isCustomerBooking: true,
         reason: `Customer booking - ${this.currentBookingId}`,
-        bookingId: this.currentBookingId, // Link to booking record
+        bookingId: this.currentBookingId, 
   
     };
     
-    // this.http.post<{success: boolean, eventId: string, calendarId: string}>('http://localhost:3000/partner/block-slot', blockSlotPayload)
 
     this._bookingPageService.blockSlotAfterPayment(blockSlotPayload)
         .subscribe({
@@ -616,8 +609,7 @@ private blockSlotAfterPayment(): void {
             },
             error: (err) => {
                 console.error('Failed to block slot after payment:', err);
-                // Handle this - payment succeeded but slot blocking failed
-                // You might want to trigger a retry mechanism
+          
             }
         });
 }
@@ -626,14 +618,13 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
     const updatePayload = {
         googleEventId: eventId,
         googleCalendarId: calendarId,
-        bookingStatus: 'Confirmed' // Now fully confirmed
+        bookingStatus: 'Confirmed' 
     };
     
     this.http.patch(`/api/bookings/${this.currentBookingId}`, updatePayload)
         .subscribe({
             next: (response) => {
                 console.log('Booking fully confirmed!');
-                // this.showBookingConfirmation();
             
             },
             error: (err) => {

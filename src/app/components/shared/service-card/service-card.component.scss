@@ -8,7 +8,6 @@
   padding: 0;
   width: 100%;
   max-width: 320px;
-  // height: 420px; // Increased height to ensure button visibility
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
@@ -28,8 +27,8 @@
     }
 
     h3 {
-      min-height: unset; // Remove fixed height for title
-      -webkit-line-clamp: 1; // Single line for title
+      min-height: unset; 
+      -webkit-line-clamp: 1; 
     }
   }
 
@@ -161,18 +160,18 @@
   }
 
   @media (max-width: 768px) {
-    height: 380px; // Adjusted for mobile
+    height: 380px; 
     max-width: 280px;
 
     &.home-page {
-      height: 260px; // Smaller height for mobile home page
+      height: 260px; 
       img {
-        height: 200px; // Adjusted image height
+        height: 200px; 
       }
     }
 
     img {
-      height: 160px; // Adjusted for mobile
+      height: 160px; 
     }
 
     .card-content {

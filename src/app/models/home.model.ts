@@ -5,6 +5,6 @@ export interface HomeResponseDTO {
     serviceId: string;
     serviceName: string;
   }[];
-  subServices?: string[]; // keep if needed
-  offers?: string[];      // keep if needed
+  subServices?: string[]; 
+  offers?: string[];      
 }

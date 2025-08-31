@@ -1,5 +1,4 @@
-// user-profile.component.ts
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, inject, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -12,10 +11,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
-import { SidebarComponent } from '../../admin/side-bar/side-bar.component';
 import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-side-bar.component';
 import { selectUserRole } from '../../../store/auth/auth.reducer';
-// import { ToastrService } from 'ngx-toastr';
+
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
 
@@ -42,7 +40,7 @@ export class UserProfileComponent implements OnInit {
   private _imageUrlService = inject(ImageUrlService);
   private _router = inject(Router)
   private route= inject(ActivatedRoute)
-  // private _toastr = inject(ToastrService);
+ 
 
   pondOptions = {
     allowMultiple: false,
@@ -90,7 +88,7 @@ export class UserProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching profile:', err);
-        // this._toastr.error('Failed to load profile');
+
       }
     });
   }
@@ -99,13 +97,13 @@ export class UserProfileComponent implements OnInit {
     const file = event.file?.file;
     if (file) {
       this.selectedFile = file;
-      this.imagePreviewUrl = URL.createObjectURL(file); // Preview selected file
+      this.imagePreviewUrl = URL.createObjectURL(file); 
     }
   }
 
   pondHandleRemoveFile(): void {
     this.selectedFile = null;
-    this.loadUserProfile(); // Restore original image
+    this.loadUserProfile(); 
   }
 
   onSubmit(): void {
@@ -124,14 +122,14 @@ export class UserProfileComponent implements OnInit {
     this._http.put(`${environment.BACK_END_API_URL}/user/update-profile`, formData).subscribe({
       next: () => {
         this.isSubmitting = false;
-        // this._toastr.success('Profile updated successfully');
+        
       
-        this.loadUserProfile(); // Refresh data
+        this.loadUserProfile(); 
       },
       error: (err) => {
         console.error('Error updating profile:', err);
         this.isSubmitting = false;
-        // this._toastr.error('Failed to update profile');
+       
       }
     });
   }

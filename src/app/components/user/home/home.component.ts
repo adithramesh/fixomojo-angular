@@ -6,8 +6,8 @@ import {
   selectPhoneNumber,
   selectUsername,
 } from '../../../store/auth/auth.reducer';
-import { AdminService } from '../../../services/admin.service'; // Changed from HomeService
-import { PaginatedResponseDTO, ServiceResponseDTO } from '../../../models/admin.model'; // Updated imports
+import { AdminService } from '../../../services/admin.service'; 
+import { PaginatedResponseDTO, ServiceResponseDTO } from '../../../models/admin.model'; 
 import { CommonModule } from '@angular/common';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { Router } from '@angular/router';
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         .pipe(tap(() => (this.isLoading = false)))
         .subscribe({
           next: (response: PaginatedResponseDTO<ServiceResponseDTO[]>) => {
-            this.featuredServices = response.items.filter(service => service.status === 'active');; // Get services from paginated response
+            this.featuredServices = response.items.filter(service => service.status === 'active');; 
             console.log("featured service", this.featuredServices); 
             this.error = null;
           },
