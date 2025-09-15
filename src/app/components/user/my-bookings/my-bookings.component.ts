@@ -61,9 +61,7 @@ export class MyBookingsComponent implements OnInit {
   constructor(private bookingService: BookingService) {}
 
   ngOnInit(): void {
- 
 
-     console.log('🔁 ngOnInit called in MyBookingsComponent');
    this._store.select(selectTempUserId).subscribe(id => {
                   if (id) {
                     this._currentUserId = id;
@@ -96,10 +94,8 @@ export class MyBookingsComponent implements OnInit {
       this.bookingService.bookingUpdated$
         .pipe(filter(updatedBooking => updatedBooking !== null))
         .subscribe((updatedBooking: TableData) => {
-          console.log('📥 Received booking update via Subject:', updatedBooking);
           const index = this.bookingsTableData.findIndex(b => b.id === updatedBooking.id)
           if (index !== -1) {
-            console.log("booking status updated to ", updatedBooking.bookingStatus);
             this.bookingsTableData[index].bookingStatus = updatedBooking.bookingStatus
             this.bookingsTableData[index].isCompleted = updatedBooking.isCompleted
           }
@@ -115,8 +111,7 @@ export class MyBookingsComponent implements OnInit {
       next: (response: BookingResponse) => {
         // Check if response and bookingList exist
        if (response.success && response.bookingList?.items) {
-        // console.log("bookingList", response.bookingList.items);
-        
+       
           this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
           // this.totalBookings = response.bookingList.length; // Fallback; update if backend provides total
           this.totalBookings = response.bookingList.total;
@@ -143,13 +138,13 @@ export class MyBookingsComponent implements OnInit {
   }
 
   mapBookingsToTableData(booking: any): TableData {
-    // console.log("booking", booking._id.toString());
     
     return {
-      id: booking._id.toString(),
-      displayId: booking._id.toString().slice(18),
-      subServiceId: booking.subServiceId.slice(18), // Use subServiceId instead of serviceName
+      id: booking.id,
+      displayId: booking.id.slice(18),
+      subServiceId: booking.subServiceId.slice(18), 
       subServiceName:booking.subServiceName,
+      technicianId:booking.Id,
       totalAmount: booking.totalAmount.toString(),
       paymentStatus: booking.paymentStatus,
       bookingStatus: booking.bookingStatus,
@@ -199,7 +194,6 @@ export class MyBookingsComponent implements OnInit {
 
   private getValidToken(): string | null {
   const _authToken = localStorage.getItem('access_token');
-  console.log('Token from localStorage:', _authToken);
   
   if (!_authToken) {
     console.error('No token found');

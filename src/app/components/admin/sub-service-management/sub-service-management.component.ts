@@ -73,16 +73,12 @@ export class SubServiceManagementComponent {
         debounceTime(300),
         distinctUntilChanged()
       ).subscribe(searchTerm => {
-        console.log('searchTerm', searchTerm);
         this.searchTerm = searchTerm;
         this.pagination.searchTerm = searchTerm;
         this.pagination.page = 1;
-        console.log('loadSubServices called');
         this.loadSubServices();
       })
     );
-
-    console.log('Initial loadSubServices called');
   }
   ngOnDestroy() {
     this._subscription.unsubscribe();
@@ -91,8 +87,6 @@ export class SubServiceManagementComponent {
 
     loadSubServices(): void {
     this.isLoading = true;
-    console.log('this.pagination', this.pagination);
-    console.log('this.searchTerm', this.searchTerm);
     this._subscription.add(
       this._adminService.getSubServices(this.pagination).subscribe({
         next: (response) => {
@@ -140,8 +134,6 @@ export class SubServiceManagementComponent {
     const subServiceId = event.item.id;
     switch (event.action) {
       case 'edit':
-      
-        console.log('Editing sub-service:', subServiceId);
         this._router.navigate([`/edit-sub-service/${subServiceId}`]).then(success => {
         if (!success) {
           console.error('Navigation to edit-sub-service failed');
@@ -149,7 +141,6 @@ export class SubServiceManagementComponent {
       });
         break;
       case 'block':
-        console.log('Blocking sub-service:', subServiceId);
         this._adminService.changeSubServiceStatus(subServiceId).subscribe({
           next: (response: SubServiceResponseDTO) => {
             const index = this.subServiceTableData.findIndex(subService => subService.id === subServiceId);

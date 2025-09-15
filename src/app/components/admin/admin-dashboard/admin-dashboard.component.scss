@@ -28,6 +28,85 @@
     }
   }
 
+      .filter-row {
+      margin: 1rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      label {
+        font-size: 0.9rem;
+        color: var.$text-color;
+
+        input {
+          margin-left: 0.5rem;
+          padding: 0.4rem;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+        }
+      }
+
+      button {
+        background: linear-gradient(90deg, #14a44d, #0f9b42);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        
+
+        &:hover {
+          background: linear-gradient(90deg, #0f9b42, #0c7b34);
+        }
+      }
+
+      .reset {
+        background:var.$purple;;
+        color:#fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        &:hover {
+          background: #e0e0e0;
+        }
+      }
+      
+    }
+
+    .download-row {
+      margin: 1rem 0 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+
+      .download-btn {
+        background: linear-gradient(90deg, #1e88e5, #167bd6);
+        color: #fff;
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: linear-gradient(90deg, #1565c0, #0f4c81);
+        }
+
+        &.pdf {
+          background: linear-gradient(90deg, #e53935, #c62828);
+
+          &:hover {
+            background: linear-gradient(90deg, #b71c1c, #8e0000);
+          }
+        }
+      }
+    }
+
+
   .status-row {
     margin: 1rem 0;
     .loading {
@@ -119,8 +198,34 @@
     }
   }
 
+  .download-row {
+  margin: 1rem 0 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+
+  .download-btn {
+    background: linear-gradient(90deg, #1e88e5, #167bd6);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(90deg, #1565c0, #0f4c81);
+    }
+  }
+
+  
+}
+
+
   @media (max-width: 900px) {
     .charts-row { grid-template-columns: 1fr; }
     .main-content { margin-left: 0; padding: 1rem; }
   }
 }
+

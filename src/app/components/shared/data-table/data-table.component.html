@@ -3,11 +3,12 @@
   <h2 *ngIf="title">{{ title }}</h2>
 
     <!-- Table controls: Search and Add button -->
-  <div class="table-controls" *ngIf="!isLoading && tableData.length > 0">
+  <div class="table-controls" *ngIf="!isLoading && (tableData.length > 0 || showAddButton)">
     <input
       *ngIf="showSearch"
+      #searchInput
       type="text"
-      [(ngModel)]="searchTerm"
+      [value]="searchTerm"
       (input)="onSearchChange($event)"
       [placeholder]="searchPlaceholder"
       class="search-input"
@@ -60,6 +61,7 @@
                     class="table-image"
                     (click)="onImageClick(item)"
                     (error)="onImageError($event)"
+                    loading="lazy"
                   />
                   <div
                     *ngIf="!item[column.key]"

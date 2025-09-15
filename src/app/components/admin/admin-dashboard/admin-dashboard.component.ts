@@ -7,14 +7,19 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.reducer';
 import { AdminDashboardResponseDTO } from '../../../models/dashboard.model';
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartData, ChartOptions, ChartType } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [SidebarComponent, CommonModule, NavBarComponent, BaseChartDirective],
+  imports: [SidebarComponent, CommonModule,FormsModule, NavBarComponent, BaseChartDirective],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
 })
@@ -28,6 +33,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   isLoading = true;
   error: string | null = null;
+  private subscription?: Subscription;
+
+  // Filters
+  startDate: string = '';
+  endDate: string = '';
+  today: string = new Date().toISOString().split('T')[0];
 
   // Pie Chart
   public pieChartOptions: ChartOptions<'pie'> = { responsive: true, maintainAspectRatio: false };
@@ -45,18 +56,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   };
   public lineChartOptions: ChartOptions<'line'> = { responsive: true };
   public lineChartLegend = true;
-  // public lineChartType: ChartType = 'line';
   public lineChartType: 'line' = 'line';
-
   public lineChartPlugins: any[] = [];
-
-  private subscription?: Subscription;
 
   ngOnInit(): void {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber);
 
-    this.dashboard$ = this._dashboardService.getAdminDashboard().pipe(
+    this.loadDashboard();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  loadDashboard(startDate?: string, endDate?: string): void {
+    this.dashboard$ = this._dashboardService.getAdminDashboard(startDate, endDate).pipe(
       map((data) => {
         this.pieChartData = {
           labels: data.bookingStatusDistribution?.map(i => i.status) ?? [],
@@ -78,7 +93,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         };
 
         return data;
-      })
+      }),
+       shareReplay(1)
     );
 
     this.subscription = this.dashboard$.subscribe({
@@ -94,7 +110,75 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+  applyFilter(): void {
+    this.loadDashboard(this.startDate, this.endDate);
+  }
+
+  resetFilter(): void {
+      this.startDate = '';
+      this.endDate = '';
+      this.loadDashboard(); // reload without filter
+    }
+
+  downloadSalesReportExcel(): void {
+    this.dashboard$.subscribe((data) => {
+      if (!data) return;
+
+      const rows = [
+        ["SALES REPORT SUMMARY"],
+        ["Total Revenue", data.totalRevenue],
+        ["Total Bookings", data.totalBookings],
+        ["Active Partners", data.activePartners],
+        ["Total Customers", data.totalCustomers],
+        [],
+        ["Booking Status Distribution"],
+        ...(data.bookingStatusDistribution?.map(b => [b.status, b.count]) || []),
+        [],
+        ["Revenue Trends (Last 8 Weeks)"],
+        ["Week", "Total Revenue"],
+        ...(data.revenueTrends?.map(r => [`Week ${r.week}`, r.totalRevenue]) || [])
+      ];
+
+      const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(rows);
+      const workbook: XLSX.WorkBook = { Sheets: { 'SalesReport': worksheet }, SheetNames: ['SalesReport'] };
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const file: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+      saveAs(file, `Sales_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+    });
+  }
+
+  downloadSalesReportPDF(): void {
+    this.dashboard$.subscribe((data) => {
+      if (!data) return;
+
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Sales Report Summary', 14, 22);
+
+      autoTable(doc, {
+        startY: 30,
+        head: [['Metric', 'Value']],
+        body: [
+          ['Total Revenue', data.totalRevenue],
+          ['Total Bookings', data.totalBookings],
+          ['Active Partners', data.activePartners],
+          ['Total Customers', data.totalCustomers]
+        ]
+      });
+
+      autoTable(doc, {
+        startY: (doc as any).lastAutoTable.finalY + 10,
+        head: [['Status', 'Count']],
+        body: data.bookingStatusDistribution?.map(b => [b.status, b.count]) || []
+      });
+
+      autoTable(doc, {
+        startY: (doc as any).lastAutoTable.finalY + 10,
+        head: [['Week', 'Total Revenue']],
+        body: data.revenueTrends?.map(r => [`Week ${r.week}`, r.totalRevenue]) || []
+      });
+
+      doc.save(`Sales_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    });
   }
 }

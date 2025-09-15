@@ -16,7 +16,7 @@ export interface BackendSlotResponse {
 export class BookingPageService {
   private partnerApiUrl = `${environment.BACK_END_API_URL}/partner`;
   private userApiUrl = `${environment.BACK_END_API_URL}/user`;
-
+  private offerApiUrl = `${environment.BACK_END_API_URL}/offer`;
   constructor(private http: HttpClient) {}
 
 
@@ -32,6 +32,11 @@ export class BookingPageService {
       `${this.partnerApiUrl}/available-slots`,
       { params }
     );
+  }
+
+  applyBestOffer(price:number):Observable<{discountAmount:number, appliedOfferName:string, finalAmount:number}>{
+    const params = new HttpParams().set('price', price.toString());
+    return this.http.get<{discountAmount:number, appliedOfferName:string, finalAmount:number}>(`${this.offerApiUrl}/check-offer`,{params})
   }
 
 

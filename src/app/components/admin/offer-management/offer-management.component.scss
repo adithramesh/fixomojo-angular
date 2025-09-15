@@ -1,0 +1,112 @@
+@use 'sass:color' as color;
+@use 'variables' as var;
+@use 'forms' as forms;
+@use 'buttons' as buttons;
+
+.offer-management {
+  padding: var.$spacing-lg;
+  background-color: var.$white;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+
+  h2 {
+    font-family: var.$title-font;
+    font-size: var.$font-size-lg;
+    margin-bottom: var.$spacing-md;
+  }
+
+  .filter-section {
+    display: flex;
+    gap: var.$spacing-md;
+    margin-bottom: var.$spacing-lg;
+
+    .search-input {
+      @include forms.input-style;
+      width: 200px;
+    }
+
+    .filter-form select {
+      @include forms.input-style;
+      width: 150px;
+    }
+
+    .add-button {
+      @include buttons.button-style(var.$success-green);
+      width: auto;
+      padding: var.$spacing-sm var.$spacing-md;
+
+      &:hover:not(:disabled) {
+        // background-color: darken(var.$success-green, 10%);
+        background-color: color.adjust(var.$success-green, $lightness: -10%)
+      }
+    }
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var.$spacing-md;
+
+    th, td {
+      padding: var.$spacing-sm;
+      text-align: left;
+      border-bottom: 1px solid var.$border-color;
+    }
+
+    th {
+      background-color: var.$input-bg;
+      font-weight: var.$font-weight-semibold;
+    }
+
+    .status-active {
+      color: var.$success-green;
+      font-weight: var.$font-weight-semibold;
+    }
+
+    .status-inactive {
+      color: var.$error-red;
+      font-weight: var.$font-weight-semibold;
+    }
+
+    .action-button {
+      @include buttons.button-style(var.$purple);
+      margin-right: var.$spacing-sm;
+      padding: var.$spacing-xs var.$spacing-sm;
+
+      &:hover:not(:disabled) {
+        // background-color: darken(var.$purple, 10%);
+        background-color: color.adjust(var.$purple, $lightness: -10%)
+      }
+    }
+
+    .block-button {
+      background-color: var.$error-red;
+
+      &:hover:not(:disabled) {
+        // background-color: darken(var.$error-red, 10%);
+        background-color:color.adjust(var.$error-red, $lightness: -10%);
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: var.$spacing-md;
+
+    button {
+      @include buttons.button-style(var.$purple);
+      padding: var.$spacing-xs var.$spacing-sm;
+
+      &:disabled {
+        background-color: var.$disabled-bg;
+        cursor: not-allowed;
+      }
+    }
+
+    span {
+      align-self: center;
+      font-size: var.$font-size-sm;
+    }
+  }
+}

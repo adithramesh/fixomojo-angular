@@ -1,13 +1,15 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Subscription, Observable, interval } from 'rxjs';
+import { tap, switchMap } from 'rxjs/operators';
 import {
   selectPhoneNumber,
   selectUsername,
 } from '../../../store/auth/auth.reducer';
 import { AdminService } from '../../../services/admin.service'; 
+import { OfferService } from '../../../services/offer.service';
 import { PaginatedResponseDTO, ServiceResponseDTO } from '../../../models/admin.model'; 
+import { OfferDataRequestDTO } from '../../../models/offer.model';
 import { CommonModule } from '@angular/common';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { Router } from '@angular/router';
@@ -28,11 +30,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   phoneNumber$!: Observable<string | null>;
 
   featuredServices: ServiceResponseDTO[] = []; 
+  offers: OfferDataRequestDTO[] = [];
+  currentSlide = 0;
+  showOffers = false;
   isLoading = true;
   error: string | null = null;
 
   private _store = inject(Store);
   private _adminService = inject(AdminService); 
+  private _offerService = inject(OfferService);
   private _subscription: Subscription = new Subscription();
   private _router = inject(Router)
   public _imageUrlService = inject(ImageUrlService)
@@ -40,17 +46,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
- 
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber);
     
-
     this.loadFeaturedServices();
+    this.loadOffers();
+    this.startCarousel();
   }
   
- 
   loadFeaturedServices() {
-  
     const pagination = {
       page: 1,
       pageSize: 6, 
@@ -64,8 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         .pipe(tap(() => (this.isLoading = false)))
         .subscribe({
           next: (response: PaginatedResponseDTO<ServiceResponseDTO[]>) => {
-            this.featuredServices = response.items.filter(service => service.status === 'active');; 
-            console.log("featured service", this.featuredServices); 
+            this.featuredServices = response.items.filter(service => service.status === 'active');
             this.error = null;
           },
           error: (error) => {
@@ -77,13 +80,90 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  loadOffers() {
+    this._subscription.add(
+      this._offerService.getAllOffers(1, 10, 'createdAt', 'desc', { status: 'Active' })
+        .subscribe({
+          next: (response) => {
+            if (response.success && response.data?.offers) {
+              this.offers = response.data.offers.filter((offer: OfferDataRequestDTO) => 
+                offer.status === 'Active' && 
+                (!offer.valid_until || new Date(offer.valid_until) > new Date())
+              );
+            }
+          },
+          error: (error) => {
+            console.error('Error loading offers:', error);
+          }
+        })
+    );
+  }
 
+  startCarousel() {
+    // Show welcome for 3 seconds, then start offer carousel
+    setTimeout(() => {
+      if (this.offers.length > 0) {
+        this.showOffers = true;
+        this.startOfferRotation();
+      }
+    }, 3000);
+  }
+
+  startOfferRotation() {
+    if (this.offers.length <= 1) return;
+
+    this._subscription.add(
+      interval(4000).subscribe(() => {
+        this.nextSlide();
+      })
+    );
+  }
+
+  nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % (this.offers.length + 1);
+    
+    // If we've cycled through all offers, show welcome again
+    if (this.currentSlide === 0) {
+      this.showOffers = false;
+      setTimeout(() => {
+        this.showOffers = true;
+        this.currentSlide = 1;
+      }, 3000);
+    }
+  }
+
+  prevSlide() {
+    if (this.currentSlide === 0) {
+      this.currentSlide = this.offers.length;
+    } else {
+      this.currentSlide = this.currentSlide - 1;
+    }
+    
+    this.showOffers = this.currentSlide > 0;
+  }
+
+  goToSlide(index: number) {
+    this.currentSlide = index;
+    this.showOffers = index > 0;
+  }
+
+  getCurrentOffer(): OfferDataRequestDTO | null {
+    if (this.showOffers && this.offers.length > 0 && this.currentSlide > 0) {
+      return this.offers[this.currentSlide - 1] || null;
+    }
+    return null;
+  }
+
+  getDiscountText(offer: OfferDataRequestDTO): string {
+    return offer.discount_type === 'percentage' 
+      ? `${offer.discount_value}% OFF`
+      : `₹${offer.discount_value} OFF`;
+  }
 
   viewAllServices(): void {
     this._router.navigate(['/services']);
   }
 
- 
   viewService(service: ServiceResponseDTO): void {
     this._router.navigate(['/services'], {
       queryParams: {

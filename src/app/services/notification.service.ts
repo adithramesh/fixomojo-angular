@@ -1,5 +1,3 @@
-// src/app/core/services/notification.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -86,6 +84,10 @@ export class NotificationService {
     return this.http.get<BackendSuccessResponse<{ count: number }>>(`${this.apiUrl}/unread-count`);
   }
 
+/**
+ *
+ * request and response details to added (as per the coding std format) 
+ */
 
   markAsRead(notificationId: string, actionTaken?:string): Observable<BackendSuccessResponse<any>> {
     return this.http.put<BackendSuccessResponse<any>>(`${this.apiUrl}/${notificationId}/read`, {actionTaken});

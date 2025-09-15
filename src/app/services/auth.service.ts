@@ -17,7 +17,6 @@ export class AuthService {
   }
 
   verifyOtp(otpData: OtpRequestDTO): Observable<SignupResponseDTO> {
-    console.log('Sending verifyOtp request to:', `${this.apiUrl}verify-otp`, 'with data:', otpData);
     return this.http.post<SignupResponseDTO>(`${this.apiUrl}verify-otp`, otpData);
   }
 

@@ -77,7 +77,6 @@ export class NavBarComponent implements OnInit {
     localStorage.removeItem('refresh_token');
     this._notificationSocketService.disconnect();
     this._router.navigate(['/login']);
-    console.log('User logged out successfully');
   }
 
   navigateToMyProfile():void {
@@ -185,9 +184,7 @@ markAsRead(notificationId: string, actionTaken?: string): void {
     })
   );
 }
-  markAllNotificationsAsRead(): void {
-    console.log("this.unreadNotificationCount ", this.unreadNotificationCount );
-    
+  markAllNotificationsAsRead(): void {    
     if (this.unreadNotificationCount > 0) { 
       this.subscriptions.add(
         this._notificationService.markAllAsRead().subscribe({

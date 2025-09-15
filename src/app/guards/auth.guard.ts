@@ -20,8 +20,6 @@ export const dontGoBack: CanActivateFn = (route,state) => {
   return store.select(selectTempUserId).pipe(
     take(1),
     map((tempUserId:string | null)=>{
-      console.log("token || tempUserId", token, tempUserId);
-      
       const isOtpRoute = route.routeConfig?.path === 'signup/verify-otp' || route.routeConfig?.path === 'forgot-password/verify-otp';
       if (isOtpRoute && tempUserId) {
         return true;
@@ -42,7 +40,6 @@ export const RoleGuard:CanActivateFn = (route,state)=>{
   const token = isPlatformBrowser(platformId) ? localStorage.getItem('access_token') : null;
 
   if(!token){ 
-    console.log("1");
     // router.navigate(['/login'])
     return false
   }
@@ -50,20 +47,16 @@ export const RoleGuard:CanActivateFn = (route,state)=>{
   try {
     const decodedToken =jwtHelper.decodeToken(token);
     const userRole=decodedToken.role;
-    console.log("userRole @ authguard", userRole);
 
     const allowedRoles = route.data['allowedRoles'] as string[];
     if(!allowedRoles || allowedRoles.includes(userRole)){
-      console.log("2");
       return true
     }else {
-      console.log("3");
       router.navigate(['/login'])
       return false
     }
   } catch (error) {
     console.error('Error decoding token:', error);
-    console.log("4");
     router.navigate(['/login']);
     return false;
   }

@@ -12,6 +12,7 @@ export interface ChatState {
   currentUserRole: 'user' | 'partner' | null;
   isLoading: boolean;
   error: string | null;
+  counterPartyName?: string | null; 
 }
 
 export interface ChatData {
@@ -20,6 +21,7 @@ export interface ChatData {
   userRole: 'user' | 'partner';
   customerName?: string;
   serviceName?: string;
+  technicianName?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -90,6 +92,12 @@ export class ChatService {
       // Load chat history
       const messages = await this.loadChatHistory(chatData.bookingId);
 
+      let counterPartyName = null;
+      if (chatData.userRole === 'user') {
+        counterPartyName = chatData.technicianName || 'Technician'; 
+      } else if (chatData.userRole === 'partner') {
+        counterPartyName = chatData.customerName || 'Customer';
+      }
       // Subscribe to new messages
       this.subscribeToMessages();
 
@@ -101,7 +109,8 @@ export class ChatService {
         currentUserRole: chatData.userRole,
         messages,
         isLoading: false,
-        error: null
+        error: null,
+        counterPartyName 
       });
 
     } catch (error: any) {

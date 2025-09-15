@@ -84,7 +84,6 @@ export class LocationComponent {
       next: (coords) => {
         this.currentLatitude = coords.latitude;
         this.currentLongitude = coords.longitude;
-        console.log("Latitude, Longitude:", this.currentLatitude, this.currentLongitude);
       },
       error: (err) => {
         this.errorMessage = `Error getting location: ${err.message || err}`;
@@ -102,10 +101,8 @@ export class LocationComponent {
   }
 
   updateLatLon(){
-    console.log("inside lat lon");
      console.trace("TRACE: updateLatLon called");
     this._userId.subscribe((id)=>{
-      console.log("User ID received:", id);
       if(!id ) return
       let locationToSend;
       if(this.selectedAddressDetails){
@@ -127,7 +124,7 @@ export class LocationComponent {
 
     this._locationService.updateTechnicianWithLocation(id,locationToSend).subscribe({
       next:(res)=>{
-        console.log("Technician location saved", res);
+        // console.log("Technician location saved", res);
         this._router.navigate(['/partner-dashboard'])
       },
       error:(err)=>{

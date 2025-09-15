@@ -27,6 +27,7 @@ export class SidebarComponent {
     { label: 'Services', route: '/service-management',icon: 'category' },
     { label: 'Sub-Services', route: '/sub-service-management',icon: 'build' },
     { label: 'Activities', route: '/activities',icon: 'task_alt'},
+    { label: 'Offers', route: '/offers',icon: 'discount'},
     { label: 'Revenue', route: '/admin-wallet',icon: 'money' },
   ];
 }

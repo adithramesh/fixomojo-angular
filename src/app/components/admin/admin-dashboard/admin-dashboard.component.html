@@ -1,6 +1,3 @@
-
-
-
 <app-nav-bar></app-nav-bar>
 
 <div class="admin-dashboard">
@@ -11,13 +8,35 @@
       <p class="subtitle">Welcome to your admin dashboard</p>
     </div>
 
+
+    <div class="filter-row" *ngIf="!isLoading && !error">
+      <label>
+        Start Date:
+        <input type="date" [(ngModel)]="startDate" [max]="today" />
+      </label>
+      <label>
+        End Date:
+        <input type="date" [(ngModel)]="endDate" [max]="today" />
+      </label>
+      <button (click)="applyFilter()">Apply</button>
+      <button class="reset" (click)="resetFilter()">Reset</button>
+    </div>
+
+ 
+    <div class="download-row" *ngIf="!isLoading && !error">
+      <button class="download-btn" (click)="downloadSalesReportExcel()">⬇️ Excel</button>
+      <button class="download-btn pdf" (click)="downloadSalesReportPDF()">⬇️ PDF</button>
+    </div>
+
+   
+
+
     <div class="status-row" *ngIf="isLoading">
       <div class="loading">Loading dashboard...</div>
     </div>
     <div class="status-row error" *ngIf="error">{{ error }}</div>
 
-    <div class="stat-grid" *ngIf="!isLoading && !error">
-      <!-- Stats cards -->
+    <!-- Stats -->
     <div class="stat-grid" *ngIf="!isLoading && !error">
       <div class="stat-card revenue">
         <div class="stat-left">
@@ -53,10 +72,9 @@
         <div class="stat-icon">👥</div>
       </div>
     </div>
-    </div>
 
+    <!-- Charts -->
     <div class="charts-row" *ngIf="!isLoading && !error">
-      
       <!-- Pie Chart -->
       <div class="chart-card">
         <div class="card-header"><h3>Booking Status Distribution</h3></div>
@@ -93,6 +111,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>

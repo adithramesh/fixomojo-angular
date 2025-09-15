@@ -66,9 +66,7 @@ export class ActivitiesComponent {
         this.bookingService.getAllBookingsForAdmin(this.pagination).subscribe({
           next: (response: BookingResponse) => {
            
-           if (response.success && response.bookingList?.items) {
-            console.log("bookingList", response.bookingList.items);
-            
+           if (response.success && response.bookingList?.items) {  
               this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
             
               this.totalBookings = response.bookingList.total;
@@ -95,7 +93,6 @@ export class ActivitiesComponent {
       }
     
       mapBookingsToTableData(booking: any): TableData {
-        console.log("booking", booking._id.toString());
         
         return {
           id: booking._id.toString().slice(18),

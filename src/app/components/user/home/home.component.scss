@@ -12,43 +12,179 @@
   flex-direction: column;
   gap: var.$spacing-xl;
 
-  // Welcome Section - Centered and prominent
+ 
   .welcome-section {
     text-align: center;
-    
-    .welcome-card {
+
+    .carousel-container {
+      position: relative;
       background-color: var.$white;
-      border-radius: var.$border-radius-md;
-      box-shadow: var.$box-shadow-sm;
-      padding: var.$spacing-xl;
-      max-width: 600px;
+      border-radius: var.$border-radius-lg;
+      box-shadow: var.$box-shadow-md;
+      padding: var.$spacing-xl var.$spacing-lg;
+      max-width: 650px;
       margin: 0 auto;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
 
-      h1 {
-        font-family: var.$title-font;
-        font-size: 2rem;
-        color: var.$text-color;
-        margin-bottom: var.$spacing-sm;
-        font-weight: var.$font-weight-bold;
+      /* Welcome Card */
+      .welcome-card {
+        text-align: center;
+
+        h1 {
+          font-family: var.$title-font;
+          font-size: 2rem;
+          font-weight: var.$font-weight-bold;
+          color: var.$text-color;
+          margin-bottom: var.$spacing-sm;
+        }
+
+        p {
+          font-family: var.$primary-font;
+          font-size: var.$font-size-md;
+          color: var.$gray-text;
+          margin: 0.25rem 0;
+        }
+
+        .subtitle {
+          font-size: var.$font-size-lg;
+          font-weight: var.$font-weight-semibold;
+          margin-top: var.$spacing-md;
+          color: var.$text-color;
+        }
       }
 
-      p {
-        font-family: var.$primary-font;
-        font-size: var.$font-size-md;
-        color: var.$gray-text;
-        margin-bottom: var.$spacing-xs;
+      /* Offer Card */
+      .offer-card {
+        text-align: center;
+
+        .offer-content {
+          padding: var.$spacing-md 0;
+
+          .offer-badge {
+            background: linear-gradient(
+              135deg,
+              var.$purple,
+              color.adjust(var.$purple, $lightness: 20%)
+            );
+            color: var.$white;
+            border-radius: var.$border-radius-lg;
+            padding: var.$spacing-xs var.$spacing-md;
+            display: inline-block;
+            margin-bottom: var.$spacing-sm;
+            box-shadow: 0 4px 12px rgba(138, 79, 255, 0.3);
+
+            .discount-text {
+              font-family: var.$title-font;
+              font-size: var.$font-size-lg;
+              font-weight: var.$font-weight-bold;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+          }
+
+          h2 {
+            font-family: var.$title-font;
+            font-size: 1.6rem;
+            font-weight: var.$font-weight-bold;
+            color: var.$text-color;
+            margin-bottom: var.$spacing-xs;
+          }
+
+          .offer-description {
+            font-family: var.$primary-font;
+            font-size: var.$font-size-md;
+            color: var.$gray-text;
+            line-height: 1.5;
+            margin-bottom: var.$spacing-sm;
+          }
+
+          .offer-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var.$spacing-md;
+            font-family: var.$primary-font;
+            font-size: var.$font-size-sm;
+            margin-top: var.$spacing-sm;
+
+            .min-amount,
+            .max-discount {
+              color: var.$success-green;
+              font-weight: var.$font-weight-semibold;
+            }
+
+            .validity {
+              color: var.$error-red;
+              font-weight: var.$font-weight-semibold;
+            }
+          }
+        }
       }
 
-      .subtitle {
-        font-size: var.$font-size-xl;
-        color: var.$text-color;
-        font-weight: var.$font-weight-semibold;
-        margin-top: var.$spacing-md;
+      /* Carousel Controls */
+      .carousel-controls {
+        position: absolute;
+        bottom: var.$spacing-md;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: var.$spacing-md;
+
+        .nav-btn {
+          background-color: rgba(138, 79, 255, 0.85);
+          color: var.$white;
+          border: none;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all 0.25s ease;
+          backdrop-filter: blur(4px);
+
+          &:hover {
+            background-color: var.$purple;
+            transform: scale(1.15);
+          }
+        }
+
+        .carousel-indicators {
+          display: flex;
+          gap: 8px;
+
+          .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(138, 79, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &.active {
+              background-color: var.$purple;
+              transform: scale(1.3);
+            }
+
+            &:hover {
+              background-color: rgba(138, 79, 255, 0.6);
+            }
+          }
+        }
       }
     }
   }
 
-  // Featured Services Section
+  /* ===============================
+     Featured Services Section
+  ================================ */
   .featured-services-section {
     .section-header {
       display: flex;
@@ -59,8 +195,8 @@
       h2 {
         font-family: var.$title-font;
         font-size: var.$font-size-xl;
-        color: var.$text-color;
         font-weight: var.$font-weight-bold;
+        color: var.$text-color;
       }
 
       .view-all-btn {
@@ -80,7 +216,6 @@
       }
     }
 
-    // Services Grid Layout
     .services-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -88,50 +223,8 @@
       margin-bottom: var.$spacing-xl;
     }
 
-    // Loading State
-    .loading {
-      text-align: center;
-      padding: var.$spacing-xl;
-      
-      p {
-        font-family: var.$primary-font;
-        color: var.$gray-text;
-        font-size: var.$font-size-md;
-      }
-    }
-
-    // Error State
-    .error-message {
-      text-align: center;
-      padding: var.$spacing-xl;
-      background-color: var.$white;
-      border-radius: var.$border-radius-md;
-      box-shadow: var.$box-shadow-sm;
-
-      p {
-        font-family: var.$primary-font;
-        color: var.$error-red;
-        font-size: var.$font-size-md;
-        margin-bottom: var.$spacing-md;
-      }
-
-      .retry-btn {
-        background-color: var.$purple;
-        color: var.$white;
-        border: none;
-        border-radius: var.$border-radius-sm;
-        padding: var.$spacing-sm var.$spacing-md;
-        font-family: var.$primary-font;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: color.adjust(var.$purple, $lightness: -10%);
-        }
-      }
-    }
-
-    // Empty State
+    .loading,
+    .error-message,
     .empty-state {
       text-align: center;
       padding: var.$spacing-xl;
@@ -141,13 +234,40 @@
 
       p {
         font-family: var.$primary-font;
-        color: var.$gray-text;
         font-size: var.$font-size-md;
       }
     }
+
+    .loading p {
+      color: var.$gray-text;
+    }
+
+    .error-message p {
+      color: var.$error-red;
+      margin-bottom: var.$spacing-md;
+    }
+
+    .retry-btn {
+      background-color: var.$purple;
+      color: var.$white;
+      border: none;
+      border-radius: var.$border-radius-sm;
+      padding: var.$spacing-sm var.$spacing-md;
+      font-family: var.$primary-font;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: color.adjust(var.$purple, $lightness: -10%);
+      }
+    }
+
+    .empty-state p {
+      color: var.$gray-text;
+    }
   }
 
-  // Quick Actions Section
+
   .quick-actions-section {
     .section-header {
       margin-bottom: var.$spacing-lg;
@@ -155,8 +275,8 @@
       h2 {
         font-family: var.$title-font;
         font-size: var.$font-size-xl;
-        color: var.$text-color;
         font-weight: var.$font-weight-bold;
+        color: var.$text-color;
       }
     }
 
@@ -183,32 +303,51 @@
         h3 {
           font-family: var.$title-font;
           font-size: var.$font-size-md;
+          font-weight: var.$font-weight-semibold;
           color: var.$text-color;
           margin-bottom: var.$spacing-xs;
-          font-weight: var.$font-weight-semibold;
         }
 
         p {
           font-family: var.$primary-font;
-          color: var.$gray-text;
           font-size: var.$font-size-sm;
+          color: var.$gray-text;
           margin: 0;
         }
       }
     }
   }
 
-  // Responsive Design
+  /* ===============================
+     Responsive Adjustments
+  ================================ */
   @media (max-width: var.$breakpoint-md) {
     padding: var.$spacing-md;
     padding-top: calc(48px + #{var.$spacing-md});
     gap: var.$spacing-lg;
 
-    .welcome-section .welcome-card {
-      padding: var.$spacing-lg;
-      
-      h1 {
-        font-size: 1.75rem;
+    .welcome-section .carousel-container {
+      padding: var.$spacing-md;
+      min-height: 200px;
+
+      .welcome-card h1,
+      .offer-card h2 {
+        font-size: 1.3rem;
+      }
+
+      .offer-card .offer-content .offer-details {
+        font-size: var.$font-size-xs;
+        gap: var.$spacing-sm;
+      }
+
+      .carousel-controls {
+        bottom: var.$spacing-sm;
+
+        .nav-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 14px;
+        }
       }
     }
 

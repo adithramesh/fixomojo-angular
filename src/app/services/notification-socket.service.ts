@@ -10,7 +10,9 @@ export interface ChatNotificationData {
   bookingId: string;
   senderId: string;
   message: string;
+  createdAt?: string;
   senderType: 'user' | 'technician';
+  senderName?: string;
 }
 
 @Injectable({ providedIn: 'root' })

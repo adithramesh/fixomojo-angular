@@ -52,7 +52,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.loading$.subscribe(loading => console.log('loading state:', loading));
     this.updateOtpValidity(); 
-    console.log('Initial isOtpValid:', this.isOtpValid);
   }
 
   ngAfterViewInit() {
@@ -118,7 +117,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
   
   onSubmit(): void {
-    console.log('onSubmit triggered with otpValues:', this.otpValues);
     if (this.isOtpValid) {
        if (this.isModalMode) {
       
@@ -132,7 +130,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
             otp: this.otpValues.join(''),
             context: this.verificationContext
           };
-          console.log('Dispatching verifyOtp with:', otpData);
           this.store.dispatch(AuthActions.verifyOtp({ otpData }));
         } else {
           console.error('tempUserId is null or undefined');
@@ -143,7 +140,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onVerifyButtonClick(): void {
-    console.log('Verify button was clicked!');
     this.onSubmit();
   }
 
@@ -158,8 +154,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
             phoneNumber, 
             context: this.verificationContext 
           };
-          
-          console.log("Resending OTP with data:", resendData);
           this.store.dispatch(AuthActions.resendOtp({ resendData }));
           
           // Reset timer
@@ -176,7 +170,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     const otp = this.otpValues.join('');
     if (otp.length === 4) {
       this.clipboard.copy(otp);
-      console.log('OTP copied to clipboard:', otp);
     }
   }
 

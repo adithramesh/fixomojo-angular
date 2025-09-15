@@ -14,8 +14,11 @@ export class DashboardService {
   
   constructor(private http: HttpClient) {}
 
-  getAdminDashboard(): Observable<AdminDashboardResponseDTO> {
-    return this.http.get<AdminDashboardResponseDTO>(`${this.apiUrl}/admin/dashboard`);
+  getAdminDashboard(startDate?: string, endDate?: string): Observable<AdminDashboardResponseDTO> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<AdminDashboardResponseDTO>(`${this.apiUrl}/admin/dashboard`, {params});
   }
 
   getPartnerDashboard(): Observable<PartnerDashboardResponseDTO> {

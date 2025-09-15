@@ -37,9 +37,7 @@ export class ForgotPasswordComponent implements OnInit {
   onSubmit() {
     if (this.forgotPasswordForm.valid) {
       const { phoneNumber } = this.forgotPasswordForm.value;
-      console.log('Dispatching phoneNumber:', phoneNumber);
       const payload: ForgotPasswordRequestDTO = { phoneNumber }; 
-      console.log('Dispatching payload:', payload);
       this.store.dispatch(AuthActions.forgotPassword({ data: payload })); 
     }
   }

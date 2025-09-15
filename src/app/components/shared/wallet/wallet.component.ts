@@ -8,10 +8,9 @@ import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-
 import { TransactionService } from '../../../services/transaction.service';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
-import { DataTableComponent, TableColumn, TableData } from '../data-table/data-table.component';
+import { DataTableComponent, TableColumn } from '../data-table/data-table.component';
 import { Transaction } from '../../../models/wallet.model';
 import { FormsModule } from '@angular/forms';
-import { selectTempUserId } from '../../../store/auth/auth.reducer';
 import { Store } from '@ngrx/store';
 
 
@@ -35,6 +34,7 @@ export class WalletComponent implements OnInit {
   searchTerm: string = '';
   amountToAdd: number = 0;
   showRechargeInput:boolean = false;
+  today: string = new Date().toISOString().split('T')[0];
 
 
   private route= inject(ActivatedRoute)
@@ -50,7 +50,9 @@ export class WalletComponent implements OnInit {
       sortBy: 'createdAt',
       sortOrder: 'desc',
       searchTerm: '',
-      filter: {} 
+      filter: {
+        transactionType:''
+      } 
     };
     totalTransactions = 0;
     totalPages = 0;
@@ -73,9 +75,7 @@ export class WalletComponent implements OnInit {
 
 
     this.transactionService.countTransactions().subscribe(count=>{
-      if(count){
-        // console.log("count", count.count );
-        
+      if(count){   
         this.totalTransactions=count.count
       }
     })
@@ -85,11 +85,9 @@ export class WalletComponent implements OnInit {
         debounceTime(300),
         distinctUntilChanged()
       ).subscribe(searchTerm => {
-        console.log('searchTerm', searchTerm);
         this.searchTerm = searchTerm;
         this.pagination.searchTerm = searchTerm;
         this.pagination.page = 1;
-        console.log('loadSubServices called');
         this.fetchTransactions();
       })
     );    
@@ -107,8 +105,7 @@ export class WalletComponent implements OnInit {
   fetchWallet(): void {
     this.walletService.getWallet().subscribe({
       next:(response)=>{
-        console.log("response", response);
-        console.log("response", response);
+
             if (response.success && response.wallet) {
               this.isLoading=false
                 this.walletBalance = response.wallet.balance;
@@ -128,17 +125,13 @@ export class WalletComponent implements OnInit {
   fetchTransactions(): void {
     this.transactionService.getTransactions(this.pagination).subscribe({
       next:(response)=>{
-        console.log("transaction response", response);
-         console.log("response.success && response.transactionList1",response.success, response.transaction);
+
         if (response.success && response.transaction) {
-          console.log("response.success && response.transactionList2",response.success && response.transaction);
           
           this.transactionTableData=response.transaction.map(transaction=>this.mapTransactionToTableData(transaction))
               this.isLoading=false
               this.totalPages = Math.ceil( this.totalTransactions/this.pagination.pageSize);
-              console.log("this.totalTransactions/this.pagination.pageSize",this.totalTransactions,this.pagination.pageSize);
-              
-            
+                    
             } else {
                 console.error('Failed to fetch wallet transactions:', response);
             }
@@ -152,7 +145,6 @@ export class WalletComponent implements OnInit {
   }
 
   mapTransactionToTableData(transaction:Transaction):any{
-    console.log("transaction", transaction);
     return{
       _id: transaction._id.toString().slice(18),
       createdAt:transaction.createdAt,
@@ -201,5 +193,37 @@ export class WalletComponent implements OnInit {
     this.searchSubject.next(searchTerm);
   }
 
+
+  applyFilters():void{
+    this.pagination.page=1
+    this.countFilteredTransactions();
+    this.fetchTransactions();
+    
+  }
+
+  resetFilters(){
+    this.pagination.filter = {};
+    this.pagination.page = 1;
+    this.countAllTransactions()
+    this.fetchTransactions();
+  }
+
+  countFilteredTransactions():void {
+    this.transactionService.countTransactions(this.pagination.filter).subscribe(count =>{
+      if(count){
+        this.totalTransactions=count.count
+        this.totalPages=Math.ceil(this.totalTransactions/this.pagination.pageSize)
+      }
+    }) 
+  }
+
+    countAllTransactions(): void {
+    this.transactionService.countTransactions().subscribe(count => {
+      if (count) {
+        this.totalTransactions = count.count;
+        this.totalPages = Math.ceil(this.totalTransactions / this.pagination.pageSize);
+      }
+    });
+  }
   
 }

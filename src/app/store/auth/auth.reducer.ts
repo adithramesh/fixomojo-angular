@@ -121,7 +121,13 @@ export const authFeature = createFeature({
       loading: false,
     })),
     on(AuthActions.setUser, (state, { user }) => ({ ...state, user })),
-    on(AuthActions.logout, () => initialState)
+    on(AuthActions.logout, () => initialState),
+
+    on(AuthActions.updateUsername, (state, { username }) => ({
+      ...state,
+      username,
+      // user: state.user ? { ...state.user, data: { ...state.user.data, username } } : null
+    }))
   ),
 });
 

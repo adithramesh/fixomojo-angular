@@ -25,6 +25,8 @@ import { TasksComponent } from './components/partner/tasks/tasks.component';
 import { ActivitiesComponent } from './components/admin/activities/activities.component';
 import { UserProfileComponent } from './components/shared/user-profile/user-profile.component';
 import { VideoCallComponent } from './components/shared/video-call/video-call.component';
+import { OfferManagementComponent } from './components/admin/offer-management/offer-management.component';
+import { OfferFormComponent } from './components/admin/offer-form/offer-form.component';
 
 export const routes: Routes = [
     //user
@@ -53,7 +55,9 @@ export const routes: Routes = [
     { path: 'edit-sub-service/:id', component: AddSubServiceComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'admin-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'], role: 'admin'} },
     { path: 'activities', component: ActivitiesComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin']} },
-
+    { path: 'offers', component: OfferManagementComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'offers/add', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
+    { path: 'offers/edit/:id', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     //partner
     { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin'] } }, 
     { path: 'location', component: LocationComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 

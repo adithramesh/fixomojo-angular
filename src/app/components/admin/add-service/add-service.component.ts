@@ -9,6 +9,8 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { SidebarComponent } from '../side-bar/side-bar.component';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
@@ -16,7 +18,7 @@ registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPl
 @Component({
   selector: 'app-add-service',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FilePondModule],
+  imports: [ReactiveFormsModule, CommonModule, FilePondModule, NavBarComponent, SidebarComponent],
   templateUrl: './add-service.component.html',
   styleUrl: './add-service.component.scss'
 })
@@ -70,7 +72,6 @@ export class AddServiceComponent implements OnInit {
         });
 
         if (service.image) {
-          console.log("service.image", service.image);
           const fullImageUrl = this._imageUrlService.buildImageUrl(service.image);
           this.pondFiles = [{
             source: fullImageUrl,

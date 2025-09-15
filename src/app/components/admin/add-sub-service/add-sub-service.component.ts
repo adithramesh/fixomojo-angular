@@ -10,13 +10,15 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { SidebarComponent } from '../side-bar/side-bar.component';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
 
 @Component({
   selector: 'app-add-sub-service',
-  imports: [CommonModule, ReactiveFormsModule, FilePondModule],
+  imports: [CommonModule, ReactiveFormsModule, FilePondModule, NavBarComponent, SidebarComponent],
   templateUrl: './add-sub-service.component.html',
   styleUrl: './add-sub-service.component.scss'
 })
@@ -78,8 +80,6 @@ export class AddSubServiceComponent {
   private loadSubServiceData(subServiceId: string): void {
     this._adminService.getSubServiceById(subServiceId).subscribe({
       next: (subService: SubServiceRequestDTO) => {
-        console.log('Sub-service data:', subService)
-        
         this.addSubServiceForm.patchValue({
           serviceId: subService.serviceId,
           subServiceId:subServiceId,
@@ -90,7 +90,6 @@ export class AddSubServiceComponent {
           status: subService.status,
         });
         if (subService.image) {
-          console.log("sub-service.image", subService.image);
           const fullImageUrl = this._imageUrlService.buildImageUrl(subService.image);
           this.pondFiles = [{
             source: fullImageUrl,
@@ -139,7 +138,7 @@ export class AddSubServiceComponent {
       }
     const { serviceId } = this.addSubServiceForm.value.serviceId;
     console.log('Form Values:', this.addSubServiceForm.value);
-     console.log('Form Validity:', this.addSubServiceForm.valid);
+    console.log('Form Validity:', this.addSubServiceForm.valid);
     const request$ = this.mode === 'edit' && this.subServiceId
       ? this._adminService.updateSubService(this.subServiceId, formData)
       : this._adminService.createSubService(serviceId, formData);

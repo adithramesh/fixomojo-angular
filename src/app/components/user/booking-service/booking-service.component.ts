@@ -72,8 +72,13 @@ export class BookingServiceComponent {
   autocompleteSuggestions: any[] = [];
   selectedAddressDetails?: { address: string; latitude: number; longitude: number };
   typedLocationErrorMessage?: string;
-
   showAddressInputField: boolean = false;
+
+  //offer
+  appliedDiscount!:number
+  appliedOfferName!:string
+  finalAmount!:number
+
   
   private addressInputChanges = new Subject<string>();
   private _locationService=inject(LocationService)
@@ -112,8 +117,6 @@ export class BookingServiceComponent {
       this.price = parseInt(params['price'] ) 
     })
 
-    console.log("price: ", this.price);
-    console.log("subServiceName", this.subServiceName);
     
       this._store.select(selectTempUserId).subscribe(id => {
             if (id) {
@@ -219,7 +222,6 @@ export class BookingServiceComponent {
       next: (coords) => {
         this.currentLatitude = coords.latitude;
         this.currentLongitude = coords.longitude;
-        console.log("Latitude, Longitude:", this.currentLatitude, this.currentLongitude);
         
         // Set user location after getting coordinates
         this.userLocation = { 
@@ -300,7 +302,6 @@ export class BookingServiceComponent {
     
     this._adminService.getPartners(this.pagination).subscribe({
       next: (response) => {
-        console.log('Partners response:', response);
         this.allTechnicians = response.items.map(partner => ({
           id: partner.id,
           name: partner.username,
@@ -317,7 +318,6 @@ export class BookingServiceComponent {
           profileImage: this._imageUrlService.buildImageUrl(partner.image)
         }));
         
-        console.log('Processed technicians:', this.allTechnicians);
         this.isLoadingTechnicians = false;
         
         // If user location is already set, filter technicians
@@ -341,14 +341,12 @@ export class BookingServiceComponent {
         return;
     }
 
-    console.log("filtering technician based on user location, user location -", this.userLocation);
 
     this.availableTechnicians=this.allTechnicians.map(technician=>{
       const distance = this.calculateDistance(technician.location);
       return {...technician, distance:Math.round(distance*10)/10}
     }).filter(technician=>technician.distance<=10)
     .sort((a,b)=>a.distance-b.distance)
-    console.log("Available technician within 10km", this.availableTechnicians);
     
 }
 
@@ -361,17 +359,17 @@ export class BookingServiceComponent {
               Math.cos(this.userLocation.latitude * Math.PI / 180) * Math.cos(techLocation.lat * Math.PI / 180) *
               Math.sin(dLng/2) * Math.sin(dLng/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    console.log("R",R);
-    console.log("c",c);
-    console.log("R * c",R * c);
+    // console.log("R",R);
+    // console.log("c",c);
+    // console.log("R * c",R * c);
     
     return R * c;
   }
 
   onTechnicianSelected(technician: any): void {
     this.bookingForm.patchValue({ technician: technician.id });
-     // NEW: Clear the time slot if a new technician is selected
-    this.bookingForm.patchValue({ timeSlot: null }); // Clear the value
+    
+    this.bookingForm.patchValue({ timeSlot: null }); 
     this.availableTimeSlots = []; // Clear current time slots
     this.onDateSelected()
     // Load new slots
@@ -393,9 +391,7 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
   this.isLoadingTimeSlots = true;
   const selectedDate = new Date(date);
   const now = new Date();
-  
-  console.log("selectedDate:", selectedDate);
-  console.log('Now:', now.toISOString());
+
  
   // Prevent loading slots for past dates
   if (selectedDate.toDateString() !== now.toDateString() && selectedDate < now) {
@@ -421,10 +417,10 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                   const startTime = new Date(slot.start);
                   const isToday = selectedDate.toDateString() === now.toDateString();
                   const isPastSlot = isToday && startTime.getTime() < (now.getTime() + 60 * 60 * 1000); // 1 hour buffer
-                    console.log('Slot start:', slot.start);
-                    console.log('StartTime (parsed):', startTime.toISOString());
-                    console.log('Is today:', isToday);
-                    console.log('Is past slot:', isPastSlot);
+                    // console.log('Slot start:', slot.start);
+                    // console.log('StartTime (parsed):', startTime.toISOString());
+                    // console.log('Is today:', isToday);
+                    // console.log('Is past slot:', isPastSlot);
                   return !isPastSlot;
               })
               .map(slot => {
@@ -469,9 +465,22 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
         });
       } else {
       
-        console.log("selectedSlot", selectedSlot);
         this.bookingForm.patchValue({ timeSlot: selectedSlot.id });
-        console.log('Slot is available.');
+
+        this._bookingPageService.applyBestOffer(this.price).subscribe({
+          next:(response)=>{
+            this.appliedDiscount = response.discountAmount;
+            this.appliedOfferName = response.appliedOfferName;
+            this.finalAmount = response.finalAmount;
+          },
+          error:(err)=>{
+            console.error("Failed to apply offer:", err);
+            this.appliedDiscount = 0;
+            this.appliedOfferName = '';
+            this.finalAmount = this.price;
+          }
+        })
+        
       }
     },
     error: (err) => {
@@ -493,7 +502,6 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
   // Submit
   onSubmit(): void {
     if (this.canProceedToNextStep()) {
-        console.log('Booking Data:', this.bookingForm.value);
           const data ={
             userId:this._userId,
             username:this._username,
@@ -506,32 +514,20 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                 longitude: this.bookingForm.get('location.longitude')?.value
             },
             date:new Date(),
-            totalAmount:this.price,
+            totalAmount:this.finalAmount,
             paymentMethod:this.bookingForm.get('paymentMethod')?.value,
             bookedDate:this.selectedDate,
             timeSlotStart:this.getSelectedTimeSlot().startTime as Date,
             timeSlotEnd:this.getSelectedTimeSlot().endTime as Date
           }
-       
-        console.log("data:", data);
-
-        
-    
-        // Create booking record in "Pending" state
-        // this.http.post<BookServiceResponseDTO>('http://localhost:3000/user/book-service', data)
-
         this._bookingPageService.submitData(data)
 
             .subscribe({
                 next: (response) => {
-                  console.log("response",response)
                     if (response.success) {
                       ;
                       
                       const bookingData=response.data;
-                      console.log("bookingData",bookingData );
-                      
-                    
                         localStorage.setItem('bookingData', JSON.stringify({
                           bookingId: bookingData._id,
                           username:bookingData.username,
@@ -540,14 +536,11 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                           startTime: bookingData.timeSlotStart,
                           endTime: bookingData.timeSlotEnd
                         }));
-                       
-                        console.log("requires cash", bookingData?.requiresCash )
+                      
                         if(bookingData?.requiresCash=== false){
                           this.proceedToPayment(bookingData);
                         }else{
-                          console.log("in else condition onSubmit()");
                           this.blockSlotAfterPayment()
-                       
                         }
                     }else{
                       this._router.navigate(['/payment-success'],{
@@ -566,7 +559,6 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
 proceedToPayment(bookingData:any){
 
     if (bookingData.checkoutUrl) {
-        console.log('Redirecting to payment page:', bookingData.checkoutUrl);
         window.location.href = bookingData.checkoutUrl;
       
         //wallet logic
@@ -625,7 +617,6 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
         .subscribe({
             next: (response) => {
                 console.log('Booking fully confirmed!');
-            
             },
             error: (err) => {
                 console.error('Failed to update booking with calendar details:', err);
@@ -642,8 +633,6 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
 
   getSelectedTimeSlot(): any {
     const timeSlotId = this.bookingForm.get('timeSlot')?.value;
-    console.log("timeSlotId", timeSlotId);
-    
     return this.availableTimeSlots.find(slot => slot.id === timeSlotId);
   }
 
@@ -655,6 +644,10 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
 
   getTotalAmount(){
 
+  }
+
+  applyBestOffer(price:number):any{
+    return this._bookingPageService.applyBestOffer(price)
   }
 
 }

@@ -1,5 +1,5 @@
-import { Component, inject, OnInit} from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
@@ -13,9 +13,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-side-bar.component';
 import { selectUserRole } from '../../../store/auth/auth.reducer';
-
+// import { ToastrService } from 'ngx-toastr';
+import { AuthActions } from '../../../store/auth/auth.actions';
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
+
+// Custom validator to prevent leading/trailing whitespace
+function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value || '';
+  const hasLeadingOrTrailingWhitespace = value.trim() !== value;
+  return hasLeadingOrTrailingWhitespace ? { whitespace: true } : null;
+}
+
+// Custom validator for username to allow only alphanumeric and specific characters
+function usernameFormatValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value || '';
+  const validFormat = /^[a-zA-Z0-9_-]+$/.test(value);
+  return !validFormat ? { invalidUsernameFormat: true } : null;
+}
 
 @Component({
   selector: 'app-user-profile',
@@ -28,6 +43,7 @@ export class UserProfileComponent implements OnInit {
   profileForm!: FormGroup;
   userId = '';
   isSubmitting = false;
+  isLoading = false;
   selectedFile: File | null = null;
   imagePreviewUrl: string = '';
   pondFiles: any[] = [];
@@ -35,12 +51,12 @@ export class UserProfileComponent implements OnInit {
   role: 'user' | 'partner' | 'admin' = 'user';
 
   private _fb = inject(FormBuilder);
-  private _store = inject(Store<{ tempUserId: string }>);
+  private _store = inject(Store);
   private _http = inject(HttpClient);
   private _imageUrlService = inject(ImageUrlService);
-  private _router = inject(Router)
-  private route= inject(ActivatedRoute)
- 
+  private _router = inject(Router);
+  private _route = inject(ActivatedRoute);
+  // private _toastr = inject(ToastrService);
 
   pondOptions = {
     allowMultiple: false,
@@ -53,17 +69,25 @@ export class UserProfileComponent implements OnInit {
   };
 
   ngOnInit(): void {
-
-
-
-     this._store.select(selectUserRole).subscribe(role => {
-          if (role) {
-            this.role = role;
-          }
-        });
+    this._store.select(selectUserRole).subscribe(role => {
+      if (role) {
+        this.role = role;
+      }
+    });
 
     this.profileForm = this._fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]]
+      username: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+        noWhitespaceValidator,
+        usernameFormatValidator
+      ]],
+      phoneNumber: ['', [
+        Validators.required,
+        Validators.pattern(/^\+91[\- ]?[6-9]\d{9}$/),
+        noWhitespaceValidator
+      ]]
     });
 
     this._store.select('tempUserId').subscribe(id => {
@@ -73,9 +97,13 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadUserProfile(): void {
+    this.isLoading = true;
     this._http.get<any>(`${environment.BACK_END_API_URL}/user/get-profile`).subscribe({
       next: (profile) => {
-        this.profileForm.patchValue({ username: profile.username });
+        this.profileForm.patchValue({
+          username: profile.username,
+          phoneNumber: profile.phoneNumber
+        });
         if (profile.profilePic) {
           const fullImageUrl = this._imageUrlService.buildImageUrl(profile.profilePic);
           this.imagePreviewUrl = fullImageUrl;
@@ -85,10 +113,12 @@ export class UserProfileComponent implements OnInit {
             metadata: { poster: fullImageUrl }
           }];
         }
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching profile:', err);
-
+        // this._toastr.error('Failed to load profile. Please try again.', 'Error');
+        this.isLoading = false;
       }
     });
   }
@@ -97,13 +127,13 @@ export class UserProfileComponent implements OnInit {
     const file = event.file?.file;
     if (file) {
       this.selectedFile = file;
-      this.imagePreviewUrl = URL.createObjectURL(file); 
+      this.imagePreviewUrl = URL.createObjectURL(file);
     }
   }
 
   pondHandleRemoveFile(): void {
     this.selectedFile = null;
-    this.loadUserProfile(); 
+    this.loadUserProfile();
   }
 
   onSubmit(): void {
@@ -114,27 +144,26 @@ export class UserProfileComponent implements OnInit {
 
     this.isSubmitting = true;
     const formData = new FormData();
-    formData.append('username', this.profileForm.get('username')?.value);
+    formData.append('username', this.profileForm.get('username')?.value.trim());
+    formData.append('phoneNumber', this.profileForm.get('phoneNumber')?.value.trim());
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }
 
     this._http.put(`${environment.BACK_END_API_URL}/user/update-profile`, formData).subscribe({
-      next: () => {
+      next: (response: any) => {
         this.isSubmitting = false;
-        
-      
-        this.loadUserProfile(); 
+        this._store.dispatch(AuthActions.updateUsername({ username: response.username }));
+        this.loadUserProfile();
       },
       error: (err) => {
         console.error('Error updating profile:', err);
         this.isSubmitting = false;
-       
       }
     });
   }
 
   cancel(): void {
-     this._router.navigate(['/home'])
+    this._router.navigate(['/home']);
   }
 }

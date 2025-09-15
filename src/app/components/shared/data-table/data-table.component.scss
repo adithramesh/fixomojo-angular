@@ -176,6 +176,28 @@
           padding: var.$spacing-xs var.$spacing-sm; /* Reduce padding from var.$spacing-sm */
           vertical-align: middle; /* Or 'top' if you prefer text to start at the top */
 
+          select {
+              font-family: var.$primary-font;
+              font-size: var.$font-size-sm;
+              padding: var.$spacing-xs var.$spacing-sm;
+              border: 1px solid var.$border-color;
+              border-radius: var.$border-radius-sm;
+              background-color: var.$input-bg;
+              color: var.$text-color;
+              outline: none;
+              cursor: pointer;
+              transition: border-color 0.3s ease, background-color 0.3s ease;
+      
+              &:hover {
+                border-color: color.adjust(var.$purple, $lightness: -10%);
+              }
+      
+              &:focus {
+                border-color: var.$purple;
+                box-shadow: 0 0 0 2px rgba(var.$purple, 0.2);
+              }
+            }
+
           // Table button styles
           button {
             display: inline-block;

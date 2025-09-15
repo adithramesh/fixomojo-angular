@@ -50,7 +50,6 @@ export class ResetPasswordComponent {
       combineLatest([this.tempUserId$, this.resetToken$])
         .pipe(first())
         .subscribe(([tempUserId, resetToken]) => {
-          console.log('tempUserId:', tempUserId, 'resetToken:', resetToken);
           if (tempUserId && resetToken) {
             const { newPassword } = this.resetPasswordForm.value;
             const payload: ResetPasswordRequestDTO = {

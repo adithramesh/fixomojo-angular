@@ -10,7 +10,8 @@
         <div class="card-body">
           <h2 class="card-title">My Profile</h2>
 
-          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <div *ngIf="isLoading" class="loading-spinner">Loading...</div>
+          <form *ngIf="!isLoading" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="username">Username</label>
               <input
@@ -19,13 +20,57 @@
                 class="form-input"
                 formControlName="username"
                 placeholder="Enter username"
-                readonly
+                aria-required="true"
+                aria-describedby="username-error"
               />
               <div
                 *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched"
                 class="error-message"
+                id="username-error"
               >
-                Username is required and must be at least 3 characters.
+                <span *ngIf="profileForm.get('username')?.errors?.['required']">
+                  Username is required.
+                </span>
+                <span *ngIf="profileForm.get('username')?.errors?.['minlength']">
+                  Username must be at least 3 characters.
+                </span>
+                <span *ngIf="profileForm.get('username')?.errors?.['maxlength']">
+                  Username cannot exceed 50 characters.
+                </span>
+                <span *ngIf="profileForm.get('username')?.errors?.['whitespace']">
+                  Username cannot have leading or trailing whitespace.
+                </span>
+                <span *ngIf="profileForm.get('username')?.errors?.['invalidUsernameFormat']">
+                  Username can only contain letters, numbers, underscores, or hyphens.
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                class="form-input"
+                formControlName="phoneNumber"
+                placeholder="+91-XXXXXXXXXX"
+                aria-required="true"
+                aria-describedby="phoneNumber-error"
+              />
+              <div
+                *ngIf="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched"
+                class="error-message"
+                id="phoneNumber-error"
+              >
+                <span *ngIf="profileForm.get('phoneNumber')?.errors?.['required']">
+                  Phone number is required.
+                </span>
+                <span *ngIf="profileForm.get('phoneNumber')?.errors?.['pattern']">
+                  Please enter a valid Indian phone number (+91-XXXXXXXXXX).
+                </span>
+                <span *ngIf="profileForm.get('phoneNumber')?.errors?.['whitespace']">
+                  Phone number cannot have leading or trailing whitespace.
+                </span>
               </div>
             </div>
 

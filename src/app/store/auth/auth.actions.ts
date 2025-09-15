@@ -29,7 +29,9 @@ export const AuthActions = createActionGroup({
     'Login Failure': props<{ error: any }>(),
 
     'Logout': emptyProps(),
-    'Set User': props<{ user: SignupResponseDTO | null }>(), //sets the user or null if logout.
+    'Set User': props<{ user: SignupResponseDTO | null }>(), 
+
+    'Update Username':  props<{ username: string }>()
   },
   
 });

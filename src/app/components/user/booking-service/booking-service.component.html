@@ -177,9 +177,17 @@
               <span class="value">{{ getSelectedTechnician()?.name || 'Not selected' }}</span>
             </div>
             <div class="summary-item">
-              <span class="label">Amount payable:</span>
-              <span class="value">{{ price }}</span>
-            </div>
+            <span class="label">Price:</span>
+            <span class="value">{{ price }}</span>
+          </div>
+          <div *ngIf="appliedDiscount > 0" class="summary-item">
+            <span class="label">Offer ({{ appliedOfferName }}):</span>
+            <span class="value">-{{ appliedDiscount }}</span>
+          </div>
+          <div class="summary-item total">
+            <span class="label">Amount Payable:</span>
+            <span class="value">{{ finalAmount }}</span>
+          </div>
           </div>
           <div class="payment-methods">
             <h4>Choose Payment Method</h4>

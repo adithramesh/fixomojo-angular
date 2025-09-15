@@ -139,9 +139,7 @@ export class PartnerManagementComponent {
     }
   }
 
-  updateLicenseStatus(userId: string | number, licenseStatus: string) {
-    console.log("licenseStatus",licenseStatus);
-    
+  updateLicenseStatus(userId: string | number, licenseStatus: string) {  
     this._adminService.changeUserStatus(userId, licenseStatus).subscribe({
       next: (updatedUser) => {
         const index = this.userTableData.findIndex(user => user.id === userId);
@@ -156,12 +154,12 @@ export class PartnerManagementComponent {
     });
   }
 
-   onPageChange(newPage: number): void {
+  onPageChange(newPage: number): void {
     this.pagination.page = newPage;
     this.loadUsers();
   }
 
-   onSearchChange(searchTerm: string): void {
+  onSearchChange(searchTerm: string): void {
     this.searchSubject.next(searchTerm)
   }
 

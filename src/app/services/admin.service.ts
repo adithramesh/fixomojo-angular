@@ -40,9 +40,9 @@ export class AdminService {
     return this.getUsers(pagination,'partner')
   }
 
-  getServices(pagination: PaginationRequestDTO = { page: 1, pageSize:10 , sortBy: 'serviceName', sortOrder: 'asc', searchTerm: '' }): Observable<PaginatedResponseDTO<ServiceResponseDTO[]>> {
+
+  getServices(pagination: PaginationRequestDTO): Observable<PaginatedResponseDTO<ServiceResponseDTO[]>> {
     let params = this.buildPaginationParams(pagination);
-    console.log("params", params);
     return this.http.get<PaginatedResponseDTO<ServiceResponseDTO[]>>(`${this.apiUrl}service-management`, { params });
   }
 
@@ -79,8 +79,6 @@ export class AdminService {
         }
       });
     }
-    console.log("params: ", params);
-    
     return params;
 }
   

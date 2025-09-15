@@ -1,0 +1,212 @@
+// @use 'sass:color' as color;
+// @use 'variables' as var;
+// @use 'buttons' as buttons;
+// @use 'forms' as forms;
+
+// .offer-form-container {
+//   padding: var.$spacing-lg;
+//   max-width: 500px;
+//   margin: var.$spacing-lg auto;
+//   background-color: var.$white;
+//   border-radius: var.$border-radius-md;
+//   box-shadow: var.$box-shadow-sm;
+
+//   h2 {
+//     font-family: var.$title-font;
+//     font-size: var.$font-size-lg;
+//     margin-bottom: var.$spacing-md;
+//     text-align: center;
+//   }
+
+//   .form-group {
+//     margin-bottom: var.$spacing-md;
+    
+//     .inline-input {
+//       .input-wrapper {
+//         display: flex;
+//         align-items: center;
+//         input {
+//           flex: 1;
+//         }
+//         span {
+//           margin-left: 8px;
+//           font-size: var.$font-size-sm;
+//           color: var.$gray-text;
+//         }
+//       }
+//     }
+
+//     label {
+//       display: block;
+//       margin-bottom: var.$spacing-xs;
+//       font-size: var.$font-size-sm;
+//       color: var.$gray-text;
+//     }
+
+//     input,
+//     textarea,
+//     select {
+//       @include forms.input-style;
+//       width: 100%;
+//       font-size: var.$font-size-md;
+
+//       &:focus {
+//         border-color: var.$purple;
+//       }
+//     }
+
+//     textarea {
+//       height: 100px;
+//       resize: vertical;
+//     }
+
+//     select {
+//       appearance: none;
+//       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+//       background-repeat: no-repeat;
+//       background-position: right var.$spacing-sm center;
+//       padding-right: var.$spacing-lg;
+//     }
+//   }
+
+//   .form-actions {
+//     display: flex;
+//     justify-content: flex-end;
+//     gap: var.$spacing-md;
+
+//     button {
+//       @include buttons.button-style(var.$purple);
+//       width: 100px;
+
+//       &:hover:not(:disabled) {
+//         background-color:color.adjust(var.$purple, $lightness: -10%)
+//       }
+//     }
+
+//     .cancel-button {
+//       @include buttons.button-style(var.$gray-light);
+//       color: var.$text-color;
+
+//       &:hover:not(:disabled) {
+//          background-color:  color.adjust(var.$gray-light, $lightness: -10%);
+//       }
+//     }
+//   }
+// }
+
+
+@use 'sass:color';
+@use 'variables' as var;
+@use 'buttons' as buttons;
+@use 'forms' as forms;
+
+.offer-form-container {
+  padding: var.$spacing-lg;
+  max-width: 800px;
+  margin: var.$spacing-lg auto;
+  background-color: var.$white;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+
+  h2 {
+    font-family: var.$title-font;
+    font-size: var.$font-size-lg;
+    margin-bottom: var.$spacing-md;
+    text-align: center;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var.$spacing-md;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-bottom: var.$spacing-xs;
+        font-size: var.$font-size-sm;
+        color: var.$gray-text;
+      }
+
+      input,
+      textarea,
+      select {
+        @include forms.input-style;
+        width: 100%;
+        font-size: var.$font-size-md;
+
+        &:focus {
+          border-color: var.$purple;
+        }
+      }
+
+      textarea {
+        height: 100px;
+        resize: vertical;
+      }
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .inline-input {
+      .input-wrapper {
+        display: flex;
+        align-items: center;
+
+        input {
+          flex: 1;
+        }
+
+        span {
+          margin-left: 8px;
+          font-size: var.$font-size-sm;
+          color: var.$gray-text;
+        }
+      }
+    }
+
+    .error {
+      small {
+        color: var.$purple;
+        font-size: var.$font-size-xs;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+
+    .form-actions {
+      grid-column: span 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: var.$spacing-md;
+      margin-top: var.$spacing-md;
+
+      button {
+        @include buttons.button-style(var.$purple);
+        width: 120px;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust(var.$purple, $lightness: -10%);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .cancel-button {
+        @include buttons.button-style(var.$gray-light);
+        color: var.$text-color;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust(var.$gray-light, $lightness: -10%);
+        }
+      }
+    }
+  }
+}

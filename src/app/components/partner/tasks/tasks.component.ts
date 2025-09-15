@@ -97,11 +97,12 @@ export class TasksComponent {
       
       this.bookingService.getBookings(this.pagination).subscribe({
         next: (response: BookingResponse) => {
-          // Check if response and bookingList exist
          if (response.success && response.bookingList?.items) {
-          console.log("bookingList", response.bookingList.items);
-          
-            this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
+            this.bookingsTableData = response.bookingList.items.map(booking =>{
+                 return this.mapBookingsToTableData(booking)
+            } );
+            
+            
             // this.totalBookings = response.bookingList.length; // Fallback; update if backend provides total
             this.totalBookings = response.bookingList.total;
             this.totalPages = response.bookingList.totalPages;
@@ -127,20 +128,19 @@ export class TasksComponent {
     }
   
     mapBookingsToTableData(booking: any): TableData {
-      console.log("booking", booking._id.toString());
       
       return {
-        id: booking._id.toString(),
-        displayId: booking._id.toString().slice(18),
+        id: booking.id,
+        displayId: booking.id.slice(18),
         username:booking.username,
-        subServiceId: booking.subServiceId.slice(18), // Use subServiceId instead of serviceName
+        subServiceId: booking.subServiceId, 
         subServiceName:booking.subServiceName,
-        totalAmount: booking.totalAmount.toString(),
+        totalAmount: booking.totalAmount,
         paymentStatus: booking.paymentStatus,
         bookingStatus: booking.bookingStatus,
-        timeSlotStart:booking.timeSlotStart,
-        createdAt:booking.createdAt,
-        location:booking.location.address.split(',').slice(0,2).join(','),
+        timeSlotStart:booking.timeSlotStart!,
+        createdAt:booking.createdAt!,
+        location:booking.location || '',
         isCompleted: booking.isCompleted ? 'Yes' : 'No'
       };
     }

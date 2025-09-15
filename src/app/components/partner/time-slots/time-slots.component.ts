@@ -7,6 +7,7 @@ import { selectTempUserId } from '../../../store/auth/auth.reducer';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
+import { environment } from '../../../../environments/environment';
 
 
 interface TimeSlotDisplay {
@@ -29,7 +30,7 @@ interface TimeSlotDisplay {
 })
 export class TimeSlotsComponent implements OnInit, OnDestroy {
 
-  private readonly API_BASE_URL = 'http://localhost:3000/partner'; 
+  private readonly API_BASE_URL = `${environment.BACK_END_API_URL}/partner`; 
 
   selectedDate: string;
   minDate: string;
@@ -212,9 +213,7 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
       reason: reason,
       isCustomerBooking:false,
     };
-    console.log("insid blocking slot");
-    
-
+   
     this.http.post<{ success: boolean; message: string; eventId?: string | null }>(
       `${this.API_BASE_URL}/block-slot`, payload
     ).subscribe({
@@ -238,7 +237,6 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
   }
 
   private unblockSingleSlot(googleEventId: string): void {
-    // console.log("googleEventId", googleEventId);
     
     this.isLoadingUnblocking = true;
     this.errorMessage = null;

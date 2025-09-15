@@ -1,0 +1,122 @@
+<app-nav-bar></app-nav-bar>
+<main class="admin-dashboard">
+  <app-side-bar></app-side-bar>
+  <section class="main-content">
+    <div class="offer-form-container">
+      <h2>{{ isEditMode ? 'Edit Offer' : 'Add Offer' }}</h2>
+
+      <form [formGroup]="offerForm" (ngSubmit)="onSubmit()">
+        <!-- Title -->
+        <div class="form-group">
+          <label for="title">Offer Title</label>
+          <input id="title" formControlName="title" type="text" placeholder="Enter offer title..." />
+          <div class="error" *ngIf="offerForm.get('title')?.touched && offerForm.get('title')?.invalid">
+            <small *ngIf="offerForm.get('title')?.errors?.['required']">Title is required</small>
+            <small *ngIf="offerForm.get('title')?.errors?.['minlength']">At least 3 characters</small>
+            <small *ngIf="offerForm.get('title')?.errors?.['maxlength']">Max 100 characters</small>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group full-width">
+          <label for="description">Description</label>
+          <textarea id="description" formControlName="description" placeholder="Enter offer description..."></textarea>
+          <div class="error" *ngIf="offerForm.get('description')?.touched && offerForm.get('description')?.invalid">
+            <small *ngIf="offerForm.get('description')?.errors?.['required']">Description is required</small>
+            <small *ngIf="offerForm.get('description')?.errors?.['minlength']">At least 10 characters</small>
+            <small *ngIf="offerForm.get('description')?.errors?.['maxlength']">Max 500 characters</small>
+          </div>
+        </div>
+
+        <!-- Offer Type -->
+        <div class="form-group">
+          <label for="offer_type">Offer Type</label>
+          <select id="offer_type" formControlName="offer_type">
+            <option value="">Select offer type</option>
+            <option *ngFor="let type of offerTypes" [value]="type">{{ type }}</option>
+          </select>
+          <div class="error" *ngIf="offerForm.get('offer_type')?.touched && offerForm.get('offer_type')?.invalid">
+            <small>Offer type is required</small>
+          </div>
+        </div>
+
+        <!-- Service Category (conditional) -->
+        <div class="form-group" *ngIf="offerForm.get('offer_type')?.value === 'service_category'">
+          <label for="serviceId">Select Service</label>
+          <select id="serviceId" formControlName="serviceId">
+            <option value="">Select Service</option>
+            <option *ngFor="let category of serviceCategories" [value]="category">{{ category }}</option>
+          </select>
+          <div class="error" *ngIf="offerForm.get('serviceId')?.touched && offerForm.get('serviceId')?.invalid">
+            <small>Service selection is required</small>
+          </div>
+        </div>
+
+        <!-- Discount Type -->
+        <div class="form-group">
+          <label for="discount_type">Discount Type</label>
+          <select id="discount_type" formControlName="discount_type">
+            <option value="">Select discount type</option>
+            <option *ngFor="let type of discountTypes" [value]="type">{{ type }}</option>
+          </select>
+          <div class="error" *ngIf="offerForm.get('discount_type')?.touched && offerForm.get('discount_type')?.invalid">
+            <small>Discount type is required</small>
+          </div>
+        </div>
+
+        <!-- Discount Value -->
+        <div class="form-group inline-input">
+          <label for="discount_value">Discount Value</label>
+          <div class="input-wrapper">
+            <input id="discount_value" formControlName="discount_value" type="number" placeholder="Enter amount..." />
+            <span>{{ offerForm.get('discount_type')?.value === 'percentage' ? '%' : '₹' }}</span>
+          </div>
+          <div class="error" *ngIf="offerForm.get('discount_value')?.touched && offerForm.get('discount_value')?.invalid">
+            <small *ngIf="offerForm.get('discount_value')?.errors?.['required']">Discount value required</small>
+            <small *ngIf="offerForm.get('discount_value')?.errors?.['min']">Must be greater than 0</small>
+          </div>
+         
+          <div class="error" *ngIf="offerForm.errors?.['percentageExceeds']">
+            <small>Percentage discount cannot exceed 100%.</small>
+          </div>
+        </div>
+
+        <!-- Max Discount -->
+        <div class="form-group">
+          <label for="max_discount">Maximum Discount (₹)</label>
+          <input id="max_discount" formControlName="max_discount" type="number" placeholder="Enter max discount..." />
+          <div class="error" *ngIf="offerForm.get('max_discount')?.touched && offerForm.get('max_discount')?.invalid">
+            <small *ngIf="offerForm.get('max_discount')?.errors?.['min']">Must be greater than 0</small>
+          </div>
+          <div class="error" *ngIf="offerForm.errors?.['invalidDiscount']">
+            <small>Max discount should be less than minimum booking amount</small>
+          </div>
+        </div>
+
+        <!-- Min Booking Amount -->
+        <div class="form-group">
+          <label for="min_booking_amount">Minimum Booking Amount (₹)</label>
+          <input id="min_booking_amount" formControlName="min_booking_amount" type="number" placeholder="Enter minimum booking amount..." />
+          <div class="error" *ngIf="offerForm.get('min_booking_amount')?.touched && offerForm.get('min_booking_amount')?.invalid">
+            <small *ngIf="offerForm.get('min_booking_amount')?.errors?.['min']">Must be greater than 0</small>
+          </div>
+        </div>
+
+        <!-- Valid Until -->
+        <div class="form-group">
+          <label for="valid_until">Valid Until</label>
+          <input id="valid_until" formControlName="valid_until" type="date" [min]="today" />
+          <div class="error" *ngIf="offerForm.get('valid_until')?.touched && offerForm.get('valid_until')?.invalid">
+            <small>Valid until date is required</small>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="cancel-button" (click)="onCancel()">Cancel</button>
+          <button type="submit" [disabled]="offerForm.invalid">{{ isEditMode ? 'Update' : 'Add' }}</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>

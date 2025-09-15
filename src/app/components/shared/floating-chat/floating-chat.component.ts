@@ -21,7 +21,8 @@ export class FloatingChatComponent {
     currentUserId: null,
     currentUserRole: null,
     isLoading: false,
-    error: null
+    error: null,
+    counterPartyName: null
   };
 
   newMessage: string = '';
@@ -43,6 +44,9 @@ export class FloatingChatComponent {
         this.shouldScrollToBottom = true;
       }
     });
+
+
+    
   }
 
   ngAfterViewChecked(): void {
@@ -82,28 +86,67 @@ export class FloatingChatComponent {
     }
     return false;
   }
-
-  formatTime(date: Date): string {
-    const messageDate = new Date(date);
-    const now = new Date();
-    const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 24) {
-      return messageDate.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      });
-    } else {
-      return messageDate.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      });
-    }
+  // formatDate(dateStr: string): string {
+  //   const date = new Date(dateStr);
+  //   return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
+  // }
+  formatDate(dateStr: string): string {
+  if (!dateStr || typeof dateStr !== 'string') {
+    console.warn('Invalid date string:', dateStr);
+    return new Date().toLocaleString('en-GB', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
   }
+  const date = new Date(dateStr);
+  return isNaN(date.getTime())
+    ? new Date().toLocaleString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+    : date.toLocaleString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+}
+
+
+  // formatTime(date: Date): string {
+  //   const messageDate = new Date(date);
+  //   const now = new Date();
+  //   const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+
+  //   if (diffInHours < 24) {
+  //     return messageDate.toLocaleTimeString('en-US', { 
+  //       hour: '2-digit', 
+  //       minute: '2-digit',
+  //       hour12: true 
+  //     });
+  //   } else {
+  //     return messageDate.toLocaleDateString('en-US', { 
+  //       month: 'short', 
+  //       day: 'numeric',
+  //       hour: '2-digit', 
+  //       minute: '2-digit',
+  //       hour12: true 
+  //     });
+  //   }
+  // }
 
   private scrollToBottom(): void {
     if (this.messagesContainer) {
@@ -111,4 +154,6 @@ export class FloatingChatComponent {
       element.scrollTop = element.scrollHeight;
     }
   }
+
+
 }

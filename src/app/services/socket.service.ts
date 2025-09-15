@@ -9,7 +9,8 @@ export interface ChatMessage {
   messageText: string;
   senderType: 'user' | 'technician';
   senderId: string;
-  createdAt: Date;
+  createdAt?: string;
+  senderName: string;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ViewChild, ElementRef, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectUserRole } from '../../../store/auth/auth.reducer';
+import { Subject, takeUntil } from 'rxjs';
 
 
 export interface TableData {
@@ -28,7 +29,7 @@ export interface TableData {
       address?: string;
       latitude: number;
       longitude: number;
-   };
+   } ;
   timeSlotStart?: Date; 
   timeSlotEnd?: Date; 
 }
@@ -40,6 +41,7 @@ export interface TableColumn {
   dropdownOptions?: { label: string; value: string }[];
   buttonText?: string;
   buttonClass?: string; 
+  buttonTextFn?: (item: TableData) => string;
   width?: string; 
   className?: string
 }
@@ -49,7 +51,8 @@ export interface TableColumn {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './data-table.component.html',
-  styleUrl: './data-table.component.scss'
+  styleUrl: './data-table.component.scss',
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTableComponent {
   @Input() tableData: TableData[] = [];
@@ -74,16 +77,27 @@ export class DataTableComponent {
   @Output() pageChange = new EventEmitter<number>();
   @Output() searchChange = new EventEmitter<string>();
   @Output() addItem = new EventEmitter<void>();
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
  
 
   private _store = inject(Store)
   private _role!:string
+  private destroy$ = new Subject<void>();
   ngOnInit(){
-     this._store.select(selectUserRole).subscribe(role => {
-                if (role) {
-                  this._role = role;
-                }
-              });
+     this._store
+        .select(selectUserRole)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(role => {
+          if (role) {
+            this._role = role;
+          }
+        });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['searchTerm'] && this.searchInput) {
+      this.searchInput.nativeElement.value = this.searchTerm;
+    }
   }
   onButtonClick(action: string, item: TableData): void {
     this.rowAction.emit({action, item});
@@ -120,7 +134,6 @@ export class DataTableComponent {
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target) {
-        this.searchTerm = target.value; 
         this.searchChange.emit(target.value);
       }
     } 
@@ -128,7 +141,7 @@ export class DataTableComponent {
   onImageError(event: Event): void {
   const target = event.target as HTMLImageElement;
   if (target) {
-      target.src = 'assets/images/placeholder.jpg';
+      target.style.display = 'none';
     }
   }
 
@@ -161,5 +174,10 @@ private isToday(dateString: string): boolean {
   const bookingDate = new Date(dateString);
 
   return today.toDateString() === bookingDate.toDateString();
+}
+
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
 }
 }
