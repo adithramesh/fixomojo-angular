@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable} from 'rxjs';
 import { PaginatedResponseDTO, PaginationRequestDTO } from '../models/admin.model';
 import { environment } from '../../environments/environment';
 import { IBooking } from '../models/book-service.model';
@@ -20,18 +20,18 @@ export interface BookingResponse {
 })
 export class BookingService {
   private apiUrl =`${environment.BACK_END_API_URL}/booking`
-  private bookingData!: any
+  private bookingData! : IBooking | null
   private bookingUpdatedSubject = new BehaviorSubject<TableData | null>(null)
   bookingUpdated$ = this.bookingUpdatedSubject.asObservable()
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient)
 
   getBookings(pagination: PaginationRequestDTO): Observable<BookingResponse> {
-    let params = this.buildPaginationParams(pagination);
+    const params = this.buildPaginationParams(pagination);
     return this.http.get<BookingResponse>(this.apiUrl, { params });
   }
 
   getAllBookingsForAdmin(pagination: PaginationRequestDTO): Observable<BookingResponse> {
-    let params = this.buildPaginationParams(pagination);
+    const params = this.buildPaginationParams(pagination);
     return this.http.get<BookingResponse>(`${this.apiUrl}/all`, { params });
   }
 
@@ -52,7 +52,7 @@ export class BookingService {
     this.bookingUpdatedSubject.next(updatedBooking)
   }
 
-  setBookingData(data: any) {
+  setBookingData(data: IBooking) {
     this.bookingData = data;
   }
 

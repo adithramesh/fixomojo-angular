@@ -22,7 +22,6 @@ export class SocketService {
   // Subject to track connection status
   private connectionStatus$ = new BehaviorSubject<boolean>(false);
   
-  constructor() {}
 
   // Initialize socket connection with auth token
   connect(token: string, bookingId: string): void {

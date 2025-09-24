@@ -27,18 +27,18 @@
           
           <div class="filter-group">
             <label for="startDate">Start Date</label>
-            <input type="date" id="startDate" [(ngModel)]="pagination.filter.dateFrom" [max]="today"/>
+            <input type="date" id="startDate" [(ngModel)]="pagination.filter!['dateFrom']" [max]="today"/>
           </div>
 
           <div class="filter-group">
             <label for="endDate">End Date</label>
-            <input type="date" id="endDate" [(ngModel)]="pagination.filter.dateTo" [min]="pagination.filter.dateFrom" [max]="today"/>
+            <input type="date" id="endDate" [(ngModel)]="pagination.filter!['dateTo']" [min]="pagination.filter!['dateFrom']" [max]="today"/>
             
           </div>
 
           <div class="filter-group">
             <label for="transactionType">Type</label>
-            <select id="transactionType" [(ngModel)]="pagination.filter.transactionType">
+            <select id="transactionType" [(ngModel)]="pagination.filter!['transactionType']">
               <option value="">All Types</option>
               <option value="credit">Credit</option>
               <option value="debit">Debit</option>
@@ -47,12 +47,12 @@
 
           <div class="filter-group">
             <label for="minAmount">Min Amount</label>
-            <input type="number" id="minAmount" placeholder="Min" [(ngModel)]="pagination.filter.minAmount" />
+            <input type="number" id="minAmount" placeholder="Min" [(ngModel)]="pagination.filter!['minAmount']" />
           </div>
           
           <div class="filter-group">
             <label for="maxAmount">Max Amount</label>
-            <input type="number" id="maxAmount" placeholder="Max" [(ngModel)]="pagination.filter.maxAmount" />
+            <input type="number" id="maxAmount" placeholder="Max" [(ngModel)]="pagination.filter!['maxAmount']" />
           </div>
 
           <button (click)="applyFilters()" class="filter-button">Apply Filters</button>

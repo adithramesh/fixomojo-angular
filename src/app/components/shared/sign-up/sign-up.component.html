@@ -74,7 +74,7 @@
           </div>
         </div>
         <div class="error-message" *ngIf="error$ | async as error">
-          {{ error.error.message || 'Signup failed. Please try again.' }}
+          {{  error?.message || error?.error?.message || 'Default error'|| 'Signup failed. Please try again.' }}
         </div>
         <div class="loading-overlay" *ngIf="loading$ | async">
           <div class="spinner"></div>

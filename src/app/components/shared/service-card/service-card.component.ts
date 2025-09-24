@@ -9,14 +9,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./service-card.component.scss']
 })
 export class ServiceCardComponent {
-  @Input() title: string = '';
-  @Input() description: string = '';
-  @Input() price: string = '';
-  @Input() isHomePage: boolean = false;
-  @Input() imageUrl: string = '';
-  @Input() status: string = '';
-  @Input() showBookButton: boolean = true;
-  @Input() searchTerm: string = '';
+  @Input() title = '';
+  @Input() description = '';
+  @Input() price = '';
+  @Input() isHomePage = false;
+  @Input() imageUrl = '';
+  @Input() status = '';
+  @Input() showBookButton = true;
+  @Input() searchTerm = '';
   @Output() bookClicked = new EventEmitter<void>();
 
   highlightSearch(text: string, searchTerm: string): string {

@@ -21,12 +21,12 @@ export class LocationComponent {
   errorMessage?: string;
 
   // Typed location fields
-  addressInput: string = '';
-  autocompleteSuggestions: any[] = [];
+  addressInput = '';
+  autocompleteSuggestions: { display_name: string; lat: string; lon: string; }[] = [];
   selectedAddressDetails?: { address: string; latitude: number; longitude: number };
   typedLocationErrorMessage?: string;
 
-  showAddressInputField: boolean = false;
+  showAddressInputField = false;
 
   private _locationService = inject(LocationService);
   private _destroy$ = new Subject<void>();
@@ -68,7 +68,7 @@ export class LocationComponent {
     this.autocompleteSuggestions = [];
   }
 
-  onSelectSuggestion(suggestion: any): void {
+  onSelectSuggestion(suggestion: { display_name: string; lat: string; lon: string; }): void {
     this.addressInput = suggestion.display_name;
     this.selectedAddressDetails = {
       address: suggestion.display_name,
@@ -123,7 +123,7 @@ export class LocationComponent {
     }
 
     this._locationService.updateTechnicianWithLocation(id,locationToSend).subscribe({
-      next:(res)=>{
+      next:()=>{
         // console.log("Technician location saved", res);
         this._router.navigate(['/partner-dashboard'])
       },

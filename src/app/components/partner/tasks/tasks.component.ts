@@ -5,13 +5,13 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 import { BookingResponse, BookingService } from '../../../services/booking.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
 import { Router } from '@angular/router';
 import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { Store } from '@ngrx/store';
 import { ChatService } from '../../../services/chat.service';
+
 
 @Component({
   selector: 'app-tasks',
@@ -20,7 +20,7 @@ import { ChatService } from '../../../services/chat.service';
   styleUrl: './tasks.component.scss'
 })
 export class TasksComponent {
-   isLoading: boolean = true;
+   isLoading = true;
     bookingsTableColumns: TableColumn[] = [
       { header: 'Booking Number', key: 'displayId', type: 'text', width: '15%' },
       { header: 'Customer Name', key: 'username', type: 'text', width: '15%' },
@@ -42,25 +42,26 @@ export class TasksComponent {
       sortOrder: 'desc',
       searchTerm: ''
     };
-    totalBookings: number = 0;
-    totalPages: number = 0;
+    totalBookings = 0;
+    totalPages = 0;
     error: string | null = null;
     private searchSubject = new Subject<string>()
     private subscription: Subscription = new Subscription;
     private _router = inject(Router)
     private _store = inject(Store)
     private chatService = inject(ChatService)
-    private _currentUserId:string = ''
-    private _role:string = ''
-    private _username:string = ''
-    searchTerm: string=''
+    private _currentUserId = ''
+    private _role = ''
+    private _username = ''
+    searchTerm=''
 
-    isModalOpen:boolean=false
+    isModalOpen=false
     modalType:'service' | 'otp' |'chat' = 'otp';
-    otpData:any
+    // otpData:any
     bookingId!:string
     selectedBooking: TableData | null = null  
-    constructor(private bookingService: BookingService) {}
+
+    private bookingService = inject(BookingService) 
   
     ngOnInit(): void {
 
@@ -116,7 +117,7 @@ export class TasksComponent {
           }
           this.isLoading = false;
         },
-        error: (error: any) => {
+        error: (error) => {
           console.error('Failed to fetch bookings:', error);
           this.isLoading = false;
           this.bookingsTableData = [];
@@ -127,11 +128,13 @@ export class TasksComponent {
       });
     }
   
-    mapBookingsToTableData(booking: any): TableData {
+    mapBookingsToTableData(booking: TableData): TableData {
       
       return {
         id: booking.id,
-        displayId: booking.id.slice(18),
+        displayId: typeof booking.id === 'string'
+        ? booking.id.slice(18)
+        : booking.id?.toString().slice(18),
         username:booking.username,
         subServiceId: booking.subServiceId, 
         subServiceName:booking.subServiceName,
@@ -229,7 +232,7 @@ export class TasksComponent {
       document.body.classList.remove('modal-open');
     }
 
-    onOtpVerified(event: {otp: string, bookingData: any}): void {
+    onOtpVerified(event: {otp: string, bookingData: TableData}): void {
     const { otp, bookingData } = event;
     
     console.log('OTP verified:', otp, 'for booking:', bookingData);
@@ -258,7 +261,7 @@ export class TasksComponent {
         this.closeModal();
         // this.getBookings();
       },
-      error: (error: any) => {
+      error: (error) => {
         console.error('OTP verification failed:', error);
         
       }

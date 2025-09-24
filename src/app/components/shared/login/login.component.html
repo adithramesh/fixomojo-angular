@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="error-message" *ngIf="error$ | async as error">
-          {{ error.error?.message || 'Login failed. Please try again.' }}
+          {{ error?.message || error?.error?.message || 'Login failed. Please try again.' }}
         </div>
         <div class="loading-overlay" *ngIf="loading$ | async">
           <div class="spinner"></div>

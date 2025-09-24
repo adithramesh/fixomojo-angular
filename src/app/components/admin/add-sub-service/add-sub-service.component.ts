@@ -12,6 +12,7 @@ import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { SidebarComponent } from '../side-bar/side-bar.component';
+import { FilePondInitialFile } from 'filepond';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
@@ -35,7 +36,7 @@ export class AddSubServiceComponent {
   private _imageUrlService = inject(ImageUrlService)
   isSubmitting=false;
   file: File | null = null;
-  pondFiles: any[] = [];
+  pondFiles: FilePondInitialFile[] = [];
 
   pondOptions = {
     allowMultiple: false,
@@ -72,7 +73,7 @@ export class AddSubServiceComponent {
    console.log('Form Controls:', this.addSubServiceForm.controls);
 
     if (this.mode === 'edit' && this.subServiceId) {
-        this.services$.subscribe(services => {
+        this.services$.subscribe(() => {
       this.loadSubServiceData(this.subServiceId!);
     })}
   }
@@ -94,12 +95,12 @@ export class AddSubServiceComponent {
           this.pondFiles = [{
             source: fullImageUrl,
             options: {
-              type: 'remote',
-              size: 500000
+              type: 'local',
+              // size: 500000
             },
-             metadata: {
-              poster: fullImageUrl 
-            }
+            //  metadata: {
+            //   poster: fullImageUrl 
+            // }
           }];
         }
         console.log('Form value after patch:', this.addSubServiceForm.value);
@@ -111,9 +112,11 @@ export class AddSubServiceComponent {
     });
   }
 
-  pondHandleAddFile(event: any): void {
-    console.log("pondHandleAddFile", event),event.file;
-    this.file = event.file?.file || null;
+ 
+
+ pondHandleAddFile(event: { file: File }): void { 
+    // console.log("pondHandleAddFile", event),event.file;
+    this.file = event.file || null;
   }
 
   pondHandleRemoveFile(): void {

@@ -8,7 +8,7 @@ import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-
 import { TransactionService } from '../../../services/transaction.service';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
-import { DataTableComponent, TableColumn } from '../data-table/data-table.component';
+import { DataTableComponent, TableColumn, TableData } from '../data-table/data-table.component';
 import { Transaction } from '../../../models/wallet.model';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -23,17 +23,17 @@ import { Store } from '@ngrx/store';
 })
 export class WalletComponent implements OnInit {
   role: 'user' | 'partner' | 'admin' = 'user';
-  referenceId: string = '';
+  referenceId = '';
   
-  walletBalance: number = 0;
+  walletBalance = 0;
   currency = 'INR';
   isLoading!:boolean;
   error: string | null = null;
   transactions!: Transaction; 
-  transactionTableData: Transaction[] = []; 
-  searchTerm: string = '';
-  amountToAdd: number = 0;
-  showRechargeInput:boolean = false;
+  transactionTableData: TableData[] = []; 
+  searchTerm = '';
+  amountToAdd = 0;
+  showRechargeInput = false;
   today: string = new Date().toISOString().split('T')[0];
 
 
@@ -144,7 +144,7 @@ export class WalletComponent implements OnInit {
     })
   }
 
-  mapTransactionToTableData(transaction:Transaction):any{
+  mapTransactionToTableData(transaction:Transaction){
     return{
       _id: transaction._id.toString().slice(18),
       createdAt:transaction.createdAt,

@@ -20,7 +20,7 @@ export class PartnerManagementComponent {
   private _adminService = inject(AdminService);
   private _router = inject(Router)
   private subscription: Subscription = new Subscription;
-  searchTerm:string=''
+  searchTerm =''
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; 
   private searchSubject= new Subject<string>();

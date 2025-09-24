@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { DataTableComponent, TableColumn, TableData } from "../../shared/data-table/data-table.component";
 import { Store } from '@ngrx/store';
 import { Subscription, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PaginationRequestDTO, ServiceResponseDTO} from '../../../models/admin.model';
 import { AdminService } from '../../../services/admin.service';
 import { selectUsername, selectPhoneNumber } from '../../../store/auth/auth.reducer';
@@ -25,7 +25,7 @@ export class ServiceManagementComponent {
   private _subscription: Subscription = new Subscription;
   private searchSubject = new Subject<string>();
   private _imageUrlService = inject(ImageUrlService)
-  searchTerm:string = '';
+  searchTerm ='';
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; 
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, inject, ViewChild, ElementRef, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ViewChild, ElementRef,SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectUserRole } from '../../../store/auth/auth.reducer';
@@ -7,21 +7,27 @@ import { Subject, takeUntil } from 'rxjs';
 
 
 export interface TableData {
-  [key: string]: any; // Add this line
-  id?: any;
+  sl?:number;
+  toggle?:string;
+  id?: string|number;
+  Id?:string;
+  _id?:string | undefined;
+  displayId?:string;
+  phoneNumber?:number| string;
   image?: string;
+  title?:string;
   serviceName?: string;
-  subServiceId?: any;
+  subServiceId?: string;
   subServiceName?: string;
   description?: string;
   price?: string;
   status?: string;
-  book?: any;
-  edit?: any;
-  totalAmount?: any;
-  bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed";
+  book?: string;
+  edit?: string;
+  totalAmount?: string |number;
+  bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed" |string;
   paymentStatus?: "Pending" | "Success" | "Failed";
-  isCompleted?: any;
+  isCompleted?: boolean |string;
   username?: string; 
   createdAt?: string; 
   block?: string; 
@@ -29,9 +35,18 @@ export interface TableData {
       address?: string;
       latitude: number;
       longitude: number;
-   } ;
-  timeSlotStart?: Date; 
-  timeSlotEnd?: Date; 
+   } | string ;
+  timeSlotStart?: Date |string; 
+  timeSlotEnd?: Date |string; 
+  paymentMethod?:string;
+  discount_type?:string;
+  discount_value?:number;
+  value?:string |number;
+  email?: string; 
+  technicianId?: string; 
+  licenseStatus?:string;
+  videoCall?:string;
+  
 }
 
 export interface TableColumn {
@@ -57,18 +72,18 @@ export interface TableColumn {
 export class DataTableComponent {
   @Input() tableData: TableData[] = [];
   @Input() tableColumns: TableColumn[] = [];
-  @Input() title: string = "";
-  @Input() showImage: boolean = false;
-  @Input() imageSource: string = '';
-  @Input() isLoading: boolean = false;
-  @Input() emptyMessage: string = 'No data available';
-  @Input() currentPage: number = 1;
-  @Input() pageSize: number = 10;
-  @Input() totalPages: number = 1;
-  @Input() showAddButton: boolean = false;
-  @Input() searchTerm: string = '';
-  @Input() showSearch: boolean = true;
-  @Input() searchPlaceholder: string = 'Search...';
+  @Input() title = "";
+  @Input() showImage = false;
+  @Input() imageSource = '';
+  @Input() isLoading = false;
+  @Input() emptyMessage = 'No data available';
+  @Input() currentPage = 1;
+  @Input() pageSize = 10;
+  @Input() totalPages = 1;
+  @Input() showAddButton = false;
+  @Input() searchTerm = '';
+  @Input() showSearch = true;
+  @Input() searchPlaceholder = 'Search...';
   
   
   // Events for buttons or row actions
@@ -174,6 +189,23 @@ private isToday(dateString: string): boolean {
   const bookingDate = new Date(dateString);
 
   return today.toDateString() === bookingDate.toDateString();
+}
+
+getItemValue(item: TableData, key: string): unknown {
+  return (item as Record<string, unknown>)[key];
+}
+
+getItemValueAsString(item: TableData, key: string): string {
+  return String((item as Record<string, unknown>)[key] || '');
+}
+
+getItemValueAsDate(item: TableData, key: string): string | number | Date | null {
+  const value = (item as Record<string, unknown>)[key];
+  return value as string | number | Date | null;
+}
+
+updateItemValue(item: TableData, key: string, value: string | number | boolean | null | undefined): void {
+  (item as Record<string, unknown>)[key] = value;
 }
 
 ngOnDestroy() {

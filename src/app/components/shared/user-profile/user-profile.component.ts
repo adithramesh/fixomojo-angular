@@ -13,8 +13,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { PartnerSideBarComponent } from '../../partner/partner-side-bar/partner-side-bar.component';
 import { selectUserRole } from '../../../store/auth/auth.reducer';
-// import { ToastrService } from 'ngx-toastr';
 import { AuthActions } from '../../../store/auth/auth.actions';
+import { ActualFileObject, FilePondInitialFile } from 'filepond';
+import { UserResponseDTO } from '../../../models/admin.model';
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
 
@@ -45,8 +46,8 @@ export class UserProfileComponent implements OnInit {
   isSubmitting = false;
   isLoading = false;
   selectedFile: File | null = null;
-  imagePreviewUrl: string = '';
-  pondFiles: any[] = [];
+  imagePreviewUrl = '';
+  pondFiles: (string | FilePondInitialFile | Blob | ActualFileObject)[] = [];
   show = true;
   role: 'user' | 'partner' | 'admin' = 'user';
 
@@ -85,6 +86,7 @@ export class UserProfileComponent implements OnInit {
       ]],
       phoneNumber: ['', [
         Validators.required,
+        // eslint-disable-next-line no-useless-escape
         Validators.pattern(/^\+91[\- ]?[6-9]\d{9}$/),
         noWhitespaceValidator
       ]]
@@ -98,7 +100,7 @@ export class UserProfileComponent implements OnInit {
 
   loadUserProfile(): void {
     this.isLoading = true;
-    this._http.get<any>(`${environment.BACK_END_API_URL}/user/get-profile`).subscribe({
+    this._http.get<{username:string, phoneNumber:string, profilePic?:string}>(`${environment.BACK_END_API_URL}/user/get-profile`).subscribe({
       next: (profile) => {
         this.profileForm.patchValue({
           username: profile.username,
@@ -109,8 +111,8 @@ export class UserProfileComponent implements OnInit {
           this.imagePreviewUrl = fullImageUrl;
           this.pondFiles = [{
             source: fullImageUrl,
-            options: { type: 'remote' },
-            metadata: { poster: fullImageUrl }
+            options: { type: 'local' },
+            // metadata: { poster: fullImageUrl }
           }];
         }
         this.isLoading = false;
@@ -123,8 +125,8 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  pondHandleAddFile(event: any): void {
-    const file = event.file?.file;
+  pondHandleAddFile(event:  { file: File }): void {
+    const file = event.file;
     if (file) {
       this.selectedFile = file;
       this.imagePreviewUrl = URL.createObjectURL(file);
@@ -151,9 +153,9 @@ export class UserProfileComponent implements OnInit {
     }
 
     this._http.put(`${environment.BACK_END_API_URL}/user/update-profile`, formData).subscribe({
-      next: (response: any) => {
+      next: (response:Partial<UserResponseDTO>) => {
         this.isSubmitting = false;
-        this._store.dispatch(AuthActions.updateUsername({ username: response.username }));
+        this._store.dispatch(AuthActions.updateUsername({ username: response.username! }));
         this.loadUserProfile();
       },
       error: (err) => {

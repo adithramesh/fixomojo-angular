@@ -18,7 +18,7 @@ interface SidebarItem {
   styleUrls: ['./side-bar.component.scss']
 })
 export class SidebarComponent {
-  title: string = 'Admin Panel';
+  title = 'Admin Panel';
 
   menuItems: SidebarItem[] = [
     { label: 'Dashboard', route: '/admin-dashboard', icon:'dashboard' },

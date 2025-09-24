@@ -18,7 +18,7 @@ interface SidebarItem {
   styleUrl: './partner-side-bar.component.scss'
 })
 export class PartnerSideBarComponent {
-title: string = 'Partner Panel';
+title = 'Partner Panel';
 menuItems: SidebarItem[] = [
     { label: 'Dashboard', route: '/partner-dashboard', icon:'dashboard' },
     { label: 'Location', route: '/location', icon:'location_on' },

@@ -1,4 +1,4 @@
-<nav class="navbar">
+<!-- <nav class="navbar">
   <div class="navbar-left">
     <div class="logo-container" (click)="navigateToHome()">
       <svg width="40" height="40" viewBox="0 0 100 100">
@@ -71,4 +71,129 @@
       </button>
     </div>
   </div>
+</nav> -->
+
+
+<nav class="navbar">
+  <!-- Left Section -->
+  <div class="navbar-left">
+    <div class="logo-container" (click)="navigateToHome()" role="button" tabindex="0" (keydown.enter)="navigateToHome()" (keydown.space)="navigateToHome()">
+      <svg width="40" height="40" viewBox="0 0 100 100" aria-label="Fixomojo Logo">
+        <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black" />
+        <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif"
+              font-size="40" font-weight="bold" fill="white">
+          FM
+        </text>
+      </svg>
+    </div>
+    <span class="welcome-message">
+      Welcome, {{ username$ | async }}!
+    </span>
+  </div>
+
+  <!-- Right Section -->
+  <div class="navbar-right">
+    <!-- Notifications -->
+    <div class="notification-container" (click)="toggleNotificationDropdown()" role="button" tabindex="0" (keydown.enter)="navigateToHome()" (keydown.space)="navigateToHome()">
+      <mat-icon>notifications</mat-icon>
+      <span class="notification-badge" *ngIf="unreadNotificationCount > 0">
+        {{ unreadNotificationCount }}
+      </span>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" [class.open]="notificationDropdownOpen">
+      <!-- Empty State -->
+      <div *ngIf="notifications.length === 0" class="no-notifications">
+        No notifications
+      </div>
+
+      <!-- Notifications List -->
+      <ng-container *ngIf="notifications.length > 0">
+        <div *ngFor="let notification of notifications"
+             class="notification-item"
+             [class.unread]="!notification.read">
+
+          <!-- Video Call Notification -->
+          <ng-container *ngIf="notification.type === 'video-call'; else defaultNotification">
+            <div class="notification-content video-call-notif">
+              <div class="notification-message">
+                <strong>{{ notification.message }}</strong>
+                <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+              </div>
+
+              <!-- Video Call Actions -->
+              <div *ngIf="!notification.actionTaken" class="notification-actions">
+                <button class="accept-btn"
+                        (click)="acceptCallFromNavbar(notification); $event.stopPropagation()">
+                  Accept
+                </button>
+                <button class="decline-btn"
+                        (click)="declineCallFromNavbar(notification); $event.stopPropagation()">
+                  Decline
+                </button>
+              </div>
+
+              <!-- Action Result -->
+              <div *ngIf="notification.actionTaken" class="notification-result">
+                <span *ngIf="notification.actionTaken === 'accepted'" style="color: green;">Accepted</span>
+                <span *ngIf="notification.actionTaken === 'declined'" style="color: red;">Declined</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Default Notification -->
+          <ng-template #defaultNotification>
+            <div class="notification-content default-notif"
+                  role="button"
+                 tabindex="0"
+                 (click)="markAsRead(notification._id)"
+                 (keydown.enter)="markAsRead(notification._id)"
+                 (keydown.space)="markAsRead(notification._id)">
+              <div class="notification-message">{{ notification.message }}</div>
+              <div class="notification-time">{{ notification.createdAt | date:'short' }}</div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Mark All as Read -->
+        <button class="clear-all-btn" (click)="markAllNotificationsAsRead()">
+          Mark all as read
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- User Menu -->
+    <button class="user-menu-trigger" (click)="toggleUserDropdown()">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <!-- User Dropdown -->
+    <div class="user-menu-dropdown" [class.open]="userDropdownOpen">
+      <button class="dropdown-item"
+              *ngIf="role === 'partner' || role === 'user'"
+              (click)="navigateToMyProfile()">
+        <mat-icon>account_box</mat-icon>
+        <span>My Profile</span>
+      </button>
+
+      <button class="dropdown-item"
+              *ngIf="role === 'user'"
+              (click)="navigateToMyBookings()">
+        <mat-icon>bookings</mat-icon>
+        <span>My Bookings</span>
+      </button>
+
+      <button class="dropdown-item" (click)="navigateToWallet()">
+        <mat-icon>wallet</mat-icon>
+        <span>Wallet</span>
+      </button>
+
+      <button class="dropdown-item" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
 </nav>
+

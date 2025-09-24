@@ -2,26 +2,38 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
 import { LocationService } from '../../../services/location.service';
 import { Store } from '@ngrx/store';
 import { selectTempUserId, selectUsername } from '../../../store/auth/auth.reducer';
 import { AdminService } from '../../../services/admin.service';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { HttpClient } from '@angular/common/http';
-import { BookServiceRequestDTO, BookServiceResponseDTO } from '../../../models/book-service.model';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { BookingService } from '../../../services/booking.service';
 import { ImageUrlService } from '../../../services/image.service';
 import { BookingPageService } from '../../../services/booking.page.service';
+import { IBooking } from '../../../models/book-service.model';
 
 
-interface BackendSlotResponse {
-  start: string;
-  end: string;
-  type: 'available' | 'customer-booked' | 'technician-blocked';
-  id?: string; // googleEventId
-  reason?: string;
+// interface BackendSlotResponse {
+//   start: string;
+//   end: string;
+//   type: 'available' | 'customer-booked' | 'technician-blocked';
+//   id?: string; // googleEventId
+//   reason?: string;
+// }
+
+  interface TechnicianUI {
+  id?: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  rating: number;
+  experience: string;
+  distance: number;
+  location?: { lat: number; lng: number };
+  profileImage: string;
 }
 
 @Component({
@@ -31,7 +43,8 @@ interface BackendSlotResponse {
   styleUrl: './booking-service.component.scss'
 })
 
-  
+
+
 
 export class BookingServiceComponent {
   bookingForm: FormGroup;
@@ -45,18 +58,18 @@ export class BookingServiceComponent {
   currentLongitude?: number;
   errorMessage?: string;
   userLocation!: { address?: string; latitude: number; longitude: number; };
-  availableTimeSlots: any[] = [];
-  availableTechnicians: any[] = [];
-  allTechnicians: any[]=[];
+  availableTimeSlots:{ id: string; time: string; startTime: string; endTime: string; }[] = [];
+  availableTechnicians:TechnicianUI[] = [];
+  allTechnicians:TechnicianUI[] =[];
   isLoadingMap = false;
   isLoadingTimeSlots = false;
   isLoadingTechnicians = false;
   currentBookingId!:string;
 
   // Date selection
-  selectedDate: string = '';
-  minDate: string = '';
-  maxDate: string = '';
+  selectedDate = '';
+  minDate = '';
+  maxDate = '';
 
     pagination: PaginationRequestDTO = {
       page: 1,
@@ -68,11 +81,11 @@ export class BookingServiceComponent {
     };
 
   // Typed location fields
-  addressInput: string = '';
-  autocompleteSuggestions: any[] = [];
+  addressInput = '';
+  autocompleteSuggestions:{ display_name: string; lat: string; lon: string; }[] = [];
   selectedAddressDetails?: { address: string; latitude: number; longitude: number };
   typedLocationErrorMessage?: string;
-  showAddressInputField: boolean = false;
+  showAddressInputField = false;
 
   //offer
   appliedDiscount!:number
@@ -86,8 +99,8 @@ export class BookingServiceComponent {
   private _adminService = inject(AdminService)
   private _store = inject(Store)
   // private _userId!:Observable<string|null>
-  private _userId:string = ''
-  private _username:string = ''
+  private _userId = ''
+  private _username = ''
   private _destroy$ = new Subject<void>();
   private _route = inject(ActivatedRoute)
   private _router = inject(Router)
@@ -197,9 +210,9 @@ export class BookingServiceComponent {
   nextStep(): void {
     if (this.canProceedToNextStep() && this.currentStep < this.maxSteps) {
       this.currentStep++;
-      if(this.currentStep===3){
+      // if(this.currentStep===3){
 
-      }
+      // }
     }
   }
 
@@ -262,7 +275,7 @@ export class BookingServiceComponent {
     this.autocompleteSuggestions = [];
   }
 
-  onSelectSuggestion(suggestion: any): void {
+  onSelectSuggestion(suggestion: { display_name: string; lat: string; lon: string; }): void {
     this.addressInput = suggestion.display_name;
     this.selectedAddressDetails = {
       address: suggestion.display_name,
@@ -303,17 +316,24 @@ export class BookingServiceComponent {
     this._adminService.getPartners(this.pagination).subscribe({
       next: (response) => {
         this.allTechnicians = response.items.map(partner => ({
-          id: partner.id,
-          name: partner.username,
-          email: partner.email,
-          phoneNumber: partner.phoneNumber,
+          // id: String(partner.id ?? ''),
+          // name: partner.username,
+          // email: partner.email,
+            name: partner.name ?? '',
+            email: partner.email ?? '',
+            phoneNumber: partner.phoneNumber ?? '',
+         
           rating: 4.5, // Default rating - you might want to get this from backend
           experience: '3 years', // Default experience - you might want to get this from backend
           distance: 0,// calculated using haversine formula-working
-          location:partner.location?{
-            lat: partner.location.latitude,
-            lng: partner.location.longitude
-          }:undefined,
+          // location:partner.location?{
+          //   lat: partner!.location!.latitude!,
+          //   lng: partner!.location!.longitude!
+          // }:undefined,
+          location: partner.location
+            ? { lat: partner.location.latitude, lng: partner.location.longitude }
+            : undefined,
+
           // profileImage: partner.image
           profileImage: this._imageUrlService.buildImageUrl(partner.image)
         }));
@@ -343,7 +363,7 @@ export class BookingServiceComponent {
 
 
     this.availableTechnicians=this.allTechnicians.map(technician=>{
-      const distance = this.calculateDistance(technician.location);
+      const distance = this.calculateDistance(technician.location!);
       return {...technician, distance:Math.round(distance*10)/10}
     }).filter(technician=>technician.distance<=10)
     .sort((a,b)=>a.distance-b.distance)
@@ -366,7 +386,7 @@ export class BookingServiceComponent {
     return R * c;
   }
 
-  onTechnicianSelected(technician: any): void {
+  onTechnicianSelected(technician:TechnicianUI): void {
     this.bookingForm.patchValue({ technician: technician.id });
     
     this.bookingForm.patchValue({ timeSlot: null }); 
@@ -517,8 +537,8 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
             totalAmount:this.finalAmount,
             paymentMethod:this.bookingForm.get('paymentMethod')?.value,
             bookedDate:this.selectedDate,
-            timeSlotStart:this.getSelectedTimeSlot().startTime as Date,
-            timeSlotEnd:this.getSelectedTimeSlot().endTime as Date
+            timeSlotStart:this.getSelectedTimeSlot()!.startTime as unknown as Date,
+            timeSlotEnd:this.getSelectedTimeSlot()!.endTime as unknown as Date
           }
         this._bookingPageService.submitData(data)
 
@@ -529,12 +549,12 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
                       
                       const bookingData=response.data;
                         localStorage.setItem('bookingData', JSON.stringify({
-                          bookingId: bookingData._id,
-                          username:bookingData.username,
+                          bookingId: bookingData?._id,
+                          username:bookingData?.username,
                           subServiceName:this.subServiceName,
                           technicianId: this.bookingForm.get('technician')?.value,
-                          startTime: bookingData.timeSlotStart,
-                          endTime: bookingData.timeSlotEnd
+                          startTime: bookingData?.timeSlotStart,
+                          endTime: bookingData?.timeSlotEnd
                         }));
                       
                         if(bookingData?.requiresCash=== false){
@@ -556,7 +576,7 @@ loadTimeSlotsForTechnicianAndDate(technicianId: string, date: string): void {
     }
 }
 
-proceedToPayment(bookingData:any){
+proceedToPayment(bookingData:IBooking){
 
     if (bookingData.checkoutUrl) {
         window.location.href = bookingData.checkoutUrl;
@@ -581,9 +601,9 @@ private blockSlotAfterPayment(): void {
     const technicianId = this.bookingForm.get('technician')?.value;
     
     const blockSlotPayload = {
-        technicianId: technicianId,
-        start: selectedSlot.startTime,
-        end: selectedSlot.endTime,
+        technicianId: technicianId as string,
+        start: selectedSlot!.startTime!,
+        end: selectedSlot!.endTime!,
         isCustomerBooking: true,
         reason: `Customer booking - ${this.currentBookingId}`,
         bookingId: this.currentBookingId, 
@@ -615,7 +635,7 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
     
     this.http.patch(`/api/bookings/${this.currentBookingId}`, updatePayload)
         .subscribe({
-            next: (response) => {
+            next: () => {
                 console.log('Booking fully confirmed!');
             },
             error: (err) => {
@@ -631,22 +651,20 @@ private updateBookingWithPaymentDetails(eventId: string, calendarId: string): vo
     return titles[step - 1];
   }
 
-  getSelectedTimeSlot(): any {
+  getSelectedTimeSlot(){
     const timeSlotId = this.bookingForm.get('timeSlot')?.value;
     return this.availableTimeSlots.find(slot => slot.id === timeSlotId);
   }
 
 
-  getSelectedTechnician(): any {
+  getSelectedTechnician() {
     this.technicianId = this.bookingForm.get('technician')?.value;
     return this.availableTechnicians.find(tech => tech.id === this.technicianId);
   }
 
-  getTotalAmount(){
 
-  }
 
-  applyBestOffer(price:number):any{
+  applyBestOffer(price:number){
     return this._bookingPageService.applyBestOffer(price)
   }
 

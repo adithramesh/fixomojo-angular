@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { OfferService } from '../../../services/offer.service';
 import { CommonModule } from '@angular/common';
@@ -7,6 +6,21 @@ import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { SidebarComponent } from '../side-bar/side-bar.component';
 import { DataTableComponent, TableColumn, TableData } from '../../shared/data-table/data-table.component';
 import { Subscription, Subject, debounceTime, distinctUntilChanged, catchError, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { OfferDataDTO } from '../../../models/offer.model';
+
+export interface OfferTableRow extends TableData {
+  id?: string;
+  sl: number;
+  title: string;
+  description: string;
+  status?: string;
+  type: 'percentage' | 'flat_amount';
+  value: number | string;
+  edit: string;
+  toggle: string;
+}
+
 
 @Component({
   selector: 'app-offer-management',
@@ -16,8 +30,8 @@ import { Subscription, Subject, debounceTime, distinctUntilChanged, catchError, 
   styleUrls: ['./offer-management.component.scss'],
 })
 export class OfferManagementComponent implements OnInit, OnDestroy {
-  offers: any[] = []; // Raw offers from API
-  offerTableData: TableData[] = [];
+  offers: OfferDataDTO[] = []; // Raw offers from API
+  offerTableData: OfferTableRow [] = [];
   offerTableColumns: TableColumn[] = [
     { header: 'Sl', key: 'sl', type: 'text', width: '5%' },
     { header: 'Title', key: 'title', type: 'text', width: '20%' },
@@ -34,19 +48,21 @@ export class OfferManagementComponent implements OnInit, OnDestroy {
   page = 1;
   pageSize = 10;
   filterForm: FormGroup;
-  statusFilter: string = '';
-  searchTerm: string = '';
+  statusFilter = '';
+  searchTerm = '';
   private searchSubject = new Subject<string>();
   private subscription: Subscription = new Subscription();
   isLoading = false;
   Math = Math;
 
+  private _fb=inject(FormBuilder)
+  private _offerService=inject(OfferService)
+  private _router=inject(Router)
+
   constructor(
-    private offerService: OfferService,
-    private fb: FormBuilder,
-    private router: Router
+
   ) {
-    this.filterForm = this.fb.group({
+    this.filterForm = this._fb.group({
       status: [''],
     });
   }
@@ -71,18 +87,21 @@ export class OfferManagementComponent implements OnInit, OnDestroy {
 
   loadOffers(): void {
     this.isLoading = true;
-    const filter: any = {};
+    const filter: { status: string; search: string; }={
+      status: '',
+      search: ''
+    };
     if (this.statusFilter) {
       filter.status = this.statusFilter;
     }
     if (this.searchTerm) {
       filter.search = this.searchTerm; 
     }
-    this.offerService.getAllOffers(this.page, this.pageSize, 'createdAt', 'desc', filter).subscribe(
+    this._offerService.getAllOffers(this.page, this.pageSize, 'createdAt', 'desc', filter).subscribe(
       (data) => {
-        this.offers = data.data.offers;
-        this.totalItems = data.data.pagination.total;
-        this.offerTableData = this.offers.map((offer: any, index: number) => ({
+        this.offers = data.items;
+        this.totalItems = data.total;
+        this.offerTableData = this.offers.map((offer, index: number):OfferTableRow => ({
           id: offer._id,
           sl: (this.page - 1) * this.pageSize + index + 1,
           title: offer.title,
@@ -130,13 +149,13 @@ export class OfferManagementComponent implements OnInit, OnDestroy {
 
   editOffer(id: string): void {
     if (id) {
-      this.router.navigate([`/offers/edit/${id}`]);
+      this._router.navigate([`/offers/edit/${id}`]);
     }
   }
 
   toggleStatus(id: string): void {
     if (id) {
-      this.offerService.toggleOfferStatus(id).subscribe(
+      this._offerService.toggleOfferStatus(id).subscribe(
         () => this.loadOffers(),
         (error) => console.error('Error toggling status:', error)
       );
@@ -145,7 +164,7 @@ export class OfferManagementComponent implements OnInit, OnDestroy {
 
    deleteOffer(id:string):void {
     if(id){   
-      this.offerService.deleteOffer(id).pipe(
+      this._offerService.deleteOffer(id).pipe(
         catchError((error) => {
           console.error('Error deleting offer:', error);
           return of({ success: false, message: 'Failed to delete offer' });
@@ -157,7 +176,7 @@ export class OfferManagementComponent implements OnInit, OnDestroy {
   }
 
   addNewOffer(): void {
-    this.router.navigate(['/offers/add']);
+    this._router.navigate(['/offers/add']);
   }
 
   onSearchChange(searchTerm: string): void {

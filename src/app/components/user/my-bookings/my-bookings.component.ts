@@ -20,7 +20,7 @@ import { Store } from '@ngrx/store';
   styleUrls: ['./my-bookings.component.scss']
 })
 export class MyBookingsComponent implements OnInit {
-  isLoading: boolean = true;
+  isLoading = true;
   bookingsTableColumns: TableColumn[] = [
     { header: 'Booking Number', key: 'displayId', type: 'text', width: '20%' },
     { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, // Changed to subServiceId
@@ -42,23 +42,24 @@ export class MyBookingsComponent implements OnInit {
     sortOrder: 'desc',
     searchTerm: ''
   };
-  totalBookings: number = 0;
-  totalPages: number = 0;
+  totalBookings = 0;
+  totalPages = 0;
   error: string | null = null;
   private searchSubject = new Subject<string>()
   private subscription: Subscription = new Subscription;
   private _store = inject(Store)
    private chatService = inject(ChatService)
-   private _currentUserId:string = ''
-   private _role:string = ''
-   private _username:string = ''
+   private _currentUserId = ''
+   private _role = ''
+   private _username = ''
   // _authToken = localStorage.getItem('access_token');
-  searchTerm: string=''
+  searchTerm=''
 
-  isModalOpen:boolean=false
+  isModalOpen=false
   modalType:'service' | 'otp' |'chat' = 'chat';
 
-  constructor(private bookingService: BookingService) {}
+  private bookingService = inject(BookingService)
+
 
   ngOnInit(): void {
 
@@ -126,7 +127,7 @@ export class MyBookingsComponent implements OnInit {
         }
         this.isLoading = false;
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error('Failed to fetch bookings:', error);
         this.isLoading = false;
         this.bookingsTableData = [];
@@ -137,15 +138,18 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
-  mapBookingsToTableData(booking: any): TableData {
+  mapBookingsToTableData(booking: TableData): TableData {
     
     return {
+  
       id: booking.id,
-      displayId: booking.id.slice(18),
-      subServiceId: booking.subServiceId.slice(18), 
+      displayId: typeof booking.id === 'string'
+          ? booking.id.slice(18)
+          : booking.id?.toString().slice(18),
+      subServiceId: booking.subServiceId!.slice(18), 
       subServiceName:booking.subServiceName,
       technicianId:booking.Id,
-      totalAmount: booking.totalAmount.toString(),
+      totalAmount: booking.totalAmount!.toString(),
       paymentStatus: booking.paymentStatus,
       bookingStatus: booking.bookingStatus,
       timeSlotStart:booking.timeSlotStart,

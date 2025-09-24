@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { StreamVideoClient, Call, StreamVideoParticipant } from '@stream-io/video-client';
 import { NotificationSocketService } from './notification-socket.service';
 import { environment } from '../../environments/environment';
@@ -18,11 +18,11 @@ export class VideoCallService {
 
   localParticipant = signal<StreamVideoParticipant | undefined>(undefined);
   remoteParticipant = signal<StreamVideoParticipant | null>(null);
-
+  private http = inject(HttpClient)
+  private notificationSocket = inject(NotificationSocketService)
+  
   constructor(
-    private http: HttpClient,
-    private notificationSocket: NotificationSocketService
-  ) {}
+  ) { /* empty */ }
 
   private async fetchToken(userId: string): Promise<string> {
     try {

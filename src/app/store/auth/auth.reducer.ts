@@ -1,16 +1,23 @@
 
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
-import { SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
+import { SignupResponseDTO } from '../../models/auth.model';
 
-interface AuthState {
+export interface AuthState {
   user: SignupResponseDTO | null;
   username:string|null;
   tempUserId: string | null;
   phoneNumber: string | null;
   resetToken:string|null;
-  error: any;
+  error: ApiError | null;
   loading: boolean;
+}
+
+export interface ApiError {
+  error?: {
+    message?: string;
+  };
+  message?: string;
 }
 
 export const initialState: AuthState = {
@@ -89,7 +96,7 @@ export const authFeature = createFeature({
       error,
       loading: false,
     })),
-    on(AuthActions.resetPassword, (state,{resetData}) => ({ 
+    on(AuthActions.resetPassword, (state) => ({ 
       ...state, 
       loading: true 
     })),

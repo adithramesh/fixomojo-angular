@@ -38,16 +38,16 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
 
   availableSlots: TimeSlotDisplay[] = [];
   selectedSlotToBlock?: TimeSlotDisplay; 
-  blockReason: string = '';
+  blockReason = '';
 
-  isBlockingMultiDay: boolean = false; 
+  isBlockingMultiDay = false; 
   multiDayStartDate: string;
   multiDayEndDate: string;
-  multiDayReason: string = '';
+  multiDayReason = '';
 
-  isLoadingSlots: boolean = false;
-  isLoadingBlocking: boolean = false;
-  isLoadingUnblocking: boolean = false;
+  isLoadingSlots = false;
+  isLoadingBlocking = false;
+  isLoadingUnblocking = false;
 
   errorMessage: string | null = null;
   successMessage: string | null = null;

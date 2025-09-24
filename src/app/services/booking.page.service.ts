@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -17,7 +17,7 @@ export class BookingPageService {
   private partnerApiUrl = `${environment.BACK_END_API_URL}/partner`;
   private userApiUrl = `${environment.BACK_END_API_URL}/user`;
   private offerApiUrl = `${environment.BACK_END_API_URL}/offer`;
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient)
 
 
   loadTimeSlotsForTechnicianAndDate(
@@ -51,11 +51,15 @@ export class BookingPageService {
     );
   }
 
-  submitData(data:any):Observable<BookServiceResponseDTO>{
+  submitData(data:unknown):Observable<BookServiceResponseDTO>{
     return this.http.post<BookServiceResponseDTO>(`${this.userApiUrl}/book-service`,data)
   }
 
-  blockSlotAfterPayment(blockSlotPayload:any):Observable<{success: boolean, eventId: string, calendarId: string}>{
+  // blockSlotAfterPayment(blockSlotPayload:any):Observable<{success: boolean, eventId: string, calendarId: string}>{
+  //   return this.http.post<{success: boolean, eventId: string, calendarId: string}>(`${this.partnerApiUrl}/block-slot`,blockSlotPayload)
+  // }
+
+  blockSlotAfterPayment(blockSlotPayload: { technicianId: string; start: string; end: string; isCustomerBooking: boolean; reason: string; bookingId: string; }):Observable<{success: boolean, eventId: string, calendarId: string}>{
     return this.http.post<{success: boolean, eventId: string, calendarId: string}>(`${this.partnerApiUrl}/block-slot`,blockSlotPayload)
   }
 }

@@ -8,9 +8,7 @@ export class ImageUrlService {
 
   private cloudinaryBaseUrl = `https://res.cloudinary.com/${environment.CLOUDINARY_CLOUD_NAME}/image/upload/`;
 
-  constructor() { }
-
-  buildImageUrl(publicId: string | null | undefined, transformations: string = ''): string {
+  buildImageUrl(publicId: string | null | undefined, transformations = ''): string {
     if (!publicId) {
       return 'assets/placeholder.png'; // Or any default placeholder image
     }

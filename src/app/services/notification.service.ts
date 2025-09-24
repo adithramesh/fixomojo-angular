@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -11,7 +11,7 @@ export interface PaginationRequestDTO {
   sortBy?: string;
   sortOrder?: string | "asc" | "desc";
   searchTerm?: string;
-  filter?: any; 
+  filter?: Record<string, unknown>; 
 }
 
 export interface PaginatedResponseDTO<T> {
@@ -32,11 +32,12 @@ export interface INotification {
   senderRole?: string;
   type: string;
   message: string;
-  payload: any; 
+  payload: { callId: string; }; 
   read: boolean; 
   createdAt: string; 
   updatedAt: string; 
-  actionTaken?:string
+  actionTaken?:string;
+  callId?:string;
 }
 
 interface BackendSuccessResponse<T> {
@@ -53,7 +54,7 @@ interface BackendSuccessResponse<T> {
 export class NotificationService {
   private apiUrl = `${environment.BACK_END_API_URL}/notification`;
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient)
 
  
   getNotifications(pagination: PaginationRequestDTO): Observable<BackendSuccessResponse<PaginatedResponseDTO<INotification[]>>> {
@@ -89,12 +90,12 @@ export class NotificationService {
  * request and response details to added (as per the coding std format) 
  */
 
-  markAsRead(notificationId: string, actionTaken?:string): Observable<BackendSuccessResponse<any>> {
-    return this.http.put<BackendSuccessResponse<any>>(`${this.apiUrl}/${notificationId}/read`, {actionTaken});
+  markAsRead(notificationId: string, actionTaken?:string): Observable<BackendSuccessResponse<boolean>> {
+    return this.http.put<BackendSuccessResponse<boolean>>(`${this.apiUrl}/${notificationId}/read`, {actionTaken});
   }
 
 
-  markAllAsRead(): Observable<BackendSuccessResponse<any>> {
-    return this.http.put<BackendSuccessResponse<any>>(`${this.apiUrl}/mark-all-read`, {});
+  markAllAsRead(): Observable<BackendSuccessResponse<boolean>> {
+    return this.http.put<BackendSuccessResponse<boolean>>(`${this.apiUrl}/mark-all-read`, {});
   }
 }

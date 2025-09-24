@@ -7,6 +7,14 @@ import { Store } from '@ngrx/store';
 import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { Subscription, combineLatest, filter, first } from 'rxjs';
 
+
+export interface IncomingCall {
+  callId: string;
+  callerId: string;
+  callerName: string;
+}
+
+
 @Component({
   selector: 'app-video-call',
   standalone: true,
@@ -36,7 +44,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   // Local component state
   isAudioMuted = signal(false);
   isVideoEnabled = signal(true);
-  incomingCall = signal<any | null>(null);
+  incomingCall = signal<IncomingCall | null>(null);
 
   // Store userRole as a component property
   userRole: string | null = null;
@@ -47,9 +55,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   private unbindRemoteAudio?: () => void;
   private isInitialized = false; 
 
-  constructor() {
-    
-  }
+
 
   ngOnInit() {
     this.subscriptions.add(

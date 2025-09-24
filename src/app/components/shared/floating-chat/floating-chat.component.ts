@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ChatService, ChatState } from '../../../services/chat.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -25,12 +25,12 @@ export class FloatingChatComponent {
     counterPartyName: null
   };
 
-  newMessage: string = '';
-  isOnline: boolean = true;
+  newMessage = '';
+  isOnline = true;
   private chatSubscription: Subscription | null = null;
   private shouldScrollToBottom = false;
-
-  constructor(private chatService: ChatService) {}
+  private chatService = inject(ChatService)
+  
 
   ngOnInit(): void {
 

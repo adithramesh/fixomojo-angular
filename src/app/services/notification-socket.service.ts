@@ -27,11 +27,12 @@ export class NotificationSocketService {
   private newChatNotificationSubject = new Subject<ChatNotificationData>();
   private endCallSubject = new Subject<void>()
 
-  constructor() {}
+
 
   connect(token: string, userId: string): void {
+      const socketQuery = this.socket?.io.opts.query as { userId?: string };
 
-    if (this.isConnected && this.socket && (this.socket.io.opts.query as any)?.userId === userId) {
+    if (this.isConnected && this.socket && socketQuery.userId === userId) {
       console.log('Notification Socket already connected for this user.');
       return;
     }

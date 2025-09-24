@@ -6,6 +6,8 @@ import { BookingService } from '../../../services/booking.service';
 import { PaymentService } from '../../../services/payment.service'; // Import the new service
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { TableData } from '../../shared/data-table/data-table.component';
+
 
 
 @Component({
@@ -20,8 +22,8 @@ export class PaymentSuccessComponent {
   private _bookingService = inject(BookingService)
   private _paymentService = inject(PaymentService); // Inject the new service
 
-  bookingDetails: any
-  walletMessage: string = '';
+  bookingDetails!: TableData
+  walletMessage = '';
   errorMessage!: string | null
 
   ngOnInit() {
@@ -48,10 +50,10 @@ export class PaymentSuccessComponent {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.bookingDetails = response.bookingData
+            this.bookingDetails = response.bookingData!
             // alert(response.message);
             this._bookingService.setBookingData({
-              bookingId: this.bookingDetails._id
+              bookingId: this.bookingDetails._id!
             });
           } else {
             this.errorMessage = response.message
@@ -86,8 +88,8 @@ export class PaymentSuccessComponent {
       .subscribe({
         next: (res) => {
           if (res.success) {
-            this.bookingDetails = res.data;
-            this._bookingService.setBookingData({ bookingId: this.bookingDetails._id }); 
+            this.bookingDetails = res.data!;
+            this._bookingService.setBookingData({ bookingId: this.bookingDetails._id! }); 
           } else {
             this.errorMessage = res.message;
           }

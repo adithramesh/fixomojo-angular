@@ -4,11 +4,12 @@ export interface PaginationRequestDTO {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     searchTerm?: string;
-    filter?:any;
+    filter?: Record<string, string | number | boolean | undefined>;
   }
   
 export interface PaginatedResponseDTO<T> {
     items: T ;
+    success?:boolean;
     total: number;
     page: number;
     pageSize: number;
@@ -16,14 +17,15 @@ export interface PaginatedResponseDTO<T> {
   }
 
 export interface UserResponseDTO {
-    id: string | number;
-    username: string;
-    phoneNumber: string;
-    email:string;
+    id?: string | number;
+    username?: string;
+    name?: string;
+    phoneNumber?: string;
+    email?:string;
     image?:string
-    status: string;
-    licenseStatus:string;
-    role: string;
+    status?: string;
+    licenseStatus?:string;
+    role?: string;
     location?: {
       address?: string;
       latitude: number;
@@ -32,6 +34,8 @@ export interface UserResponseDTO {
     experience?:number;
     rating?:number;
     createdAt?: string;
+    distance?: number;
+    profileImage?: string;
 }
 
 export interface ServiceRequestDTO {

@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
 import { environment } from '../../environments/environment';
-import { log } from 'node:console';
 import { AdminDashboardResponseDTO, PartnerDashboardResponseDTO } from '../models/dashboard.model';
 
 @Injectable({
@@ -12,7 +10,7 @@ import { AdminDashboardResponseDTO, PartnerDashboardResponseDTO } from '../model
 export class DashboardService {
   private apiUrl = `${environment.BACK_END_API_URL}`;
   
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient)
 
   getAdminDashboard(startDate?: string, endDate?: string): Observable<AdminDashboardResponseDTO> {
     let params = new HttpParams();

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { 
@@ -6,12 +6,9 @@ import {
   ServiceResponseDTO, 
   PaginatedResponseDTO,
   PaginationRequestDTO,
-  SubServiceRequestDTO,
   SubServiceResponseDTO,
-  ServiceRequestDTO
 } from '../models/admin.model';
 import { environment } from '../../environments/environment';
-import { log } from 'node:console';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +16,7 @@ import { log } from 'node:console';
 export class AdminService {
   private apiUrl = `${environment.BACK_END_API_URL}/admin/`;
   
-  constructor(private http: HttpClient) {}
+   private http = inject(HttpClient)
   
   // GET methods with pagination
   getUsers(pagination: PaginationRequestDTO,  role?: 'user' | 'partner'): Observable<PaginatedResponseDTO<UserResponseDTO[]>> {
@@ -31,23 +28,21 @@ export class AdminService {
   }
 
   getAppUsers(pagination: PaginationRequestDTO ): Observable<PaginatedResponseDTO<UserResponseDTO[]>> {
-    let params = this.buildPaginationParams(pagination);
     return this.getUsers(pagination,'user')
   }
   
   getPartners(pagination: PaginationRequestDTO ): Observable<PaginatedResponseDTO<UserResponseDTO[]>> {
-    let params = this.buildPaginationParams(pagination);
     return this.getUsers(pagination,'partner')
   }
 
 
   getServices(pagination: PaginationRequestDTO): Observable<PaginatedResponseDTO<ServiceResponseDTO[]>> {
-    let params = this.buildPaginationParams(pagination);
+    const params = this.buildPaginationParams(pagination);
     return this.http.get<PaginatedResponseDTO<ServiceResponseDTO[]>>(`${this.apiUrl}service-management`, { params });
   }
 
   getSubServices(pagination: PaginationRequestDTO) {
-    let params = this.buildPaginationParams(pagination);
+    const params = this.buildPaginationParams(pagination);
     return this.http.get<PaginatedResponseDTO<SubServiceResponseDTO[]>>(`${this.apiUrl}sub-service-management`, { params });
   }
 
@@ -74,8 +69,8 @@ export class AdminService {
     
     if (pagination.filter && Object.keys(pagination.filter).length > 0) {
       Object.keys(pagination.filter).forEach(key => {
-        if (pagination.filter[key] !== undefined && pagination.filter[key] !== null) {
-          params = params.set(key, pagination.filter[key].toString());
+        if (pagination.filter![key] !== undefined && pagination.filter![key] !== null) {
+          params = params.set(key, pagination.filter![key].toString());
         }
       });
     }

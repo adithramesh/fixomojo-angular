@@ -7,7 +7,7 @@
   <div *ngIf="bookingDetails" class="booking-details">
     <p>Your booking details are:</p>
     <ul>
-      <li><strong>Booking ID:</strong> {{ bookingDetails._id.slice(13) }}</li>
+      <li><strong>Booking ID:</strong> {{ bookingDetails._id?.slice(13) }}</li>
       <li><strong>Service Name:</strong> {{ bookingDetails.subServiceName }}</li>
       <li><strong>Total Amount:</strong> ₹{{ bookingDetails.totalAmount }}</li>
       <li><strong>Payment Method:</strong> {{ bookingDetails.paymentMethod }}</li>

@@ -1,9 +1,8 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { HomeResponseDTO } from "../models/home.model";
 import { environment } from "../../environments/environment";
-import { PaginatedResponseDTO } from "../models/admin.model";
+
 
 export interface WalletResponse {
   success: boolean;
@@ -18,7 +17,7 @@ export interface WalletResponse {
 
 @Injectable({ providedIn: 'root'})
 export class WalletService {
-    constructor(private http:HttpClient){}
+    private http = inject(HttpClient)
     private apiUrl=`${environment.BACK_END_API_URL}/wallet/`
     getWallet():Observable<WalletResponse>{
         return this.http.get<WalletResponse>(`${this.apiUrl}balance`)

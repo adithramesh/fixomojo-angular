@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { FloatingChatComponent } from './components/shared/floating-chat/floating-chat.component';
 import { Subscription } from 'rxjs';
@@ -14,8 +14,8 @@ export class AppComponent {
   title = 'front-end';
 
   private subscriptions: Subscription = new Subscription();
+  private router = inject (Router)
 
-  constructor(private router: Router) {}
 
   ngOnInit() {
     // Watch for navigation events for debugging

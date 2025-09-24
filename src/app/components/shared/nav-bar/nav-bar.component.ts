@@ -27,7 +27,7 @@ export class NavBarComponent implements OnInit {
   userDropdownOpen = false;
   notificationDropdownOpen = false;
 
-  unreadNotificationCount: number = 0;
+  unreadNotificationCount = 0;
   notifications: INotification[] = []
 
   private subscriptions: Subscription = new Subscription();
@@ -147,7 +147,7 @@ export class NavBarComponent implements OnInit {
     );
   }
 
-  getNotifications(page: number, pageSize: number, filter?: any): void {
+  getNotifications(page: number, pageSize: number, filter?: undefined): void {
     const pagination: PaginationRequestDTO = { page, pageSize, sortBy: 'createdAt', sortOrder: 'desc', filter };
     this.subscriptions.add(
       this._notificationService.getNotifications(pagination).subscribe({

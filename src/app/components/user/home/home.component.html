@@ -35,22 +35,31 @@
 
       <!-- Carousel Controls -->
       <div class="carousel-controls" *ngIf="offers.length > 0">
-        <button class="nav-btn prev" (click)="prevSlide()" aria-label="Previous">‹</button>
-        <div class="carousel-indicators">
-          <span 
-            class="indicator" 
-            [class.active]="currentSlide === 0"
-            (click)="goToSlide(0)">
-          </span>
-          <span 
-            *ngFor="let offer of offers; let i = index" 
-            class="indicator" 
-            [class.active]="currentSlide === i + 1"
-            (click)="goToSlide(i + 1)">
-          </span>
-        </div>
-        <button class="nav-btn next" (click)="nextSlide()" aria-label="Next">›</button>
+      <button class="nav-btn prev" (click)="prevSlide()" aria-label="Previous">‹</button>
+      <div class="carousel-indicators">
+        <span 
+          class="indicator" 
+          [class.active]="currentSlide === 0"
+          role="button"
+          tabindex="0"
+          (click)="goToSlide(0)"
+          (keydown.enter)="goToSlide(0)"
+          (keydown.space)="goToSlide(0)">
+        </span>
+        <span 
+          *ngFor="let offer of offers; let i = index" 
+          class="indicator" 
+          [class.active]="currentSlide === i + 1"
+          role="button"
+          tabindex="0"
+          (click)="goToSlide(i + 1)"
+          (keydown.enter)="goToSlide(i + 1)"
+          (keydown.space)="goToSlide(i + 1)">
+        </span>
       </div>
+      <button class="nav-btn next" (click)="nextSlide()" aria-label="Next">›</button>
+    </div>
+
     </div>
   </section>
 
@@ -82,7 +91,11 @@
         [imageUrl]="_imageUrlService.buildImageUrl(service.image)"
         [isHomePage]="true"
         [showBookButton]="false"
+        role="button"
+        tabindex="0"
         (click)="viewService(service)"
+        (keydown.enter)="viewService(service)"
+        (keydown.space)="viewService(service)"
       ></app-service-card>
     </div>
 

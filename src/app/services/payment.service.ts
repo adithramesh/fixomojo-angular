@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { IBooking } from '../models/book-service.model';
+import { TableData } from '../components/shared/data-table/data-table.component';
 
 
 export interface VerifyPaymentResponse {
   success: boolean;
   message: string;
-  bookingData?: any; 
+  bookingData?: IBooking; 
 }
 
 export interface WalletResponse {
@@ -18,7 +20,7 @@ export interface WalletResponse {
 export interface BookingDetailsResponse {
   success: boolean;
   message: string;
-  data?: any; 
+  data?: TableData; 
 }
 
 @Injectable({
@@ -27,19 +29,19 @@ export interface BookingDetailsResponse {
 export class PaymentService {
   private apiUrl = environment.BACK_END_API_URL;
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient)
 
   verifyCardPayment(sessionId: string): Observable<VerifyPaymentResponse> {
-    return this.http.get<any>(`${this.apiUrl}/user/verify-payment?session_id=${sessionId}`);
+    return this.http.get<VerifyPaymentResponse>(`${this.apiUrl}/user/verify-payment?session_id=${sessionId}`);
   }
 
 
   confirmWalletRecharge(sessionId: string): Observable<WalletResponse> {
-    return this.http.get<any>(`${this.apiUrl}/wallet/confirm-wallet?session_id=${sessionId}`);
+    return this.http.get<WalletResponse>(`${this.apiUrl}/wallet/confirm-wallet?session_id=${sessionId}`);
   }
 
 
   loadWalletBooking(bookingId: string): Observable<BookingDetailsResponse> {
-    return this.http.get<any>(`${this.apiUrl}/booking/${bookingId}`);
+    return this.http.get<BookingDetailsResponse>(`${this.apiUrl}/booking/${bookingId}`);
   }
 }

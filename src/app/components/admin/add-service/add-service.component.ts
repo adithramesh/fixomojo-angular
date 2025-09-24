@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
@@ -11,6 +11,7 @@ import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { SidebarComponent } from '../side-bar/side-bar.component';
+import { FilePondInitialFile } from 'filepond';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
@@ -25,7 +26,7 @@ registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPl
 export class AddServiceComponent implements OnInit {
   addServiceForm!: FormGroup;
   file: File | null = null;
-  pondFiles: any[] = [];
+  pondFiles: FilePondInitialFile[] = [];
 
   private _fb = inject(FormBuilder);
   private _adminService = inject(AdminService);
@@ -77,21 +78,26 @@ export class AddServiceComponent implements OnInit {
             source: fullImageUrl,
             
             options: {
-              type: 'remote',
-              size: 500000
+              type: 'local',
+              // size: 500000
             },
-             metadata: {
-              poster: fullImageUrl 
-            }
+            //  metadata: {
+            //   poster: fullImageUrl 
+            // }
           }];
         }
       }
     });
   }
 
-  pondHandleAddFile(event: any): void {
-    console.log("pondHandleAddFile", event),event.file;
-    this.file = event.file?.file || null;
+  // pondHandleAddFile(event: any): void {
+  //   console.log("pondHandleAddFile", event),event.file;
+  //   this.file = event.file?.file || null;
+  // }
+
+  pondHandleAddFile(event: { file: File }): void { 
+    // console.log("pondHandleAddFile", event),event.file;
+    this.file = event.file || null;
   }
 
   pondHandleRemoveFile(): void {

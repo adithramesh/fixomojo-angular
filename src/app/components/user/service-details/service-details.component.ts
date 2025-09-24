@@ -56,7 +56,7 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
   selectedService: TableData | null = null;
 
   subServiceTableData: TableData[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
   serviceId: string | null = null;
   serviceName: string | null = null;
   

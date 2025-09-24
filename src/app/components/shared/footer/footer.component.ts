@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
     styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
-  email: string = '';
+  email = '';
 
 
 

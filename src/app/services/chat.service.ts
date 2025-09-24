@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient} from '@angular/common/http';
 import { SocketService, ChatMessage } from './socket.service';
 import { environment } from '../../environments/environment';
+import { ApiError } from '../store/auth/auth.reducer';
+
 
 export interface ChatState {
   isOpen: boolean;
@@ -41,10 +43,9 @@ export class ChatService {
 
   private messageSubscription: Subscription | null = null;
 
-  constructor(
-    private socketService: SocketService,
-    private http: HttpClient
-  ) {}
+  private socketService = inject(SocketService)
+  private http = inject(HttpClient)
+ 
 
   // Get chat state observable
   getChatState(): Observable<ChatState> {
@@ -113,11 +114,18 @@ export class ChatService {
         counterPartyName 
       });
 
-    } catch (error: any) {
-      console.error('Error opening chat:', error);
+    } catch (error) {
+     let apiError: ApiError;
+
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        apiError = error as ApiError;
+      } else {
+        apiError = { message: 'Unknown error occurred' };
+      }
+
       this.updateChatState({
         isLoading: false,
-        error: error.message || 'Failed to open chat'
+        error: apiError.message || apiError.error?.message || 'Something went wrong'
       });
     }
   }
@@ -172,7 +180,7 @@ export class ChatService {
       } else {
         throw new Error(response?.message || 'Failed to load chat history');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading chat history:', error);
       throw error;
     }

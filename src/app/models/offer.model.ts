@@ -1,4 +1,4 @@
-export interface OfferDataRequestDTO  {
+export interface OfferDataDTO  {
   _id?:string;
   title: string;
   description: string;
@@ -10,4 +10,20 @@ export interface OfferDataRequestDTO  {
   min_booking_amount?: number;
   valid_until?: Date;
   status?: string;
+}
+
+export interface OfferApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    offers: OfferDataDTO[];
+    pagination: {
+      total: number;
+      page: number;
+      pages: number;
+      limit: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
 }

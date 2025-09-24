@@ -2,7 +2,7 @@ import { ApplicationConfig, isDevMode, provideZoneChangeDetection, inject, PLATF
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideStore, Store } from '@ngrx/store';
+import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { AuthEffects } from './store/auth/auth.effects';
 import { authFeatureKey, authReducer } from './store/auth/auth.reducer';
@@ -12,11 +12,12 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 import { ActionReducer, MetaReducer } from '@ngrx/store';
 import { isPlatformBrowser } from '@angular/common';
 import { authInterceptor } from './interceptor/auth.interceptor';
+import { AppState } from './store/auth/app.state';
 
 
 // Create a factory function for the meta reducer that checks platform
-export function localStorageSyncFactory(): MetaReducer<any> {
-  return (reducer: ActionReducer<any>): ActionReducer<any> => {
+export function localStorageSyncFactory(): MetaReducer<AppState> {
+  return (reducer: ActionReducer<AppState>): ActionReducer<AppState> => {
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       return localStorageSync({
         keys: ['auth'],
@@ -28,7 +29,7 @@ export function localStorageSyncFactory(): MetaReducer<any> {
 }
 
 // Initialize meta reducers array
-export const metaReducers: MetaReducer[] = [localStorageSyncFactory()];
+export const metaReducers: MetaReducer<AppState>[] = [localStorageSyncFactory()];
 
 export const appConfig: ApplicationConfig = {
   providers: [

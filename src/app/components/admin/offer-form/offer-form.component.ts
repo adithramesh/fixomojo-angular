@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-
-import { ActivatedRoute, Router } from '@angular/router';
 import { OfferService } from '../../../services/offer.service';
-import { OfferDataRequestDTO } from '../../../models/offer.model';
+
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../side-bar/side-bar.component';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { OfferDataDTO } from '../../../models/offer.model';
 
 @Component({
   selector: 'app-offer-form',
@@ -25,14 +25,17 @@ export class OfferFormComponent implements OnInit {
   discountTypes = ['percentage', 'flat_amount'];
   today: string = new Date().toISOString().split('T')[0];
 
+  private _fb=inject(FormBuilder)
+  private _offerService=inject(OfferService)
+  private _route=inject( ActivatedRoute)
+  private _router=inject(Router)
+
+
   constructor(
-    private fb: FormBuilder,
-    private offerService: OfferService,
-    private route: ActivatedRoute,
-    private router: Router
+  
   ) {
 
-    this.offerForm = this.fb.group({
+    this.offerForm = this._fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       offer_type: ['', Validators.required],
@@ -57,7 +60,7 @@ export class OfferFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.offerId = this.route.snapshot.paramMap.get('id');
+    this.offerId = this._route.snapshot.paramMap.get('id');
     if (this.offerId) {
       this.isEditMode = true;
       this.loadOfferDetails();
@@ -77,10 +80,10 @@ export class OfferFormComponent implements OnInit {
 
  loadOfferDetails(): void {
   if (this.offerId) {
-    this.offerService.getOfferById(this.offerId).subscribe({
-      next: (data: any) => {
-        const formattedDate = data.valid_until
-          ? new Date(data.valid_until).toISOString().split('T')[0]
+    this. _offerService.getOfferById(this.offerId).subscribe({
+      next: (data) => {
+        const formattedDate = data.data.valid_until
+          ? new Date(data.data.valid_until).toISOString().split('T')[0]
           : '';
 
         this.offerForm.patchValue({
@@ -95,12 +98,12 @@ export class OfferFormComponent implements OnInit {
           valid_until: formattedDate
         });
 
-        if (data.offer_type === 'service_category') {
+        if (data.data.offer_type === 'service_category') {
           this.offerForm.get('serviceId')?.setValidators([Validators.required]);
           this.offerForm.get('serviceId')?.updateValueAndValidity();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Error loading offer:', error);
       }
     });
@@ -111,18 +114,18 @@ export class OfferFormComponent implements OnInit {
     if (this.offerForm.valid) {
         const formData = this.offerForm.value;
     
-        const offerData: OfferDataRequestDTO = {
+        const offerData: OfferDataDTO = {
           ...formData
         };
       if (this.isEditMode && this.offerId) {
-        this.offerService.updateOffer(this.offerId, offerData).subscribe(
-          () => this.router.navigate(['/offers']),
-          (error) => console.error('Error updating offer:', error)
+        this. _offerService.updateOffer(this.offerId, offerData).subscribe(
+          () => this._router.navigate(['/offers']),
+          (error: unknown) => console.error('Error updating offer:', error)
         );
       } else {
-        this.offerService.addOffer(offerData).subscribe(
-          () => this.router.navigate(['/offers']),
-          (error) => console.error('Error adding offer:', error)
+        this. _offerService.addOffer(offerData).subscribe(
+          () => this._router.navigate(['/offers']),
+          (error: unknown) => console.error('Error adding offer:', error)
         );
       }
     }
@@ -150,6 +153,6 @@ export class OfferFormComponent implements OnInit {
 
 
   onCancel(): void {
-    this.router.navigate(['/offers']);
+    this._router.navigate(['/offers']);
   }
 }

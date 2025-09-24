@@ -38,7 +38,7 @@ export class SubServiceManagementComponent {
   ];
 
   subServiceTableData: TableData[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
   serviceId: string | null = null; 
   pagination: PaginationRequestDTO = {
     page: 1,

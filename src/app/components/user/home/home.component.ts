@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription, Observable, interval } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import {
   selectPhoneNumber,
   selectUsername,
@@ -9,13 +9,13 @@ import {
 import { AdminService } from '../../../services/admin.service'; 
 import { OfferService } from '../../../services/offer.service';
 import { PaginatedResponseDTO, ServiceResponseDTO } from '../../../models/admin.model'; 
-import { OfferDataRequestDTO } from '../../../models/offer.model';
 import { CommonModule } from '@angular/common';
 import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 import { Router } from '@angular/router';
 import { ServiceCardComponent } from '../../shared/service-card/service-card.component';
 import { ImageUrlService } from '../../../services/image.service';
 import { FooterComponent } from '../../shared/footer/footer.component';
+import { OfferDataDTO } from '../../../models/offer.model';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   phoneNumber$!: Observable<string | null>;
 
   featuredServices: ServiceResponseDTO[] = []; 
-  offers: OfferDataRequestDTO[] = [];
+  offers: OfferDataDTO[] = [];
   currentSlide = 0;
   showOffers = false;
   isLoading = true;
@@ -43,7 +43,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _router = inject(Router)
   public _imageUrlService = inject(ImageUrlService)
 
-  constructor() {}
 
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
@@ -85,8 +84,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this._offerService.getAllOffers(1, 10, 'createdAt', 'desc', { status: 'Active' })
         .subscribe({
           next: (response) => {
-            if (response.success && response.data?.offers) {
-              this.offers = response.data.offers.filter((offer: OfferDataRequestDTO) => 
+            if (response.success && response.items) {
+              this.offers = response.items.filter((offer: OfferDataDTO) => 
                 offer.status === 'Active' && 
                 (!offer.valid_until || new Date(offer.valid_until) > new Date())
               );
@@ -147,14 +146,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.showOffers = index > 0;
   }
 
-  getCurrentOffer(): OfferDataRequestDTO | null {
+  getCurrentOffer(): OfferDataDTO | null {
     if (this.showOffers && this.offers.length > 0 && this.currentSlide > 0) {
       return this.offers[this.currentSlide - 1] || null;
     }
     return null;
   }
 
-  getDiscountText(offer: OfferDataRequestDTO): string {
+  getDiscountText(offer: OfferDataDTO): string {
     return offer.discount_type === 'percentage' 
       ? `${offer.discount_value}% OFF`
       : `₹${offer.discount_value} OFF`;
