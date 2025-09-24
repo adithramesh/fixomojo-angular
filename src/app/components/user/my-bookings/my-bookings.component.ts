@@ -10,12 +10,13 @@ import { FooterComponent } from '../../shared/footer/footer.component';
 import { ChatService } from '../../../services/chat.service';
 import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { Store } from '@ngrx/store';
+import { ConfirmationModalComponent } from '../../shared/confirmation-modal/confirmation-modal.component';
 
 
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent, FooterComponent, ConfirmationModalComponent],
   templateUrl: './my-bookings.component.html',
   styleUrls: ['./my-bookings.component.scss']
 })
@@ -57,6 +58,12 @@ export class MyBookingsComponent implements OnInit {
 
   isModalOpen=false
   modalType:'service' | 'otp' |'chat' = 'chat';
+
+  showCancelModal = false;
+  cancelModalTitle = '';
+  cancelModalMessage = '';
+  cancelButtonText = '';
+  private bookingToCancel: TableData | null = null;
 
   private bookingService = inject(BookingService)
 
@@ -148,7 +155,7 @@ export class MyBookingsComponent implements OnInit {
           : booking.id?.toString().slice(18),
       subServiceId: booking.subServiceId!.slice(18), 
       subServiceName:booking.subServiceName,
-      technicianId:booking.Id,
+      technicianId:booking.technicianId,
       totalAmount: booking.totalAmount!.toString(),
       paymentStatus: booking.paymentStatus,
       bookingStatus: booking.bookingStatus,
@@ -168,9 +175,15 @@ export class MyBookingsComponent implements OnInit {
   }
 
   onRowAction(event: { action: string; item: TableData }): void {
-    console.log('Row action:', event);
-    this.openChat(event.item);
-  }
+      switch(event.action) {
+        case 'chat':
+          this.openChat(event.item);
+          break;
+        case 'cancel':
+          this.prepareAndOpenCancelModal(event.item);
+          break;
+      }
+    }
 
     async openChat(booking: TableData): Promise<void> {
     const _authToken=this.getValidToken()
@@ -194,6 +207,57 @@ export class MyBookingsComponent implements OnInit {
       console.error('Failed to open chat:', error);
       // You could show a toast notification here
     }
+  }
+  
+  private prepareAndOpenCancelModal(booking: TableData): void {
+      const timeSlotStart = new Date(booking.timeSlotStart!);
+      const now = new Date();
+      const timeDifferenceInHours = (timeSlotStart.getTime() - now.getTime()) / (1000 * 60 * 60);
+      
+      this.bookingToCancel = booking;
+      this.showCancelModal = true;
+      
+      if (timeDifferenceInHours > 24) {
+          this.cancelModalTitle = 'Cancel Booking & Get 50% Refund';
+          this.cancelModalMessage = `You are eligible for a 50% refund on this booking. Are you sure you want to proceed with the cancellation?`;
+          this.cancelButtonText = 'Cancel Booking';
+      } 
+      // else if(now.getTime()/ (1000 * 60 * 60) >timeSlotStart.getTime()/(1000 * 60 * 60) && booking.bookingStatus === 'Confirmed'){
+      //     this.cancelModalTitle = 'Work not done and get 100% Refund';
+      //     this.cancelModalMessage = `You are eligible for a 100% refund on this booking. Are you sure you want to proceed with the cancellation?`;
+      //     this.cancelButtonText = 'Cancel Booking';
+      // } 
+      else {
+          this.cancelModalTitle = 'Cancel Booking (No Refund)';
+          this.cancelModalMessage = 'This booking cannot be cancelled with a refund as it is within 24 hours of the service time. Are you sure you want to proceed?';
+          this.cancelButtonText = 'Cancel Booking';
+      }
+  }
+
+  confirmCancelBooking(): void {
+    if (!this.bookingToCancel || !this.bookingToCancel.id) {
+      console.error('Booking data is missing.');
+      return;
+    }
+    this.bookingService.cancelBooking(this.bookingToCancel.id as string).subscribe({
+      next: (response) => {
+        if (response.success) {
+          console.log(response.message || 'Booking cancelled successfully!');
+          this.getBookings();
+        } else {
+          console.error(response.message || 'Failed to cancel booking.');
+        }
+      },
+      error: (err) => {
+        console.error('Error during cancellation:', err);
+      }
+    });
+    this.cancelModalClosed();
+  }
+
+  cancelModalClosed(): void {
+      this.showCancelModal = false;
+      this.bookingToCancel = null;
   }
 
   private getValidToken(): string | null {

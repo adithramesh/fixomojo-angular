@@ -145,13 +145,13 @@
                     Complete
                   </button>
                   
-                  <!-- Rate button (shows after completion) -->
+                  <!-- Cancel button (shows after confirmation) -->
                   <button 
-                    *ngIf="shouldShowRateButton(item)"
+                    *ngIf="shouldShowCancelButton(item)"
                     class="btn btn-sm btn-warning"
-                    (click)="onButtonClick('rate', item)"
-                    title="Rate service">
-                    Rate
+                    (click)="onButtonClick('cancel', item)"
+                    title="Cancel booking">
+                    Cancel
                   </button>
                 </div>
               </ng-container>

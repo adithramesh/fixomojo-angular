@@ -1,0 +1,23 @@
+<div class="confirmation-modal" [class.show]="isOpen">
+  <div class="confirmation-modal-content">
+    <!-- Icon -->
+    <div class="confirmation-icon">!</div>
+
+    <!-- Title & Message -->
+    <h2 class="confirmation-title">{{ title }}</h2>
+    <p class="confirmation-message">{{ message }}</p>
+
+    <!-- Actions -->
+    <div class="confirmation-actions">
+      <button class="confirmation-btn btn-cancel" (click)="onCancel()">Cancel</button>
+      <button *ngIf="canConfirm" class="confirmation-btn btn-confirm" (click)="onConfirm()">
+        {{ confirmButtonText }}
+      </button>
+    </div>
+
+    <!-- Close Button -->
+    <button class="close-btn" type="button" (click)="closeModal()" aria-label="Close">
+      ×
+    </button>
+  </div>
+</div>

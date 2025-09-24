@@ -31,3 +31,15 @@
   (close)="closeModal()"
   (otpVerified)="onOtpVerified($event)">
 </app-modal>
+
+
+<app-confirmation-modal
+    [isOpen]="showCancelModal"
+    [title]="cancelModalTitle"
+    [message]="cancelModalMessage"
+    [confirmButtonText]="cancelButtonText"
+    (confirm)="confirmCancelBooking()"
+    (cancel)="cancelModalClosed()"
+    (close)="cancelModalClosed()"
+    [canConfirm]="canCancel"
+></app-confirmation-modal>

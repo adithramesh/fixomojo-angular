@@ -11,11 +11,12 @@ import { Router } from '@angular/router';
 import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { Store } from '@ngrx/store';
 import { ChatService } from '../../../services/chat.service';
+import { ConfirmationModalComponent } from '../../shared/confirmation-modal/confirmation-modal.component';
 
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule,  DataTableComponent,ModalComponent, PartnerSideBarComponent],
+  imports: [CommonModule, FormsModule,  DataTableComponent,ModalComponent, PartnerSideBarComponent, ConfirmationModalComponent],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })
@@ -59,7 +60,14 @@ export class TasksComponent {
     modalType:'service' | 'otp' |'chat' = 'otp';
     // otpData:any
     bookingId!:string
-    selectedBooking: TableData | null = null  
+    selectedBooking: TableData | null = null ;
+
+    showCancelModal = false;
+    cancelModalTitle = '';
+    cancelModalMessage = '';
+    cancelButtonText = '';
+    canCancel = false;
+    private bookingToCancel: TableData | null = null;
 
     private bookingService = inject(BookingService) 
   
@@ -165,8 +173,8 @@ export class TasksComponent {
         case 'complete':
           this.openOtpModal(event.item);
           break;
-        case 'rate':
-          this.openRating(event.item);
+        case 'cancel':
+          this.prepareAndOpenCancelModal(event.item);
           break;
       }
     }
@@ -194,6 +202,55 @@ export class TasksComponent {
       // can show toast notification here
     }
   }
+
+  private prepareAndOpenCancelModal(booking: TableData): void {
+      const timeSlotStart = new Date(booking.timeSlotStart!);
+      const now = new Date();
+      const timeDifferenceInHours = (timeSlotStart.getTime() - now.getTime()) / (1000 * 60 * 60);
+      
+      this.bookingToCancel = booking;
+      this.showCancelModal = true;
+      
+      if (timeDifferenceInHours > 24) {
+          this.cancelModalTitle = 'Cancel Booking';
+          this.cancelModalMessage = `You are eligible to cancel this booking. Are you sure you want to proceed with the cancellation?`;
+          this.cancelButtonText = 'Cancel Booking';
+          this.canCancel = true; 
+      } else {
+          this.cancelModalTitle = 'Cancel Booking (No Refund)';
+          this.cancelModalMessage = 'This booking cannot be cancelled with as it is within 24 hours. ';
+          this.cancelButtonText = 'Cancel Booking';
+          this.canCancel = false;
+      }
+  }
+
+  confirmCancelBooking(): void {
+    if (!this.bookingToCancel || !this.bookingToCancel.id) {
+      console.error('Booking data is missing.');
+      return;
+    }
+    this.bookingService.cancelBooking(this.bookingToCancel.id as string).subscribe({
+      next: (response) => {
+        if (response.success) {
+          console.log(response.message || 'Booking cancelled successfully!');
+          this.getBookings();
+        } else {
+          console.error(response.message || 'Failed to cancel booking.');
+        }
+      },
+      error: (err) => {
+        console.error('Error during cancellation:', err);
+      }
+    });
+    this.cancelModalClosed();
+  }
+
+  cancelModalClosed(): void {
+      this.showCancelModal = false;
+      this.bookingToCancel = null;
+      this.canCancel = false;
+  }
+
 
     private getValidToken(): string | null {
     const _authToken = localStorage.getItem('access_token');
@@ -268,9 +325,8 @@ export class TasksComponent {
     });
   }
 
-    openRating(booking: TableData): void {
-      // Navigate to rating page or open rating modal
-      console.log('Opening rating for booking:', booking.id);
+    openCancelBooking(booking: TableData): void {
+      console.log('Opening cancel model for booking:', booking.id);
     }
 
     

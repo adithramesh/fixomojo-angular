@@ -48,6 +48,10 @@ export class BookingService {
     return this.http.post<{success:boolean, message:string}>(`${this.apiUrl}/verify-work`, {otp, bookingId});
   }
 
+  cancelBooking(bookingId:string):Observable<{success:boolean, message:string}>{
+    return this.http.post<{success:boolean, message:string}>(`${this.apiUrl}/cancel/${bookingId}`, {});
+  }
+
   emitBookingUpdate(updatedBooking: TableData){
     this.bookingUpdatedSubject.next(updatedBooking)
   }

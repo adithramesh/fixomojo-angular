@@ -165,6 +165,8 @@ export class DataTableComponent {
   }
 
 shouldShowChatButton(item: TableData): boolean {
+  // console.log("item.isCompleted", item.isCompleted);
+  
   return item.bookingStatus === 'Confirmed'  
   // && !item.isCompleted;
   
@@ -172,16 +174,18 @@ shouldShowChatButton(item: TableData): boolean {
 
 shouldShowCompleteButton(item: TableData): boolean {
   if(item.timeSlotStart && this._role==='partner'){
+    console.log("this.isToday(item.timeSlotStart.toString())", this.isToday(item.timeSlotStart.toString()));
+    
   return item.bookingStatus === 'Confirmed'  && 
-         this.isToday(item.timeSlotStart.toString());
+        this.isToday(item.timeSlotStart.toString())
         //  && !item.isCompleted
   }else{
     return false
   }
 }
 
-shouldShowRateButton(item: TableData): boolean {
-  return item.bookingStatus === 'Completed'; 
+shouldShowCancelButton(item: TableData): boolean {
+  return item.bookingStatus === 'Confirmed' ; 
 }
 
 private isToday(dateString: string): boolean {
