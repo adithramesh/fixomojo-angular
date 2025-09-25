@@ -109,11 +109,13 @@ export class UserProfileComponent implements OnInit {
         if (profile.profilePic) {
           const fullImageUrl = this._imageUrlService.buildImageUrl(profile.profilePic);
           this.imagePreviewUrl = fullImageUrl;
-          this.pondFiles = [{
-            source: fullImageUrl,
-            options: { type: 'local' },
-            // metadata: { poster: fullImageUrl }
-          }];
+          this.pondFiles = [
+          //   {
+          //   source: fullImageUrl,
+          //   options: { type: 'local' },
+          //   metadata: { poster: fullImageUrl }
+          // }
+        ];
         }
         this.isLoading = false;
       },

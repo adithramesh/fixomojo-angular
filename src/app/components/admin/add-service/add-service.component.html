@@ -48,8 +48,8 @@
                   name="image"
                   [options]="pondOptions"
                   [files]="pondFiles"
-                  (onaddfile)="pondHandleAddFile($event)"
-                  (onremovefile)="pondHandleRemoveFile()"
+                  (onaddfile)="pondHandleAddFile($event.error, $event.file)"
+                  (onremovefile)="pondHandleRemoveFile($event.error, $event.file)"
                 ></file-pond>
               </div>
 

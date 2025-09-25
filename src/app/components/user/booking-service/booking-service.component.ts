@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
@@ -38,7 +38,7 @@ import { IBooking } from '../../../models/book-service.model';
 
 @Component({
   selector: 'app-booking-service',
-  imports: [CommonModule, FormsModule,NavBarComponent],
+  imports: [CommonModule, FormsModule, NavBarComponent],
   templateUrl: './booking-service.component.html',
   styleUrl: './booking-service.component.scss'
 })
@@ -46,7 +46,7 @@ import { IBooking } from '../../../models/book-service.model';
 
 
 
-export class BookingServiceComponent {
+export class BookingServiceComponent implements OnInit, OnDestroy {
   bookingForm: FormGroup;
   subServiceId: string | null = null;
   subServiceName: string | null = null;
@@ -316,7 +316,7 @@ export class BookingServiceComponent {
     this._adminService.getPartners(this.pagination).subscribe({
       next: (response) => {
         this.allTechnicians = response.items.map(partner => ({
-          // id: String(partner.id ?? ''),
+          id: String(partner.id ?? ''),
           // name: partner.username,
           // email: partner.email,
             name: partner.name ?? '',
@@ -388,7 +388,6 @@ export class BookingServiceComponent {
 
   onTechnicianSelected(technician:TechnicianUI): void {
     this.bookingForm.patchValue({ technician: technician.id });
-    
     this.bookingForm.patchValue({ timeSlot: null }); 
     this.availableTimeSlots = []; // Clear current time slots
     this.onDateSelected()

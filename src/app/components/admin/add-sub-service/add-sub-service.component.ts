@@ -12,7 +12,7 @@ import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { SidebarComponent } from '../side-bar/side-bar.component';
-import { FilePondInitialFile } from 'filepond';
+import { FilePondErrorDescription, FilePondFile, FilePondInitialFile } from 'filepond';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
@@ -61,7 +61,8 @@ export class AddSubServiceComponent {
       subServiceName:['', Validators.required],
       price:[0, [Validators.required, Validators.min(0)]],
       description:[],
-      image: ['', Validators.pattern(/^sub-services\/[a-zA-Z0-9_-]+$/)],
+      // image: ['', Validators.pattern(/^sub-services\/[a-zA-Z0-9_-]+$/)],
+      image: [''],
       status:['active', Validators.required],
 
     })
@@ -90,19 +91,24 @@ export class AddSubServiceComponent {
           image: subService.image,
           status: subService.status,
         });
+        // if (subService.image) {
+        //   // const fullImageUrl = this._imageUrlService.buildImageUrl(subService.image);
+        //   // this.pondFiles = [{
+        //   //   source: fullImageUrl,
+        //   //   options: {
+        //   //     type: 'local',
+        //   //     // size: 500000
+        //   //   },
+        //   //   //  metadata: {
+        //   //   //   poster: fullImageUrl 
+        //   //   // }
+        //   // }];
+        //   // this.pondFiles = []
+        // }
         if (subService.image) {
-          const fullImageUrl = this._imageUrlService.buildImageUrl(subService.image);
-          this.pondFiles = [{
-            source: fullImageUrl,
-            options: {
-              type: 'local',
-              // size: 500000
-            },
-            //  metadata: {
-            //   poster: fullImageUrl 
-            // }
-          }];
+        this.pondFiles = [];
         }
+        
         console.log('Form value after patch:', this.addSubServiceForm.value);
       },
       error: (error) => {
@@ -114,13 +120,20 @@ export class AddSubServiceComponent {
 
  
 
- pondHandleAddFile(event: { file: File }): void { 
-    // console.log("pondHandleAddFile", event),event.file;
-    this.file = event.file || null;
+    pondHandleAddFile(error: FilePondErrorDescription | null, file: FilePondFile): void {
+    if (error) {
+      console.error('FilePond add file error:', error);
+      return;
+    }
+    this.file = file.file as File;
   }
 
-  pondHandleRemoveFile(): void {
-    console.log("pondHandleRemoveFile, file",this.file );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  pondHandleRemoveFile(error: FilePondErrorDescription | null, file: FilePondFile): void {
+    if (error) {
+      console.error('FilePond remove file error:', error);
+      return;
+    }
     this.file = null;
   }
 
@@ -139,7 +152,7 @@ export class AddSubServiceComponent {
     if (this.file) {
         formData.append('image', this.file);
       }
-    const { serviceId } = this.addSubServiceForm.value.serviceId;
+    const  serviceId  = this.addSubServiceForm.value.serviceId;
     console.log('Form Values:', this.addSubServiceForm.value);
     console.log('Form Validity:', this.addSubServiceForm.valid);
     const request$ = this.mode === 'edit' && this.subServiceId

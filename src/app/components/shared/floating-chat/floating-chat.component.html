@@ -4,7 +4,7 @@
         <div class="chat-title">
           <span class="chat-icon">💬</span>
           <span>Support Chat</span>
-          <!-- <span *ngIf="chatState.counterPartyName">Chat with {{ chatState.counterPartyName }}</span> -->
+          <span *ngIf="chatState.counterPartyName">Chat with {{ chatState.counterPartyName }}</span>
           <span *ngIf="isOnline" class="online-indicator"></span>
         </div>
         <button class="close-btn" (click)="closeChat()" aria-label="Close chat">

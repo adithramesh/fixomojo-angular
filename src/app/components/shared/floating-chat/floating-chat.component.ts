@@ -39,8 +39,11 @@ export class FloatingChatComponent {
       const previousMessageCount = this.chatState.messages.length;
       this.chatState = state;
       
+      console.log("chatState", this.chatState);
       
       if (state.messages.length > previousMessageCount) {
+        console.log('First message createdAt:', state.messages[0].createdAt);
+    console.log('Type of createdAt:', typeof state.messages[0].createdAt);
         this.shouldScrollToBottom = true;
       }
     });
@@ -86,68 +89,36 @@ export class FloatingChatComponent {
     }
     return false;
   }
-  // formatDate(dateStr: string): string {
-  //   const date = new Date(dateStr);
-  //   return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
-  // }
-  formatDate(dateStr: string): string {
-  if (!dateStr || typeof dateStr !== 'string') {
-    console.warn('Invalid date string:', dateStr);
+formatDate(dateStr: string): string {
+
+  if (!dateStr) {
     return new Date().toLocaleString('en-GB', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit',
       hour12: false
     });
   }
+
   const date = new Date(dateStr);
-  return isNaN(date.getTime())
-    ? new Date().toLocaleString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })
-    : date.toLocaleString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    console.warn('Invalid date string:', dateStr);
+    return 'Invalid Date';
+  }
+
+  return date.toLocaleString('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 }
-
-
-  // formatTime(date: Date): string {
-  //   const messageDate = new Date(date);
-  //   const now = new Date();
-  //   const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
-
-  //   if (diffInHours < 24) {
-  //     return messageDate.toLocaleTimeString('en-US', { 
-  //       hour: '2-digit', 
-  //       minute: '2-digit',
-  //       hour12: true 
-  //     });
-  //   } else {
-  //     return messageDate.toLocaleDateString('en-US', { 
-  //       month: 'short', 
-  //       day: 'numeric',
-  //       hour: '2-digit', 
-  //       minute: '2-digit',
-  //       hour12: true 
-  //     });
-  //   }
-  // }
-
   private scrollToBottom(): void {
     if (this.messagesContainer) {
       const element = this.messagesContainer.nativeElement;

@@ -34,10 +34,13 @@
     <div class="booking-content">
       <!-- Step 1: Location -->
       <section *ngIf="currentStep === 1" class="step-panel">
-        <header>
+        <header class="panel-header">
           <h3>Choose Your Location</h3>
           <p>Select your service location or enter address</p>
         </header>
+        <div class="location-content">
+
+        
         <div class="form-group">
           <label for="address-input">Address:</label>
           <input
@@ -69,7 +72,7 @@
             {{ typedLocationErrorMessage }}
           </p>
         </div>
-
+    </div>
         <div class="location-actions">
           <button type="button" class="secondary-button" (click)="getCurrentLocation()">
             📍 Use Current Location
@@ -79,11 +82,11 @@
 
       <!-- Step 2: Technician -->
       <section *ngIf="currentStep === 2" class="step-panel">
-        <header>
+        <header class="panel-header">
           <h3>Choose Your Technician</h3>
           <p>Available technicians within 10km radius</p>
         </header>
-
+<div class="technician-content">
         <ng-container *ngIf="!isLoadingTechnicians; else loadingTechs">
           <p *ngIf="availableTechnicians.length === 0">No technicians available for the selected location.</p>
 
@@ -106,8 +109,9 @@
               <span *ngIf="bookingForm.get('technician')?.value === technician.id">✓</span>
             </button>
           </div>
+         
         </ng-container>
-
+</div>
         <ng-template #loadingTechs>
           <p>Finding available technicians...</p>
         </ng-template>
@@ -115,11 +119,11 @@
 
       <!-- Step 3: Date & Time -->
       <section *ngIf="currentStep === 3" class="step-panel">
-        <header>
+        <header class="panel-header">
           <h3>Select Date & Time Slot</h3>
           <p>Choose a convenient date and time</p>
         </header>
-
+<div class="timeslot-content">
         <div>
           <label for="service-date">Select Date:</label>
           <input
@@ -153,15 +157,17 @@
             <p>Loading available time slots...</p>
           </ng-template>
         </div>
+
+        </div>
       </section>
 
       <!-- Step 4: Payment -->
       <section *ngIf="currentStep === 4" class="step-panel">
-        <header>
+        <header class="panel-header">
           <h3>Payment & Confirmation</h3>
           <p>Review your booking and pay</p>
         </header>
-
+<div class="payment-content">
         <div class="booking-summary">
           <h4>Booking Summary</h4>
           <p><strong>Service:</strong> {{ subServiceName }}</p>
@@ -199,6 +205,7 @@
             💰 Cash
           </button>
         </div>
+       </div> 
       </section>
     </div>
 
