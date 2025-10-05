@@ -1,3 +1,5 @@
+
+
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription, Observable, interval } from 'rxjs';
@@ -22,7 +24,7 @@ import { OfferDataDTO } from '../../../models/offer.model';
   standalone: true,
   imports: [CommonModule, NavBarComponent, ServiceCardComponent, FooterComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit, OnDestroy {
  
@@ -42,7 +44,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   private _router = inject(Router)
   public _imageUrlService = inject(ImageUrlService)
-
 
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
@@ -99,7 +100,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   startCarousel() {
-    // Show welcome for 3 seconds, then start offer carousel
     setTimeout(() => {
       if (this.offers.length > 0) {
         this.showOffers = true;
@@ -121,7 +121,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   nextSlide() {
     this.currentSlide = (this.currentSlide + 1) % (this.offers.length + 1);
     
-    // If we've cycled through all offers, show welcome again
     if (this.currentSlide === 0) {
       this.showOffers = false;
       setTimeout(() => {

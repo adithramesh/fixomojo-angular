@@ -27,6 +27,8 @@ import { UserProfileComponent } from './components/shared/user-profile/user-prof
 import { VideoCallComponent } from './components/shared/video-call/video-call.component';
 import { OfferManagementComponent } from './components/admin/offer-management/offer-management.component';
 import { OfferFormComponent } from './components/admin/offer-form/offer-form.component';
+import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
+import { NotFoundComponent } from './components/shared/not-found/not-found.component';
 
 export const routes: Routes = [
     //user
@@ -59,18 +61,19 @@ export const routes: Routes = [
     { path: 'offers/add', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'offers/edit/:id', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     //partner
-    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin'] } }, 
+    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
     { path: 'location', component: LocationComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
     { path: 'time-slots', component: TimeSlotsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } },
     { path: 'partner-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'], role: 'partner'} },
-    { path: 'tasks', component: TasksComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
+    { path: 'tasks', component: TasksComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin']} },
     // { path: 'chat', component: ChatComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
 
     //shared
     { path: 'my-profile', component: UserProfileComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'user']} },
     { path: 'video-call/:id', component: VideoCallComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin']} },
     { path: 'video-call/join/:callId', component: VideoCallComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin']} },
+    { path: 'unauthorized', component: UnauthorizedComponent},
     { path: '', redirectTo: '/signup', pathMatch: 'full' }, // Default route
-    { path: '**', redirectTo: '/signup' }, // Wildcard route for invalid paths
+    { path: '**', component: NotFoundComponent }, // Wildcard route for invalid paths
     
 ];

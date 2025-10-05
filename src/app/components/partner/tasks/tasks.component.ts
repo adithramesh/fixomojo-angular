@@ -191,12 +191,12 @@ export class TasksComponent {
       await this.chatService.openChat({
         bookingId: booking.id as string,
         userId: this._currentUserId,
-        userRole: this._role as 'user' | 'partner',
-        customerName: this._username as string,
+        userRole:'partner',
+        userName: booking.username as string,
         serviceName: booking.subServiceName as string
       }, _authToken);
 
-      console.log('Chat opened for booking:', booking.id);
+      console.log('Chat opened for booking:', booking);
     } catch (error) {
       console.error('Failed to open chat:', error);
       // can show toast notification here
@@ -328,8 +328,6 @@ export class TasksComponent {
     openCancelBooking(booking: TableData): void {
       console.log('Opening cancel model for booking:', booking.id);
     }
-
-    
 
     ngOnDestroy(): void {
       this.subscription.unsubscribe();

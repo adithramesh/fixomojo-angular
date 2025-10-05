@@ -44,6 +44,7 @@ export interface TableData {
   value?:string |number;
   email?: string; 
   technicianId?: string; 
+  technicianName?:string;
   licenseStatus?:string;
   videoCall?:string;
   

@@ -12,7 +12,9 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 import { ActionReducer, MetaReducer } from '@ngrx/store';
 import { isPlatformBrowser } from '@angular/common';
 import { authInterceptor } from './interceptor/auth.interceptor';
-import { AppState } from './store/auth/app.state';
+import { AppState } from './store/app.state';
+import { bookingFeatureKey, bookingReducer} from './store/booking/booking.reducer';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 
 // Create a factory function for the meta reducer that checks platform
@@ -20,7 +22,7 @@ export function localStorageSyncFactory(): MetaReducer<AppState> {
   return (reducer: ActionReducer<AppState>): ActionReducer<AppState> => {
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       return localStorageSync({
-        keys: ['auth'],
+        keys: ['auth', 'booking'],
         rehydrate: true,
       })(reducer);
     }
@@ -35,8 +37,9 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideAnimations(),
     provideClientHydration(),
-    provideStore({ [authFeatureKey]: authReducer }, { metaReducers }),
+    provideStore({ [authFeatureKey]: authReducer , [bookingFeatureKey]:bookingReducer}, { metaReducers }),
     provideEffects(AuthEffects),
     provideHttpClient(
       withFetch(),

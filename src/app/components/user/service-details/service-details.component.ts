@@ -31,7 +31,7 @@ import { TableData } from '../../shared/data-table/data-table.component';
           stagger(100, [
             animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
           ])
-        ])
+        ], { optional: true })
       ])
     ])
   ]

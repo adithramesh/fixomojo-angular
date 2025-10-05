@@ -9,6 +9,7 @@ import {
   SubServiceResponseDTO,
 } from '../models/admin.model';
 import { environment } from '../../environments/environment';
+import { ServiceLookupDTO } from '../models/offer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -105,6 +106,10 @@ export class AdminService {
   
   updateSubService(subServiceId: string | number, formData: FormData): Observable<SubServiceResponseDTO> {
     return this.http.put<SubServiceResponseDTO>(`${this.apiUrl}sub-services/${subServiceId}/update-sub-service`, formData);
+  }
+
+  getActiveServices():Observable<ServiceLookupDTO[]>{
+    return this.http.get<ServiceLookupDTO[]>(`${this.apiUrl}active-services`)
   }
   // deleteService(serviceId: string | number): Observable<void> {
   //   return this.http.delete<void>(`${this.apiUrl}services/${serviceId}`);

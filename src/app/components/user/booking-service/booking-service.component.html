@@ -3,221 +3,281 @@
 <div class="booking-container">
   <!-- Left Panel -->
   <div class="booking-left">
-    <!-- Steps Navigation -->
-    <div class="booking-steps">
-      <div class="steps-header">
+    <!-- Progress Stepper -->
+    <div class="progress-stepper">
+      <div class="stepper-header">
         <h2>Book a Service</h2>
+        <p>Complete the steps below to book {{ subServiceName }}</p>
       </div>
-
-      <div class="steps-list">
-        <button
-          *ngFor="let step of [1, 2, 3, 4]"
-          type="button"
-          class="step-item"
-          [class.active]="isStepActive(step)"
-          [class.completed]="isStepCompleted(step)"
-          [class.clickable]="canNavigateToStep(step)"
-          (click)="goToStep(step)"
-        >
-          <div class="step-indicator">
-            <span *ngIf="!isStepCompleted(step)">{{ step }}</span>
-            <span *ngIf="isStepCompleted(step)">✓</span>
+      
+      <div class="steps-progress">
+        <div class="progress-line">
+          <div class="progress-fill" [style.width]="((currentStep - 1) / (maxSteps - 1)) * 100 + '%'"></div>
+        </div>
+        <div class="steps-list">
+          <div
+            *ngFor="let step of [1, 2, 3, 4]; let i = index"
+            class="step-item"
+            [class.active]="isStepActive(step)"
+            [class.completed]="isStepCompleted(step)"
+            [class.clickable]="canNavigateToStep(step)"
+            (click)="goToStep(step)"
+          >
+            <div class="step-indicator">
+              <span *ngIf="!isStepCompleted(step)">{{ step }}</span>
+              <span *ngIf="isStepCompleted(step)" class="step-check">✓</span>
+            </div>
+            <div class="step-content">
+              <h4 class="step-title">{{ getStepTitle(step) }}</h4>
+            </div>
           </div>
-          <div class="step-content">
-            <h3 class="step-title">{{ getStepTitle(step) }}</h3>
-          </div>
-        </button>
+        </div>
       </div>
     </div>
 
-    <!-- Step Content -->
-    <div class="booking-content">
+    <!-- Main Content Area -->
+    <div class="step-content-wrapper">
       <!-- Step 1: Location -->
       <section *ngIf="currentStep === 1" class="step-panel">
-        <header class="panel-header">
+        <header class="step-header">
           <h3>Choose Your Location</h3>
           <p>Select your service location or enter address</p>
         </header>
-        <div class="location-content">
-
         
-        <div class="form-group">
-          <label for="address-input">Address:</label>
-          <input
-            id="address-input"
-            type="text"
-            class="form-input"
-            [(ngModel)]="addressInput"
-            (input)="onAddressInputChange(addressInput)"
-            placeholder="Start typing a full address..."
-          />
+        <div class="step-body">
+          <div class="form-group">
+            <label for="address-input" class="form-label">Address:</label>
+            <input
+              id="address-input"
+              type="text"
+              class="form-input"
+              [(ngModel)]="addressInput"
+              (input)="onAddressInputChange(addressInput)"
+              placeholder="Start typing a full address..."
+            />
 
-          <ul *ngIf="autocompleteSuggestions.length > 0" class="autocomplete-suggestions">
-            <li
-              *ngFor="let suggestion of autocompleteSuggestions"
-              role="button"
-              tabindex="0"
-              (click)="onSelectSuggestion(suggestion)"
-              (keyup.enter)="onSelectSuggestion(suggestion)"
-              (keyup.space)="onSelectSuggestion(suggestion)"
-            >
-              {{ suggestion.display_name }}
-            </li>
-          </ul>
+            <ul *ngIf="autocompleteSuggestions.length > 0" class="autocomplete-suggestions">
+              <li
+                *ngFor="let suggestion of autocompleteSuggestions"
+                role="button"
+                tabindex="0"
+                (click)="onSelectSuggestion(suggestion)"
+                (keyup.enter)="onSelectSuggestion(suggestion)"
+                (keyup.space)="onSelectSuggestion(suggestion)"
+              >
+                {{ suggestion.display_name }}
+              </li>
+            </ul>
 
-          <p *ngIf="selectedAddressDetails" class="location-info">
-            <strong>Selected Address:</strong> {{ selectedAddressDetails.address }}
-          </p>
-          <p *ngIf="typedLocationErrorMessage" class="error-message">
-            {{ typedLocationErrorMessage }}
-          </p>
-        </div>
-    </div>
-        <div class="location-actions">
-          <button type="button" class="secondary-button" (click)="getCurrentLocation()">
-            📍 Use Current Location
+            <div *ngIf="selectedAddressDetails" class="selected-location">
+              <strong>Selected Address:</strong> {{ selectedAddressDetails.address }}
+            </div>
+            
+            <p *ngIf="typedLocationErrorMessage" class="error-message">
+              {{ typedLocationErrorMessage }}
+            </p>
+          </div>
+
+          <button type="button" class="location-button" (click)="getCurrentLocation()">
+            <span class="location-icon">📍</span>
+            Use Current Location
           </button>
         </div>
       </section>
 
       <!-- Step 2: Technician -->
       <section *ngIf="currentStep === 2" class="step-panel">
-        <header class="panel-header">
+        <header class="step-header">
           <h3>Choose Your Technician</h3>
           <p>Available technicians within 10km radius</p>
         </header>
-<div class="technician-content">
-        <ng-container *ngIf="!isLoadingTechnicians; else loadingTechs">
-          <p *ngIf="availableTechnicians.length === 0">No technicians available for the selected location.</p>
+        
+        <div class="step-body">
+          <ng-container *ngIf="!isLoadingTechnicians; else loadingTechs">
+            <div *ngIf="availableTechnicians.length === 0" class="empty-state">
+              <div class="empty-icon">👥</div>
+              <p>No technicians available for the selected location.</p>
+            </div>
 
-          <div class="technician-list" *ngIf="availableTechnicians.length > 0">
-            <button
-              *ngFor="let technician of availableTechnicians"
-              type="button"
-              class="technician-card"
-              [class.selected]="bookingForm.get('technician')?.value === technician.id"
-              (click)="onTechnicianSelected(technician)"
-            >
-              <div class="technician-avatar">
-                <img [src]="technician.profileImage" [alt]="technician.name" />
+            <div class="technician-grid" *ngIf="availableTechnicians.length > 0">
+              <div
+                *ngFor="let technician of availableTechnicians"
+                class="technician-card"
+                [class.selected]="bookingForm.get('technician')?.value === technician.id"
+                (click)="onTechnicianSelected(technician)"
+              >
+                <div class="technician-avatar">
+                  <img [src]="technician.profileImage" [alt]="technician.name" />
+                </div>
+                <div class="technician-info">
+                  <h4 class="technician-name">{{ technician.name }}</h4>
+                  <div class="technician-details">
+                    <span class="rating">⭐ {{ technician.rating }}</span>
+                    <span class="experience">{{ technician.experience }}</span>
+                    <span class="distance">📍 {{ technician.distance }} km away</span>
+                  </div>
+                </div>
+                <div *ngIf="bookingForm.get('technician')?.value === technician.id" class="selection-indicator">
+                  <span class="checkmark">✓</span>
+                </div>
               </div>
-              <div class="technician-info">
-                <h4>{{ technician.name }}</h4>
-                <p>⭐ {{ technician.rating }} | {{ technician.experience }}</p>
-                <p>📍 {{ technician.distance }} km away</p>
-              </div>
-              <span *ngIf="bookingForm.get('technician')?.value === technician.id">✓</span>
-            </button>
-          </div>
-         
-        </ng-container>
-</div>
-        <ng-template #loadingTechs>
-          <p>Finding available technicians...</p>
-        </ng-template>
+            </div>
+          </ng-container>
+
+          <ng-template #loadingTechs>
+            <div class="loading-state">
+              <p>Finding available technicians...</p>
+            </div>
+          </ng-template>
+        </div>
       </section>
 
       <!-- Step 3: Date & Time -->
       <section *ngIf="currentStep === 3" class="step-panel">
-        <header class="panel-header">
+        <header class="step-header">
           <h3>Select Date & Time Slot</h3>
           <p>Choose a convenient date and time</p>
         </header>
-<div class="timeslot-content">
-        <div>
-          <label for="service-date">Select Date:</label>
-          <input
-            id="service-date"
-            type="date"
-            [(ngModel)]="selectedDate"
-            [min]="minDate"
-            [max]="maxDate"
-            (change)="onDateSelected()"
-          />
-        </div>
+        
+        <div class="step-body">
+          <div class="date-selection">
+            <label for="service-date" class="form-label">Select Date:</label>
+            <input
+              id="service-date"
+              type="date"
+              class="form-input date-input"
+              [(ngModel)]="selectedDate"
+              [min]="minDate"
+              [max]="maxDate"
+              (change)="onDateSelected(); this.saveFormData();"
+            />
+          </div>
 
-        <div *ngIf="selectedDate">
-          <ng-container *ngIf="!isLoadingTimeSlots; else loadingSlots">
-            <p *ngIf="availableTimeSlots.length === 0">No available slots for this date.</p>
+          <div *ngIf="selectedDate" class="timeslot-section">
+            <ng-container *ngIf="!isLoadingTimeSlots; else loadingSlots">
+              <div *ngIf="availableTimeSlots.length === 0" class="empty-state">
+                <div class="empty-icon">🕒</div>
+                <p>No available slots for this date.</p>
+              </div>
 
-            <div class="timeslot-grid" *ngIf="availableTimeSlots.length > 0">
-              <button
-                *ngFor="let slot of availableTimeSlots"
-                type="button"
-                class="timeslot-item"
-                [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
-                (click)="onTimeSlotSelected(slot)"
-              >
-                {{ slot.time }}
-              </button>
-            </div>
-          </ng-container>
+              <div class="timeslot-grid" *ngIf="availableTimeSlots.length > 0">
+                <button
+                  *ngFor="let slot of availableTimeSlots"
+                  type="button"
+                  class="timeslot-item"
+                  [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
+                  (click)="onTimeSlotSelected(slot)"
+                >
+                  {{ slot.time }}
+                </button>
+              </div>
+            </ng-container>
 
-          <ng-template #loadingSlots>
-            <p>Loading available time slots...</p>
-          </ng-template>
-        </div>
-
+            <ng-template #loadingSlots>
+              <div class="loading-state">
+                <p>Loading available time slots...</p>
+              </div>
+            </ng-template>
+          </div>
         </div>
       </section>
 
       <!-- Step 4: Payment -->
       <section *ngIf="currentStep === 4" class="step-panel">
-        <header class="panel-header">
+        <header class="step-header">
           <h3>Payment & Confirmation</h3>
-          <p>Review your booking and pay</p>
+          <p>Review your booking and complete payment</p>
         </header>
-<div class="payment-content">
-        <div class="booking-summary">
-          <h4>Booking Summary</h4>
-          <p><strong>Service:</strong> {{ subServiceName }}</p>
-          <p><strong>Location:</strong> {{ userLocation.address || 'Not selected' }}</p>
-          <p><strong>Time:</strong> {{ getSelectedTimeSlot()?.time || 'Not selected' }}</p>
-          <p><strong>Technician:</strong> {{ getSelectedTechnician()?.name || 'Not selected' }}</p>
-          <p><strong>Price:</strong> {{ price }}</p>
-          <p *ngIf="appliedDiscount > 0"><strong>Offer ({{ appliedOfferName }}):</strong> -{{ appliedDiscount }}</p>
-          <p><strong>Amount Payable:</strong> {{ finalAmount }}</p>
-        </div>
+        
+        <div class="step-body">
+          <div class="booking-summary">
+            <h4>Booking Summary</h4>
+            <div class="summary-items">
+              <div class="summary-item">
+                <span class="label">Service:</span>
+                <span class="value">{{ subServiceName }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Location:</span>
+                <span class="value">{{ (userLocation && userLocation.address) ? userLocation.address : 'Not selected' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Date:</span>
+                <span class="value">{{ selectedDate | date }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Time:</span>
+                <span class="value">{{ selectedTime }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Technician:</span>
+                <span class="value">{{ getSelectedTechnician()?.name || 'Not selected' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Price:</span>
+                <span class="value">{{ price }}</span>
+              </div>
+              <div class="summary-item" *ngIf="appliedDiscount > 0">
+                <span class="label">Offer ({{ appliedOfferName }}):</span>
+                <span class="value discount">-{{ appliedDiscount }}</span>
+              </div>
+              <div class="summary-item total">
+                <span class="label">Amount Payable:</span>
+                <span class="value">{{ finalAmount }}</span>
+              </div>
+            </div>
+          </div>
 
-        <div class="payment-options">
-          <button
-            type="button"
-            class="payment-option"
-            [class.selected]="bookingForm.get('paymentMethod')?.value === 'Card'"
-            (click)="onPaymentMethodSelected('Card')"
-          >
-            💳 Card
-          </button>
-          <button
-            type="button"
-            class="payment-option"
-            [class.selected]="bookingForm.get('paymentMethod')?.value === 'Wallet'"
-            (click)="onPaymentMethodSelected('Wallet')"
-          >
-            👛 Wallet
-          </button>
-          <button
-            type="button"
-            class="payment-option"
-            [class.selected]="bookingForm.get('paymentMethod')?.value === 'Cash'"
-            (click)="onPaymentMethodSelected('Cash')"
-          >
-            💰 Cash
-          </button>
+          <div class="payment-section">
+            <h4 class="payment-title">Choose Payment Method</h4>
+            <div class="payment-options">
+              <button
+                type="button"
+                class="payment-option"
+                [class.selected]="bookingForm.get('paymentMethod')?.value === 'Card'"
+                (click)="onPaymentMethodSelected('Card')"
+              >
+                <span class="payment-icon">💳</span>
+                <span class="payment-label">Card</span>
+              </button>
+              <button
+                type="button"
+                class="payment-option"
+                [class.selected]="bookingForm.get('paymentMethod')?.value === 'Wallet'"
+                (click)="onPaymentMethodSelected('Wallet')"
+              >
+                <span class="payment-icon">👛</span>
+                <span class="payment-label">Wallet</span>
+              </button>
+              <button
+                type="button"
+                class="payment-option"
+                [class.selected]="bookingForm.get('paymentMethod')?.value === 'Cash'"
+                (click)="onPaymentMethodSelected('Cash')"
+              >
+                <span class="payment-icon">💰</span>
+                <span class="payment-label">Cash</span>
+              </button>
+            </div>
+          </div>
         </div>
-       </div> 
       </section>
     </div>
 
     <!-- Navigation -->
     <div class="step-navigation">
-      <button *ngIf="currentStep > 1" type="button" class="secondary-button" (click)="previousStep()">
+      <button 
+        *ngIf="currentStep > 1" 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="previousStep()"
+      >
         Previous
       </button>
       <button
         *ngIf="currentStep < maxSteps"
         type="button"
-        class="signup-button"
+        class="btn btn-primary"
         [disabled]="!canProceedToNextStep()"
         (click)="nextStep()"
       >
@@ -226,7 +286,7 @@
       <button
         *ngIf="currentStep === maxSteps"
         type="button"
-        class="signup-button"
+        class="btn btn-primary"
         [disabled]="!canProceedToNextStep()"
         (click)="onSubmit()"
       >
@@ -237,42 +297,69 @@
 
   <!-- Right Panel -->
   <aside class="booking-right">
-    <div class="map-container">
-      <h3>Location</h3>
-      <div *ngIf="isLoadingMap">Loading map...</div>
-      <div *ngIf="!isLoadingMap">
-        🗺️ Map placeholder
-        <p *ngIf="userLocation">📍 {{ userLocation.address }}</p>
-        <p *ngIf="getSelectedTechnician()">
-          Technician: {{ getSelectedTechnician()!.name }} ({{ getSelectedTechnician()!.distance }} km)
-        </p>
+    <div class="booking-progress-panel">
+      <h3>Booking Progress</h3>
+      
+      <div class="progress-summary">
+        <div class="progress-item" [class.completed]="userLocation && userLocation.address">
+          <div class="progress-indicator">
+            <span *ngIf="userLocation && userLocation.address">✓</span>
+            <span *ngIf="!userLocation || !userLocation.address">1</span>
+          </div>
+          <div class="progress-details">
+            <h4>Location</h4>
+            <p>{{ (userLocation && userLocation.address) ? userLocation.address : 'Not selected' }}</p>
+          </div>
+        </div>
+        
+        <div class="progress-item" [class.completed]="getSelectedTechnician()">
+          <div class="progress-indicator">
+            <span *ngIf="getSelectedTechnician()">✓</span>
+            <span *ngIf="!getSelectedTechnician()">2</span>
+          </div>
+          <div class="progress-details">
+            <h4>Technician</h4>
+            <p>{{ getSelectedTechnician()?.name || 'Not selected' }}</p>
+          </div>
+        </div>
+        
+        <div class="progress-item" [class.completed]="getSelectedTimeSlot()">
+          <div class="progress-indicator">
+            <span *ngIf="getSelectedTimeSlot()">✓</span>
+            <span *ngIf="!getSelectedTimeSlot()">3</span>
+          </div>
+          <div class="progress-details">
+            <h4>Date & Time</h4>
+            <p>{{ selectedDate | date  }} & {{selectedTime}}</p>
+          </div>
+        </div>
+        
+        <div class="progress-item" [class.completed]="bookingForm.get('paymentMethod')?.value">
+          <div class="progress-indicator">
+            <span *ngIf="bookingForm.get('paymentMethod')?.value">✓</span>
+            <span *ngIf="!bookingForm.get('paymentMethod')?.value">4</span>
+          </div>
+          <div class="progress-details">
+            <h4>Payment</h4>
+            <p>{{ bookingForm.get('paymentMethod')?.value || 'Not selected' }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div *ngIf="currentStep >= 2">
-      <h3>Available Technicians</h3>
-      <div *ngIf="isLoadingTechnicians">Loading technicians...</div>
-      <p *ngIf="!isLoadingTechnicians && availableTechnicians.length === 0">No technicians available within 10km.</p>
-      <ul *ngIf="!isLoadingTechnicians && availableTechnicians.length > 0">
-        <li *ngFor="let tech of availableTechnicians" [class.selected]="bookingForm.get('technician')?.value === tech.id">
-          <strong>{{ tech.name }}</strong> ⭐ {{ tech.rating }} ({{ tech.distance }} km away)
-        </li>
-      </ul>
-    </div>
-
-    <div *ngIf="currentStep >= 3">
-      <h3>Available Time Slots</h3>
-      <p *ngIf="!selectedDate">Please select a date first</p>
-      <p *ngIf="selectedDate && isLoadingTimeSlots">Loading time slots...</p>
-      <p *ngIf="selectedDate && !isLoadingTimeSlots && availableTimeSlots.length === 0">
-        No slots for selected date
-      </p>
-      <ul *ngIf="selectedDate && !isLoadingTimeSlots && availableTimeSlots.length > 0">
-        <li *ngFor="let slot of availableTimeSlots" [class.selected]="bookingForm.get('timeSlot')?.value === slot.id">
-          {{ slot.time }}
-          <span *ngIf="bookingForm.get('timeSlot')?.value === slot.id">✓ Selected</span>
-        </li>
-      </ul>
+    <div class="map-panel">
+      <h3>Service Location</h3>
+      <div class="map-container">
+        <div *ngIf="isLoadingMap" class="loading-state">Loading map...</div>
+        <div *ngIf="!isLoadingMap" class="map-placeholder">
+          <div class="map-icon">🗺️</div>
+          <p *ngIf="userLocation && userLocation.address">{{ userLocation.address }}</p>
+          <p *ngIf="!userLocation || !userLocation.address">Select location to view map</p>
+          <p *ngIf="getSelectedTechnician()" class="technician-distance">
+            Technician: {{ getSelectedTechnician()!.name }} ({{ getSelectedTechnician()!.distance }} km)
+          </p>
+        </div>
+      </div>
     </div>
   </aside>
 </div>

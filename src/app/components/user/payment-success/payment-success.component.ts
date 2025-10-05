@@ -7,6 +7,8 @@ import { PaymentService } from '../../../services/payment.service'; // Import th
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { TableData } from '../../shared/data-table/data-table.component';
+import { BookingActions } from '../../../store/booking/booking.action';
+import { Store } from '@ngrx/store';
 
 
 
@@ -20,13 +22,15 @@ export class PaymentSuccessComponent {
   private _route = inject(ActivatedRoute)
   private _router = inject(Router)
   private _bookingService = inject(BookingService)
-  private _paymentService = inject(PaymentService); // Inject the new service
+  private _paymentService = inject(PaymentService); 
+  private _store = inject(Store)
 
   bookingDetails!: TableData
   walletMessage = '';
   errorMessage!: string | null
 
   ngOnInit() {
+    this._store.dispatch(BookingActions.clearFormData());
     const type = this._route.snapshot.queryParamMap.get('type');
     const sessionId = this._route.snapshot.queryParamMap.get('session_id');
     const bookingId = this._route.snapshot.queryParamMap.get('booking_id');

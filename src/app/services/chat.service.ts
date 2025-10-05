@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { HttpClient} from '@angular/common/http';
 import { SocketService, ChatMessage } from './socket.service';
@@ -21,13 +21,13 @@ export interface ChatData {
   bookingId: string;
   userId: string;
   userRole: 'user' | 'partner';
-  customerName?: string;
+  userName?: string;
   serviceName?: string;
   technicianName?: string;
 }
 
 @Injectable({ providedIn: 'root' })
-export class ChatService {
+export class ChatService implements OnDestroy {
   private apiUrl = `${environment.BACK_END_API_URL}`;
   
   // Chat state using BehaviorSubject
@@ -95,9 +95,9 @@ export class ChatService {
 
       let counterPartyName = null;
       if (chatData.userRole === 'user') {
-        counterPartyName = chatData.technicianName || 'Technician'; 
+        counterPartyName=chatData.technicianName 
       } else if (chatData.userRole === 'partner') {
-        counterPartyName = chatData.customerName || 'Customer';
+        counterPartyName = chatData.userName
       }
       // Subscribe to new messages
       this.subscribeToMessages();

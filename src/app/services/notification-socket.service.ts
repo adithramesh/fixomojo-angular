@@ -94,7 +94,8 @@ export class NotificationSocketService {
     // Chat message notifications
     this.socket.on('newChatMessage', (data: ChatNotificationData) => {
         console.log('Received new chat message notification:', data);
-        this.newChatNotificationSubject.next(data);
+        // this.newChatNotificationSubject.next(data);
+        this.showChatToast(data); 
     });
 
     // Admin notifications
@@ -167,4 +168,9 @@ export class NotificationSocketService {
     
 //   });
 // }
+
+private showChatToast(data: ChatNotificationData): void {
+  // Example: open a small toast or increment unread badge
+  console.log(`🔔 New chat from ${data.senderName}: ${data.message}`);
+}
 }

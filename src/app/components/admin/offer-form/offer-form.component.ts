@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../side-bar/side-bar.component';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OfferDataDTO } from '../../../models/offer.model';
+import { OfferDataDTO, ServiceLookupDTO } from '../../../models/offer.model';
+import { AdminService } from '../../../services/admin.service';
 
 @Component({
   selector: 'app-offer-form',
@@ -21,12 +22,14 @@ export class OfferFormComponent implements OnInit {
   offerId: string | null = null;
 
   offerTypes = ['global', 'service_category', 'first_time_user'];
-  serviceCategories = ['Plumbing Services', 'Electrical Services', 'Cleaning Services']; // Add more as needed
+  // serviceCategories = ['Plumbing Services', 'Electrical Services', 'Cleaning Services']; 
+  serviceCategories:ServiceLookupDTO[]=[]
   discountTypes = ['percentage', 'flat_amount'];
   today: string = new Date().toISOString().split('T')[0];
 
   private _fb=inject(FormBuilder)
   private _offerService=inject(OfferService)
+  private _adminService=inject(AdminService)
   private _route=inject( ActivatedRoute)
   private _router=inject(Router)
 
@@ -47,34 +50,64 @@ export class OfferFormComponent implements OnInit {
       valid_until: ['', Validators.required],
     }, { validators: this.maxDiscountValidator });
 
+    // this.offerForm.get('offer_type')?.valueChanges.subscribe((type) => {
+    //   const serviceIdControl = this.offerForm.get('serviceId');
+    //   if (type === 'service_category') {
+    //     serviceIdControl?.setValidators([Validators.required]);
+    //   } else {
+    //     serviceIdControl?.clearValidators();
+    //   }
+    //   serviceIdControl?.updateValueAndValidity();
+    // });
+
+  }
+
+  ngOnInit(): void {
+    this.loadServiceCategories()
+    this.offerId = this._route.snapshot.paramMap.get('id');
+    if (this.offerId) {
+      this.isEditMode = true;
+      this.loadOfferDetails();
+    }
+    this.setupConditionalValidation();
+
+    //   this.offerForm.get('offer_type')?.valueChanges.subscribe((type) => {
+    //   const serviceIdControl = this.offerForm.get('serviceId');
+    //   if (type === 'service_category') {
+    //     serviceIdControl?.setValidators([Validators.required]);
+    //   } else {
+    //     serviceIdControl?.clearValidators();
+    //   }
+    //   serviceIdControl?.updateValueAndValidity();
+    // });
+  }
+
+  setupConditionalValidation(): void {
     this.offerForm.get('offer_type')?.valueChanges.subscribe((type) => {
       const serviceIdControl = this.offerForm.get('serviceId');
       if (type === 'service_category') {
         serviceIdControl?.setValidators([Validators.required]);
       } else {
         serviceIdControl?.clearValidators();
+        serviceIdControl?.setValue(''); 
       }
       serviceIdControl?.updateValueAndValidity();
     });
-
   }
 
-  ngOnInit(): void {
-    this.offerId = this._route.snapshot.paramMap.get('id');
-    if (this.offerId) {
-      this.isEditMode = true;
-      this.loadOfferDetails();
-    }
-
-
-      this.offerForm.get('offer_type')?.valueChanges.subscribe((type) => {
-      const serviceIdControl = this.offerForm.get('serviceId');
-      if (type === 'service_category') {
-        serviceIdControl?.setValidators([Validators.required]);
-      } else {
-        serviceIdControl?.clearValidators();
+  loadServiceCategories(): void {
+    this._adminService.getActiveServices().subscribe({
+      next: (response) => {
+        console.log("active service", response);
+        
+        this.serviceCategories = response.map((item: ServiceLookupDTO) => ({
+          id: item.id,
+          serviceName: item.serviceName 
+        }));
+      },
+      error: (error) => {
+        console.error('Failed to load service categories:', error);
       }
-      serviceIdControl?.updateValueAndValidity();
     });
   }
 
@@ -82,6 +115,8 @@ export class OfferFormComponent implements OnInit {
   if (this.offerId) {
     this. _offerService.getOfferById(this.offerId).subscribe({
       next: (data) => {
+        console.log("offer data", data);
+        
         const formattedDate = data.data.valid_until
           ? new Date(data.data.valid_until).toISOString().split('T')[0]
           : '';
@@ -90,7 +125,7 @@ export class OfferFormComponent implements OnInit {
           title: data.data.title,
           description: data.data.description,
           offer_type: data.data.offer_type,
-          serviceId: data.data.serviceId || '',
+          serviceId: data.data.serviceId ,
           discount_type: data.data.discount_type,
           discount_value: data.data.discount_value,
           max_discount: data.data.max_discount,
@@ -117,6 +152,11 @@ export class OfferFormComponent implements OnInit {
         const offerData: OfferDataDTO = {
           ...formData
         };
+
+      if (offerData.offer_type !== 'service_category') {
+          delete offerData.serviceId; 
+      }
+
       if (this.isEditMode && this.offerId) {
         this. _offerService.updateOffer(this.offerId, offerData).subscribe(
           () => this._router.navigate(['/offers']),

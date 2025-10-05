@@ -45,7 +45,7 @@
           <label for="serviceId">Select Service</label>
           <select id="serviceId" formControlName="serviceId">
             <option value="">Select Service</option>
-            <option *ngFor="let category of serviceCategories" [value]="category">{{ category }}</option>
+            <option *ngFor="let category of serviceCategories" [value]="category.id">{{ category.serviceName }}</option>
           </select>
           <div class="error" *ngIf="offerForm.get('serviceId')?.touched && offerForm.get('serviceId')?.invalid">
             <small>Service selection is required</small>

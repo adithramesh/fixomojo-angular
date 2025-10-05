@@ -156,6 +156,7 @@ export class MyBookingsComponent implements OnInit {
       subServiceId: booking.subServiceId!.slice(18), 
       subServiceName:booking.subServiceName,
       technicianId:booking.technicianId,
+      technicianName:booking.technicianName,
       totalAmount: booking.totalAmount!.toString(),
       paymentStatus: booking.paymentStatus,
       bookingStatus: booking.bookingStatus,
@@ -197,12 +198,12 @@ export class MyBookingsComponent implements OnInit {
       await this.chatService.openChat({
         bookingId: booking.id as string,
         userId: this._currentUserId,
-        userRole: this._role as 'user' | 'partner',
-        customerName: this._username as string,
+        userRole:  'user',
+        technicianName: booking.technicianName as string,
         serviceName: booking.subServiceName as string
       }, _authToken);
 
-      console.log('Chat opened for booking:', booking.id);
+      console.log('Chat opened for booking:', booking);
     } catch (error) {
       console.error('Failed to open chat:', error);
       // You could show a toast notification here

@@ -26,4 +26,11 @@ export interface OfferApiResponse {
       hasPrevPage: boolean;
     };
   };
+
+ 
+}
+
+ export interface ServiceLookupDTO {
+    id: string;
+    serviceName: string;
 }

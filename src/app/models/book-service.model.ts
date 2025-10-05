@@ -32,6 +32,7 @@ export interface IBooking  {
     longitude: number;
   };
   technicianId?: string;
+  technicianName?:string;
   googleCalendarId?: string;
   googleEventId?: string;
   totalAmount?: number;

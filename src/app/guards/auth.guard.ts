@@ -53,7 +53,8 @@ export const RoleGuard: CanActivateFn = (route, _state) => {
     if (!allowedRoles || allowedRoles.includes(userRole)) {
       return true;
     } else {
-      router.navigate(['/login']);
+      console.log(`Guard blocked: Role '${userRole}' not allowed for route`);
+      router.navigate(['/unauthorized']);
       return false;
     }
   } catch (error) {

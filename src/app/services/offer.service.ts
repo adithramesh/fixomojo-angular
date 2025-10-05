@@ -59,5 +59,7 @@ export class OfferService {
   toggleOfferStatus(id: string): Observable<OfferDataDTO> {
     return this.http.put<OfferDataDTO>(`${this.apiUrl}/toggle-status/${id}`, {});
   }
+
+
 }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild, OnDestroy, AfterViewChecked, OnInit } from '@angular/core';
 import { ChatService, ChatState } from '../../../services/chat.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { ChatMessage } from '../../../services/socket.service';
   templateUrl: './floating-chat.component.html',
   styleUrl: './floating-chat.component.scss'
 })
-export class FloatingChatComponent {
+export class FloatingChatComponent implements OnDestroy, AfterViewChecked, OnInit {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   chatState: ChatState = {
@@ -43,7 +43,7 @@ export class FloatingChatComponent {
       
       if (state.messages.length > previousMessageCount) {
         console.log('First message createdAt:', state.messages[0].createdAt);
-    console.log('Type of createdAt:', typeof state.messages[0].createdAt);
+        console.log('Type of createdAt:', typeof state.messages[0].createdAt);
         this.shouldScrollToBottom = true;
       }
     });
