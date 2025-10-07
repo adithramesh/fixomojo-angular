@@ -85,6 +85,7 @@
                 <button
                   [class]="column.buttonClass || 'btn-default'"
                   (click)="onButtonClick(column.key, item)"
+                  [disabled]="isButtonDisabled(column, item)"
                 >
                   {{ column.buttonText || "Action" }}
                 </button>

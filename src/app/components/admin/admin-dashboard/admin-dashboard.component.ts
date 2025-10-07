@@ -147,41 +147,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // downloadSalesReportPDF(): void {
-  //   this.dashboard$.subscribe((data) => {
-  //     if (!data) return;
-
-  //     const doc = new jsPDF();
-  //     doc.setFontSize(18);
-  //     doc.text('Sales Report Summary', 14, 22);
-
-  //     autoTable(doc, {
-  //       startY: 30,
-  //       head: [['Metric', 'Value']],
-  //       body: [
-  //         ['Total Revenue', data.totalRevenue],
-  //         ['Total Bookings', data.totalBookings],
-  //         ['Active Partners', data.activePartners],
-  //         ['Total Customers', data.totalCustomers]
-  //       ]
-  //     });
-
-  //     autoTable(doc, {
-        
-  //       startY: (doc as any).lastAutoTable.finalY + 10,
-  //       head: [['Status', 'Count']],
-  //       body: data.bookingStatusDistribution?.map(b => [b.status, b.count]) || []
-  //     });
-
-  //     autoTable(doc, {
-  //       startY: (doc as any).lastAutoTable.finalY + 10,
-  //       head: [['Week', 'Total Revenue']],
-  //       body: data.revenueTrends?.map(r => [`Week ${r.week}`, r.totalRevenue]) || []
-  //     });
-
-  //     doc.save(`Sales_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-  //   });
-  // }
   downloadSalesReportPDF(): void {
   this.dashboard$.subscribe((data) => {
     if (!data) return;

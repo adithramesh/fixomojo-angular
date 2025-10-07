@@ -326,10 +326,7 @@ export class TimeSlotsComponent implements OnInit, OnDestroy {
   // --- Google Calendar Link ---
 
   get googleCalendarLink(): string {
-    // You would ideally get the technician's actual Google Calendar email from the backend
-    // or from a user profile service after authentication.
-    // For now, let's use a placeholder or assume it's part of the technician object if retrieved.
-    const technicianEmail = 'your-technician-email@example.com'; // Replace with actual technician email
+    const technicianEmail = 'your-technician-email@example.com'; 
     return `https://calendar.google.com/calendar/r?tab=mc&src=${technicianEmail}`;
   }
 }

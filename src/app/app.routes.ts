@@ -61,12 +61,11 @@ export const routes: Routes = [
     { path: 'offers/add', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     { path: 'offers/edit/:id', component: OfferFormComponent, canActivate: [RoleGuard], data: { allowedRoles: ['admin'] } },
     //partner
-    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
+    { path: 'partner-dashboard', component: PartnerDashboardComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] }}, 
     { path: 'location', component: LocationComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } }, 
     { path: 'time-slots', component: TimeSlotsComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'] } },
     { path: 'partner-wallet', component: WalletComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner'], role: 'partner'} },
     { path: 'tasks', component: TasksComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'admin']} },
-    // { path: 'chat', component: ChatComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner']} },
 
     //shared
     { path: 'my-profile', component: UserProfileComponent, canActivate: [RoleGuard], data: { allowedRoles: ['partner', 'user']} },

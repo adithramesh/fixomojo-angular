@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnDestroy, OnInit, ViewChild, ElementRef, effect, runInInjectionContext, Injector } from '@angular/core';
 import { VideoCallService } from '../../../services/video-call.service';
-import { NotificationSocketService } from '../../../services/notification-socket.service';
+import { EndCallData, NotificationSocketService } from '../../../services/notification-socket.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -58,6 +58,33 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+
+    this.subscriptions.add(
+      this.notificationSocket.onEndCall().subscribe((data: EndCallData) => {  
+        console.log('Call ended by other party. Reason:', data?.reason || 'unknown');
+        this.videoCallService.endCall();
+        if (data?.reason === 'account_blocked') {
+          console.log('Account blocked - clearing storage and redirecting to unauthorized.');
+          localStorage.clear();  // Clear tokens to stop API calls
+          this.router.navigate(['/unauthorized']);
+        } else {
+          console.log('Normal end-call - redirecting to dashboard.');
+          this.navigateBasedOnRole();
+        }
+      })
+    );
+
+    // SystemAlert as fallback for block (in case end-call misses)
+    this.subscriptions.add(
+      this.notificationSocket.onNewNotification().subscribe((notification) => {
+        if (notification.type === 'SystemAlert' && notification.message.includes('blocked')) {
+          console.log('Blocked alert fallback - ending call and clearing token');
+          this.videoCallService.endCall();  // End Stream
+          localStorage.clear();  // Clear tokens to stop API calls
+          this.router.navigate(['/unauthorized']);
+        }
+      })
+    );
     this.subscriptions.add(
       combineLatest([
         this.store.select(selectTempUserId).pipe(filter(id => !!id)),
@@ -82,13 +109,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         }
       })
     );
-    this.subscriptions.add(
-      this.notificationSocket.onEndCall().subscribe(() => {
-        console.log('Call ended by the other party. Redirecting to dashboard.');
-        this.videoCallService.endCall();
-        this.navigateBasedOnRole();
-      })
-    );
+
   }
 
   ngAfterViewInit() {

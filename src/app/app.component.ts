@@ -16,7 +16,6 @@ export class AppComponent {
   private subscriptions: Subscription = new Subscription();
   private router = inject (Router)
 
-
   ngOnInit() {
     // Watch for navigation events for debugging
     this.subscriptions.add(
@@ -26,10 +25,12 @@ export class AppComponent {
         }
       })
     );
+
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+
 }
 

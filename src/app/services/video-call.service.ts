@@ -3,6 +3,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { StreamVideoClient, Call, StreamVideoParticipant } from '@stream-io/video-client';
 import { NotificationSocketService } from './notification-socket.service';
 import { environment } from '../../environments/environment';
+import { SocketService } from './socket.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,8 @@ export class VideoCallService {
   localParticipant = signal<StreamVideoParticipant | undefined>(undefined);
   remoteParticipant = signal<StreamVideoParticipant | null>(null);
   private http = inject(HttpClient)
+  private socketService = inject(SocketService)
+  private route = inject(ActivatedRoute)
   private notificationSocket = inject(NotificationSocketService)
   
   constructor(

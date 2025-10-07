@@ -165,6 +165,14 @@ export class DataTableComponent {
     this.addItem.emit();
   }
 
+isButtonDisabled(column: TableColumn, item: TableData): boolean {
+
+  if (column.key === 'videoCall' && item.licenseStatus === 'blocked') {
+    return true;
+  }
+  return false;
+}
+
 shouldShowChatButton(item: TableData): boolean {
   // console.log("item.isCompleted", item.isCompleted);
   

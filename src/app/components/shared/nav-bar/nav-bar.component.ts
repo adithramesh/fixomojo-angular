@@ -65,11 +65,25 @@ export class NavBarComponent implements OnInit {
   );
     this.getNotifications(1, 10)
     this.getUnreadCount();
+
+    this.subscriptions.add(
+      this._notificationSocketService.onNewNotification().subscribe((notification) => {
+        if (notification.type === 'SystemAlert') {
+          console.log('System alert received:', notification.message);
+
+          if (notification.message.includes('blocked')) {
+            this._router.navigate(['/unauthorized']);
+          }
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe(); 
-    this._notificationSocketService.disconnect(); 
+    // if (this._notificationSocketService.isSocketConnected()) {  
+    //     this._notificationSocketService.disconnect();
+    //   }
   }
 
   logout(): void {

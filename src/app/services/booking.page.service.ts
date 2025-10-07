@@ -55,10 +55,6 @@ export class BookingPageService {
     return this.http.post<BookServiceResponseDTO>(`${this.userApiUrl}/book-service`,data)
   }
 
-  // blockSlotAfterPayment(blockSlotPayload:any):Observable<{success: boolean, eventId: string, calendarId: string}>{
-  //   return this.http.post<{success: boolean, eventId: string, calendarId: string}>(`${this.partnerApiUrl}/block-slot`,blockSlotPayload)
-  // }
-
   blockSlotAfterPayment(blockSlotPayload: { technicianId: string; start: string; end: string; isCustomerBooking: boolean; reason: string; bookingId: string; }):Observable<{success: boolean, eventId: string, calendarId: string}>{
     return this.http.post<{success: boolean, eventId: string, calendarId: string}>(`${this.partnerApiUrl}/block-slot`,blockSlotPayload)
   }

@@ -4,7 +4,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { selectPhoneNumber, selectUsername } from '../../../store/auth/auth.reducer';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin.service';
@@ -42,7 +42,7 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
   private _route = inject(ActivatedRoute);
   private _router = inject(Router);
   public _imageUrlService = inject(ImageUrlService);
-  
+  private searchSubject = new Subject<string>();
   private _subscription: Subscription = new Subscription();
 
   username$!: Observable<string | null>;
@@ -92,6 +92,19 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
         this.loadSubServices();
       })
     );
+
+    this._subscription.add(
+      this.searchSubject
+        .pipe(
+          debounceTime(1000),         
+          distinctUntilChanged()      
+        )
+        .subscribe(searchTerm => {
+          this.pagination.searchTerm = searchTerm;
+          this.pagination.page = 1;
+          this.loadSubServices();
+        })
+    );
   }
 
   private loadSubServices() {
@@ -134,10 +147,7 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
 
   onSearchChange(event: Event): void {
     const searchTerm = (event.target as HTMLInputElement).value;
-    this.searchTerm = searchTerm;
-    this.pagination.searchTerm = searchTerm;
-    this.pagination.page = 1; 
-    this.loadSubServices();
+    this.searchSubject.next(searchTerm);
   }
 
   clearSearch(): void {

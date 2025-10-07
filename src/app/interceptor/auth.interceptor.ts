@@ -65,10 +65,13 @@ export const authInterceptor: HttpInterceptorFn = (
       );
       if (error.status === HttpStatusCode.Unauthorized) {
         return handle401Error(req, next);
-      }else if (error.status === HttpStatusCode.Forbidden) {  
-        console.warn(`Interceptor: Forbidden access for ${req.url} - Logging out`);
-        logoutUser();
-        return EMPTY; 
+      }else if (error.status === HttpStatusCode.Forbidden) {
+        console.warn(`Interceptor: Forbidden access for ${req.url} - Redirecting to unauthorized`);
+        if (isPlatformBrowser(platformId)) {
+          localStorage.removeItem('access_token');
+        }
+        router.navigate(['/unauthorized'], { queryParams: { reason: 'permissions', from: req.url } });  // Optional: Pass context for page (e.g., "Blocked from /partner-dashboard")
+        return EMPTY;  
       }
       return throwError(() => error);
     })
