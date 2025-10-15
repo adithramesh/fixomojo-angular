@@ -5,7 +5,7 @@ import { catchError, EMPTY, Observable, throwError } from 'rxjs';
 
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

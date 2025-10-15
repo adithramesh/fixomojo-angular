@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 
 import { OfferApiResponse, OfferDataDTO } from '../models/offer.model';
 import { PaginatedResponseDTO } from '../models/admin.model';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 
 
