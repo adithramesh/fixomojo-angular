@@ -134,6 +134,7 @@ export const authInterceptor: HttpInterceptorFn = (
     console.log('Interceptor: Logging out user');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('auth');
     router.navigate(['/login']);
   }
 };

@@ -1,12 +1,13 @@
-@use 'variables' as var;  // Your vars for colors/fonts
-@use 'buttons' as btn;    // Your button mixin
+@use 'variables' as var;  
+@use 'buttons' as btn;    
+@use 'sass:color';
 
 .not-found-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;  // Full viewport height
-  background: linear-gradient(135deg, var.$background-color 0%, lighten(var.$purple, 45%) 100%);
+  background: linear-gradient(135deg, var.$background-color 0%, color.adjust(var.$purple, $lightness: 45%));
   padding: var.$spacing-lg 0;  // Reduced top/bottom on mobile
   animation: fadeIn 0.8s ease-out;
 
@@ -127,7 +128,7 @@
       @include btn.button-style(var.$purple);
 
       &:hover {
-        background-color: darken(var.$purple, 10%);
+        background-color: color.adjust(var.$purple, $lightness: -10%);
       }
     }
   }

@@ -120,6 +120,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.loadDashboard(); // reload without filter
     }
 
+ private formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  }
+
+  get revenueTrendsTitle(): string {
+    if (this.startDate && this.endDate) {
+      return `Revenue Trends (${this.formatDate(this.startDate)} to ${this.formatDate(this.endDate)})`;
+    }
+    return 'Revenue Trends (Last 8 Weeks)';
+  }
+
   downloadSalesReportExcel(): void {
     this.dashboard$.subscribe((data) => {
       if (!data) return;

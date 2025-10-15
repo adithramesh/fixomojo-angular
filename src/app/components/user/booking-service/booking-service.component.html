@@ -323,10 +323,11 @@
           </div>
         </div>
         
-        <div class="progress-item" [class.completed]="getSelectedTimeSlot()">
+        <div class="progress-item" [class.completed]="selectedTime">
           <div class="progress-indicator">
-            <span *ngIf="getSelectedTimeSlot()">✓</span>
-            <span *ngIf="!getSelectedTimeSlot()">3</span>
+            <!-- <span *ngIf="getSelectedTimeSlot()">✓</span> -->
+             <span *ngIf="selectedTime" >✓</span>
+            <span *ngIf="!selectedTime">3</span>
           </div>
           <div class="progress-details">
             <h4>Date & Time</h4>

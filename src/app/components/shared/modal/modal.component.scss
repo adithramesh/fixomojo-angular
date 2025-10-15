@@ -20,11 +20,12 @@
 .modal-content {
   // Refined modal container with cleaner borders and shadow
   background: var.$white;
+  border: 1px solid rgba(0, 0, 0, 0.05); // Added: Subtle border to replace any thick black; adjust opacity if needed
   border-radius: var.$border-radius-lg;
   box-shadow: var.$box-shadow-md;
   max-width: 550px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 95vh; // Increased: From 90vh to 95vh to reduce shrinkage and scroll
   overflow: hidden;
   position: relative;
   animation: modalFadeIn 0.3s ease-out;
@@ -72,9 +73,24 @@
 
 .modal-body {
   // Consistent padding and scroll handling
-  padding: var.$spacing-lg;
+  padding: var.$spacing-xs; // Further reduced: From md to xs for even more vertical space in tight modals
   overflow-y: auto;
-  max-height: 85vh;
+  max-height: calc(95vh - 60px); // Further adjusted: Reduced subtraction for more body height (assuming ~60px for close button/header)
+  scrollbar-width: thin; // Added: For subtle scrollbar appearance
+  scrollbar-color: var.$gray-light transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var.$gray-light;
+    border-radius: 3px;
+  }
 }
 
 /* Service modal specific styles */
@@ -153,12 +169,13 @@
   }
 
   .book-button {
-    // [CHANGE LOCATION: Line 158-160] Reduced button width and removed black border
+    // [CHANGE LOCATION: Line 158-160] Reduced button width and ensured no black border
     @include btn.button-style(var.$purple);
     padding: var.$spacing-xs var.$spacing-sm; // Adjusted padding to reduce width
     width: 100px; // Explicitly set a reduced width
-    border: none; // Removed black border (overrides any default border from button-style mixin)
+    border: none !important; // Strengthened: Override any mixin border with !important to remove thick black
     font-size: var.$font-size-sm;
+    box-shadow: none; // Added: Remove any shadow that might mimic a border
   }
 }
 
@@ -169,7 +186,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var.$spacing-md;
+  gap: var.$spacing-xs; // Further reduced: From sm to xs to minimize vertical space
 
   .modal-heading {
     // Simplified heading
@@ -178,6 +195,7 @@
     color: var.$text-color;
     margin: 0;
     font-family: var.$title-font;
+    padding-top: 0.5rem; // Added: Minimal top padding to account for close button overlap
   }
 
   .modal-subtext {
@@ -186,30 +204,96 @@
     color: var.$gray-text;
     margin: 0;
     line-height: 1.4;
+    padding-bottom: 0.25rem; // Added: Tight bottom padding
   }
 
   .booking-info-card {
     // Clean card design
     background-color: var.$input-bg;
+    border: 1px solid rgba(0, 0, 0, 0.05); // Added: Subtle border for definition without thickness
     border-radius: var.$border-radius-md;
-    padding: var.$spacing-md;
+    padding: var.$spacing-xs; // Further reduced: From sm to xs for maximum compactness
     width: 100%;
-    margin-bottom: var.$spacing-md;
+    margin-bottom: var.$spacing-xs; // Further reduced: To save even more space
 
     .info-row {
       // Consistent row styling
       display: flex;
       justify-content: space-between;
-      margin-bottom: var.$spacing-xs;
+      margin-bottom: 0.25rem; // Hard-coded minimal: Override var.$spacing-xs if needed for tighter rows
       font-size: var.$font-size-sm;
 
       .label {
         font-weight: var.$font-weight-semibold;
-        color: var.$text-color;
+        color: var.$purple; // Adjusted: To match theme for better visibility
       }
 
       span {
         color: var.$gray-text;
+      }
+
+      &:last-child {
+        margin-bottom: 0; // Added: Remove extra bottom margin on last row
+      }
+    }
+  }
+
+  // Further refined: Specific adjustments for nested OTP component to prevent scroll and fit OTP boxes in view
+  app-otp {
+    width: 100%;
+    margin-top: 0; // Ensure no extra top margin
+
+    // Target the modal-mode class to override OTP's internal styles
+    &.modal-mode {
+      // Override container height issues
+      .otp-container.modal-mode {
+        height: auto !important; // Force auto height in modal to prevent fixed vh expansion
+        min-height: unset !important;
+        padding: 0; // Remove any container padding
+      }
+
+      .otp-modal-content {
+        max-width: none; // Allow full width in modal context
+        padding: 0.5rem 1rem !important; // Further reduced: From 1rem to 0.5rem top/bottom for tight fit
+        gap: 0.5rem !important; // Further reduced: From 0.8rem to 0.5rem to compress sections
+        max-height: none; // Remove any max-height that could cause internal scroll
+        height: auto; // Ensure it sizes to content
+
+        .brand-logo {
+          margin: 0; // Remove any margins
+          padding: 0;
+          gap: 0.5rem; // Tighten logo gap
+
+          h2 {
+            font-size: 16px !important; // Further reduced: From 18px to 16px for space saving
+            margin: 0;
+          }
+        }
+
+        .otp-group.centered {
+          gap: 0.5rem !important; // Further reduced: For inputs to sit closer
+          margin: 0;
+          padding: 0;
+
+          .otp-input {
+            width: 50px !important; // Slightly reduced width for better fit if needed
+            height: 50px !important; // Reduced height from 60px to 50px to save vertical space
+            font-size: 20px !important; // Adjusted font for smaller box
+          }
+        }
+
+        .error-message {
+          margin: 0.25rem 0 !important; // Tight margins
+          padding: 0;
+          min-height: 0; // Prevent empty space if no error
+        }
+
+        .otp-button.modal-mode-button {
+          height: 40px !important; // Further reduced: From 44px to 40px
+          margin: 0;
+          padding: 0.5rem;
+          font-size: 14px; // Slightly smaller text
+        }
       }
     }
   }

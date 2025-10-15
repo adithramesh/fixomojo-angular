@@ -16,7 +16,7 @@
       </label>
       <label>
         End Date:
-        <input type="date" [(ngModel)]="endDate" [max]="today" />
+        <input type="date" [(ngModel)]="endDate" [min]="startDate || null" [max]="today" />
       </label>
       <button (click)="applyFilter()">Apply</button>
       <button class="reset" (click)="resetFilter()">Reset</button>
@@ -95,7 +95,7 @@
 
       <!-- Line Chart -->
       <div class="chart-card">
-        <div class="card-header"><h3>Revenue Trends (Last 8 Weeks)</h3></div>
+        <div class="card-header"><h3>{{ revenueTrendsTitle  }}</h3></div>
         <div class="card-body">
           <canvas
             *ngIf="lineChartData.datasets[0].data.length"

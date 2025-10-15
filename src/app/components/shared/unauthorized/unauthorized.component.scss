@@ -1,5 +1,6 @@
-@use 'variables' as var;  // Your vars for colors/fonts
-@use 'buttons' as btn;    // Your button mixin
+@use 'variables' as var;  
+@use 'buttons' as btn;    
+@use 'sass:color';
 
 .unauthorized-container {
   display: flex;
@@ -58,7 +59,7 @@
       max-width: 200px;
 
       &:hover {
-        background-color: darken(var.$error-red, 10%);
+        background-color: color.adjust(var.$error-red, $lightness: -10%);
       }
     }
 

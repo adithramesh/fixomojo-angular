@@ -184,7 +184,7 @@ export class BookingServiceComponent implements OnInit, OnDestroy {
         console.log("savedData.availableTimeSlots", savedData.availableTimeSlots);
         console.log("this.availableTimeSlots", this.availableTimeSlots);
         console.log("this.selectedDate", this.selectedDate);
-        console.log(" savedData.selectedDate",  savedData.selectedDate);
+        console.log("savedData.selectedDate",  savedData.selectedDate);
         
         
         
@@ -389,7 +389,9 @@ private resetBookingState(): void {
     
     this._adminService.getPartners(this.pagination).subscribe({
       next: (response) => {
-        this.allTechnicians = response.items.map(partner => ({
+        this.allTechnicians = response.items
+        .filter(partner => partner.status === 'active' && partner.licenseStatus === 'approved')
+        .map(partner => ({
           id: String(partner.id ?? ''),
           name: partner.username!,
           email: partner.email!,
@@ -656,8 +658,7 @@ proceedToPayment(bookingData:IBooking){
       
         //wallet logic
     } else {
-        // console.error('No checkout URL provided:', bookingData);
-        // alert('Failed to get payment page. Please try again.');
+     
         this._store.dispatch(BookingActions.clearFormData());
         console.log('Wallet payment confirmed. Redirecting to success page.');
         this._router.navigate(['/payment-success'], {

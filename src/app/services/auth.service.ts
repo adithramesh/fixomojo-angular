@@ -68,6 +68,7 @@ export class AuthService {
     console.log('Interceptor: Logging out user');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('auth');
     this.router.navigate(['/login']);
   }
 }

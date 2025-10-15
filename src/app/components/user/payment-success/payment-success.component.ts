@@ -38,6 +38,7 @@ export class PaymentSuccessComponent {
 
     if (error) {
       this.errorMessage = error;
+      localStorage.removeItem('bookingData');
     } else if (type === 'card' && sessionId) {
       this.verifyCardPayment(sessionId);
     } else if (type === 'wallet' && sessionId) {
