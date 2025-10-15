@@ -2,9 +2,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { SignupUserRequestDTO, SignupResponseDTO, OtpRequestDTO, OtpResendRequestDTO, ForgotPasswordRequestDTO, ResetPasswordRequestDTO, LoginRequestDTO, RefreshTokenResponse} from '../models/auth.model';
 import { catchError, EMPTY, Observable, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
+
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
