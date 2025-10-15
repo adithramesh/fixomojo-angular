@@ -2,8 +2,9 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { HomeResponseDTO } from "../models/home.model";
-import { environment } from "../../environments/environment";
+
 import { PaginatedResponseDTO } from "../models/admin.model";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: 'root'})
 export class HomeService {
