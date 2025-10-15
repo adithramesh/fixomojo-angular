@@ -24,4 +24,14 @@
     </div>
   </section>
 </main>
+
+<app-confirmation-modal
+    [isOpen]="showCancelModal"
+    [title]="cancelModalTitle"
+    [message]="cancelModalMessage"
+    [confirmButtonText]="cancelButtonText"
+    (confirm)="confirmCancelBooking()"
+    (cancel)="cancelModalClosed()"
+    (close)="cancelModalClosed()"
+></app-confirmation-modal>
 <app-footer></app-footer>

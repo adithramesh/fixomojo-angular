@@ -1,0 +1,34 @@
+<div *ngIf="callStatus() === 'in-call'" class="video-call-container">
+  <div class="call-status in-call">In call</div>
+
+  <div class="video-streams"
+       [class.single-participant]="!remoteParticipant()"
+       [class.two-participants]="remoteParticipant()">
+    <div class="video-stream local-stream">
+      <video #localVideo muted autoplay playsinline></video>
+      <span class="stream-label">You</span>
+    </div>
+
+    <div *ngIf="remoteParticipant()" class="video-stream remote-stream">
+      <video #remoteVideo autoplay playsinline></video>
+      <span class="stream-label">{{ remoteUserName() }}</span>
+    </div>
+  </div>
+
+  <!-- hidden audio element for remote -->
+  <audio #remoteAudio hidden autoplay></audio>
+
+  <div class="call-controls">
+    <button (click)="toggleAudio()" class="control-button mute-audio" [class.active]="isAudioMuted()">
+      {{ isAudioMuted() ? '🔇' : '🎤' }}
+    </button>
+    <button (click)="toggleVideo()" class="control-button toggle-video" [class.active]="!isVideoEnabled()">
+      {{ isVideoEnabled() ? '📹' : '📸' }}
+    </button>
+    <button (click)="endCall()" class="control-button end-call">📞</button>
+  </div>
+</div>
+
+<div *ngIf="callStatus() === 'connecting'" class="call-status connecting">
+  Connecting...
+</div>

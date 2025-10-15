@@ -5,11 +5,13 @@
     <app-data-table
       [tableData]="subServiceTableData"
       [tableColumns]="subServiceTableColumns"
+      title="Sub-Services"
       [isLoading]="isLoading"
       [emptyMessage]="'No services found'"
       [showAddButton]="true"
       [searchTerm]="searchTerm"
       (rowAction)="handleAction($event)"
+      [searchTerm]="searchTerm" 
       (searchChange)="onSearchChange($event)"
       (addItem)="onAddSubService()"
       [currentPage]="pagination.page"

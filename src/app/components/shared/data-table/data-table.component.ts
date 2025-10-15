@@ -1,26 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ViewChild, ElementRef,SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { selectUserRole } from '../../../store/auth/auth.reducer';
+import { Subject, takeUntil } from 'rxjs';
 
 
 export interface TableData {
-  [key: string]: any; // Add this line
-  id?: any;
+  sl?:number;
+  toggle?:string;
+  id?: string|number;
+  Id?:string;
+  _id?:string | undefined;
+  displayId?:string;
+  phoneNumber?:number| string;
   image?: string;
+  title?:string;
   serviceName?: string;
-  subServiceId?: any;
+  subServiceId?: string;
   subServiceName?: string;
   description?: string;
   price?: string;
   status?: string;
-  book?: any;
-  edit?: any;
-  totalAmount?: any;
-  // paymentStatus?: any;
-  // bookingStatus?: any;
-  bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed";
+  book?: string;
+  edit?: string;
+  totalAmount?: string |number;
+  bookingStatus?: "Hold" |"Pending" | "Confirmed" | "Cancelled"| "Completed" | "Failed" |string;
   paymentStatus?: "Pending" | "Success" | "Failed";
-  isCompleted?: any;
+  isCompleted?: boolean |string;
   username?: string; 
   createdAt?: string; 
   block?: string; 
@@ -28,9 +35,19 @@ export interface TableData {
       address?: string;
       latitude: number;
       longitude: number;
-   };
-  timeSlotStart?: Date; 
-  timeSlotEnd?: Date; 
+   } | string ;
+  timeSlotStart?: Date |string; 
+  timeSlotEnd?: Date |string; 
+  paymentMethod?:string;
+  discount_type?:string;
+  discount_value?:number;
+  value?:string |number;
+  email?: string; 
+  technicianId?: string; 
+  technicianName?:string;
+  licenseStatus?:string;
+  videoCall?:string;
+  
 }
 
 export interface TableColumn {
@@ -40,6 +57,7 @@ export interface TableColumn {
   dropdownOptions?: { label: string; value: string }[];
   buttonText?: string;
   buttonClass?: string; 
+  buttonTextFn?: (item: TableData) => string;
   width?: string; 
   className?: string
 }
@@ -49,22 +67,25 @@ export interface TableColumn {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './data-table.component.html',
-  styleUrl: './data-table.component.scss'
+  styleUrl: './data-table.component.scss',
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTableComponent {
   @Input() tableData: TableData[] = [];
   @Input() tableColumns: TableColumn[] = [];
-  @Input() title: string = "";
-  @Input() showImage: boolean = false;
-  @Input() imageSource: string = '';
-  @Input() isLoading: boolean = false;
-  @Input() emptyMessage: string = 'No data available';
-  @Input() currentPage: number = 1;
-  @Input() pageSize: number = 10;
-  @Input() totalPages: number = 1;
-  @Input() showAddButton: boolean = false;
-  @Input() searchTerm: string = '';
-  @Input() showSearch: boolean = true;
+  @Input() title = "";
+  @Input() showImage = false;
+  @Input() imageSource = '';
+  @Input() isLoading = false;
+  @Input() emptyMessage = 'No data available';
+  @Input() currentPage = 1;
+  @Input() pageSize = 10;
+  @Input() totalPages = 1;
+  @Input() showAddButton = false;
+  @Input() searchTerm = '';
+  @Input() showSearch = true;
+  @Input() searchPlaceholder = 'Search...';
+  
   
   // Events for buttons or row actions
   @Output() rowAction = new EventEmitter<{action: string, item: TableData}>();
@@ -72,7 +93,28 @@ export class DataTableComponent {
   @Output() pageChange = new EventEmitter<number>();
   @Output() searchChange = new EventEmitter<string>();
   @Output() addItem = new EventEmitter<void>();
-  // Method to handle button clicks
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+ 
+
+  private _store = inject(Store)
+  private _role!:string
+  private destroy$ = new Subject<void>();
+  ngOnInit(){
+     this._store
+        .select(selectUserRole)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(role => {
+          if (role) {
+            this._role = role;
+          }
+        });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['searchTerm'] && this.searchInput) {
+      this.searchInput.nativeElement.value = this.searchTerm;
+    }
+  }
   onButtonClick(action: string, item: TableData): void {
     this.rowAction.emit({action, item});
   }
@@ -90,7 +132,7 @@ export class DataTableComponent {
     this.dropdownChange.emit({ itemId, field, newValue });
   }
 
-  // Methods to handle pagination
+
   prevPage(): void {
     if (this.currentPage > 1) {
       this.pageChange.emit(this.currentPage - 1);
@@ -103,14 +145,11 @@ export class DataTableComponent {
     }
   }
 
-  // onSearchChange(searchTerm: string): void {
-  //   this.searchChange.emit(searchTerm);
-  // }
+
 
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target) {
-        this.searchTerm = target.value; // Update searchTerm for two-way binding
         this.searchChange.emit(target.value);
       }
     } 
@@ -118,7 +157,7 @@ export class DataTableComponent {
   onImageError(event: Event): void {
   const target = event.target as HTMLImageElement;
   if (target) {
-      target.src = 'assets/images/placeholder.jpg';
+      target.style.display = 'none';
     }
   }
 
@@ -126,23 +165,36 @@ export class DataTableComponent {
     this.addItem.emit();
   }
 
-  shouldShowChatButton(item: TableData): boolean {
-  return item.bookingStatus === 'Confirmed' ;
-  // && !item.isCompleted
+isButtonDisabled(column: TableColumn, item: TableData): boolean {
+
+  if (column.key === 'videoCall' && item.licenseStatus === 'blocked') {
+    return true;
+  }
+  return false;
+}
+
+shouldShowChatButton(item: TableData): boolean {
+  // console.log("item.isCompleted", item.isCompleted);
+  
+  return item.bookingStatus === 'Confirmed'  
+  // && !item.isCompleted;
+  
 }
 
 shouldShowCompleteButton(item: TableData): boolean {
-  if(item.timeSlotStart){
+  if(item.timeSlotStart && this._role==='partner'){
+    console.log("this.isToday(item.timeSlotStart.toString())", this.isToday(item.timeSlotStart.toString()));
+    
   return item.bookingStatus === 'Confirmed'  && 
-         this.isToday(item.timeSlotStart.toString());
+        this.isToday(item.timeSlotStart.toString())
         //  && !item.isCompleted
   }else{
     return false
   }
 }
 
-shouldShowRateButton(item: TableData): boolean {
-  return item.bookingStatus === 'Completed'; // or item.isCompleted === 'Yes'
+shouldShowCancelButton(item: TableData): boolean {
+  return item.bookingStatus === 'Confirmed' ; 
 }
 
 private isToday(dateString: string): boolean {
@@ -150,5 +202,27 @@ private isToday(dateString: string): boolean {
   const bookingDate = new Date(dateString);
 
   return today.toDateString() === bookingDate.toDateString();
+}
+
+getItemValue(item: TableData, key: string): unknown {
+  return (item as Record<string, unknown>)[key];
+}
+
+getItemValueAsString(item: TableData, key: string): string {
+  return String((item as Record<string, unknown>)[key] || '');
+}
+
+getItemValueAsDate(item: TableData, key: string): string | number | Date | null {
+  const value = (item as Record<string, unknown>)[key];
+  return value as string | number | Date | null;
+}
+
+updateItemValue(item: TableData, key: string, value: string | number | boolean | null | undefined): void {
+  (item as Record<string, unknown>)[key] = value;
+}
+
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
 }
 }

@@ -10,13 +10,16 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
 import { ImageUrlService } from '../../../services/image.service';
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { SidebarComponent } from '../side-bar/side-bar.component';
+import { FilePondErrorDescription, FilePondFile, FilePondInitialFile } from 'filepond';
 
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize, FilePondPluginImageTransform);
 
 @Component({
   selector: 'app-add-sub-service',
-  imports: [CommonModule, ReactiveFormsModule, FilePondModule],
+  imports: [CommonModule, ReactiveFormsModule, FilePondModule, NavBarComponent, SidebarComponent],
   templateUrl: './add-sub-service.component.html',
   styleUrl: './add-sub-service.component.scss'
 })
@@ -33,7 +36,7 @@ export class AddSubServiceComponent {
   private _imageUrlService = inject(ImageUrlService)
   isSubmitting=false;
   file: File | null = null;
-  pondFiles: any[] = [];
+  pondFiles: FilePondInitialFile[] = [];
 
   pondOptions = {
     allowMultiple: false,
@@ -58,7 +61,8 @@ export class AddSubServiceComponent {
       subServiceName:['', Validators.required],
       price:[0, [Validators.required, Validators.min(0)]],
       description:[],
-      image: ['', Validators.pattern(/^sub-services\/[a-zA-Z0-9_-]+$/)],
+      // image: ['', Validators.pattern(/^sub-services\/[a-zA-Z0-9_-]+$/)],
+      image: [''],
       status:['active', Validators.required],
 
     })
@@ -70,7 +74,7 @@ export class AddSubServiceComponent {
    console.log('Form Controls:', this.addSubServiceForm.controls);
 
     if (this.mode === 'edit' && this.subServiceId) {
-        this.services$.subscribe(services => {
+        this.services$.subscribe(() => {
       this.loadSubServiceData(this.subServiceId!);
     })}
   }
@@ -78,8 +82,6 @@ export class AddSubServiceComponent {
   private loadSubServiceData(subServiceId: string): void {
     this._adminService.getSubServiceById(subServiceId).subscribe({
       next: (subService: SubServiceRequestDTO) => {
-        console.log('Sub-service data:', subService)
-        
         this.addSubServiceForm.patchValue({
           serviceId: subService.serviceId,
           subServiceId:subServiceId,
@@ -89,20 +91,24 @@ export class AddSubServiceComponent {
           image: subService.image,
           status: subService.status,
         });
+        // if (subService.image) {
+        //   // const fullImageUrl = this._imageUrlService.buildImageUrl(subService.image);
+        //   // this.pondFiles = [{
+        //   //   source: fullImageUrl,
+        //   //   options: {
+        //   //     type: 'local',
+        //   //     // size: 500000
+        //   //   },
+        //   //   //  metadata: {
+        //   //   //   poster: fullImageUrl 
+        //   //   // }
+        //   // }];
+        //   // this.pondFiles = []
+        // }
         if (subService.image) {
-          console.log("sub-service.image", subService.image);
-          const fullImageUrl = this._imageUrlService.buildImageUrl(subService.image);
-          this.pondFiles = [{
-            source: fullImageUrl,
-            options: {
-              type: 'remote',
-              size: 500000
-            },
-             metadata: {
-              poster: fullImageUrl 
-            }
-          }];
+        this.pondFiles = [];
         }
+        
         console.log('Form value after patch:', this.addSubServiceForm.value);
       },
       error: (error) => {
@@ -112,13 +118,22 @@ export class AddSubServiceComponent {
     });
   }
 
-  pondHandleAddFile(event: any): void {
-    console.log("pondHandleAddFile", event),event.file;
-    this.file = event.file?.file || null;
+ 
+
+    pondHandleAddFile(error: FilePondErrorDescription | null, file: FilePondFile): void {
+    if (error) {
+      console.error('FilePond add file error:', error);
+      return;
+    }
+    this.file = file.file as File;
   }
 
-  pondHandleRemoveFile(): void {
-    console.log("pondHandleRemoveFile, file",this.file );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  pondHandleRemoveFile(error: FilePondErrorDescription | null, file: FilePondFile): void {
+    if (error) {
+      console.error('FilePond remove file error:', error);
+      return;
+    }
     this.file = null;
   }
 
@@ -137,9 +152,9 @@ export class AddSubServiceComponent {
     if (this.file) {
         formData.append('image', this.file);
       }
-    const { serviceId } = this.addSubServiceForm.value.serviceId;
+    const  serviceId  = this.addSubServiceForm.value.serviceId;
     console.log('Form Values:', this.addSubServiceForm.value);
-     console.log('Form Validity:', this.addSubServiceForm.valid);
+    console.log('Form Validity:', this.addSubServiceForm.valid);
     const request$ = this.mode === 'edit' && this.subServiceId
       ? this._adminService.updateSubService(this.subServiceId, formData)
       : this._adminService.createSubService(serviceId, formData);

@@ -1,78 +1,36 @@
-// import { Component, inject } from '@angular/core';
-// import { Router } from '@angular/router';
-// import { Store } from '@ngrx/store';
-// import { selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
-// import { CommonModule } from '@angular/common';
-// import { MatIconModule } from '@angular/material/icon';
-// import { MatMenuModule } from '@angular/material/menu';
-
-// @Component({
-//   selector: 'app-nav-bar',
-//   imports: [CommonModule, MatIconModule, MatMenuModule,],
-//   templateUrl: './nav-bar.component.html',
-//   styleUrl: './nav-bar.component.scss'
-// })
-// export class NavBarComponent {
-//   private _router = inject(Router)
-//   private _store = inject(Store)
-
-//   username$=this._store.select(selectUsername)
-//   role!:string;
-//   dropdownOpen = false;
-
-//   ngOnInit():void{
-//      this._store.select(selectUserRole).subscribe(role => {
-//                 if (role) {
-//                   this.role = role;
-//                 }
-//               });
-//   }
-
-//   logout(){
-//     localStorage.removeItem('access_token'); 
-//     localStorage.removeItem('refresh_token'); 
-//     this._router.navigate(['/login']); 
-//     console.log('User logged out successfully'); 
-//   }
-
-//   navigateToAccount() {
-//     this._router.navigate(['/my-bookings']); 
-//   }
-
-//   navigateToHome() {
-//     if(this.role==='user'){
-//       this._router.navigate(['/home']);
-//     }else if(this.role==='partner'){
-//       this._router.navigate(['/partner-dashboard']);
-//     }else{
-//       this._router.navigate(['/admin-dashboard']);
-//     }
-//   }
-
-
-// }
-
-import { Component, inject, OnInit, HostListener } from '@angular/core'; // Added HostListener
+import { Component, inject, OnInit, HostListener } from '@angular/core'; 
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
+import { selectIsLoggedIn, selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { INotification, NotificationService, PaginationRequestDTO } from '../../../services/notification.service';
+import { NotificationSocketService } from '../../../services/notification-socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [CommonModule, MatIconModule], // Removed MatIconModule, MatMenuModule
+  imports: [CommonModule, MatIconModule],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.scss'
 })
 export class NavBarComponent implements OnInit {
   private _router = inject(Router);
   private _store = inject(Store);
+  private _notificationService = inject(NotificationService);
+  private _notificationSocketService = inject(NotificationSocketService);
 
   username$ = this._store.select(selectUsername);
+  userId!: string;
   role!: string;
-  dropdownOpen = false; // Re-introduced dropdown state
+  userDropdownOpen = false;
+  notificationDropdownOpen = false;
+
+  unreadNotificationCount = 0;
+  notifications: INotification[] = []
+
+  private subscriptions: Subscription = new Subscription();
 
   ngOnInit(): void {
     this._store.select(selectUserRole).subscribe(role => {
@@ -80,26 +38,73 @@ export class NavBarComponent implements OnInit {
         this.role = role;
       }
     });
+
+    this.subscriptions.add(
+      this._store.select(selectIsLoggedIn).subscribe(isLoggedIn => {
+        if (isLoggedIn) {
+          this._store.select(selectTempUserId).subscribe(userId => {
+            if (userId && userId !== this.userId) {
+              this.userId = userId;
+              this.connectSocket();
+            }
+          });
+        } else {
+          this._notificationSocketService.disconnect();
+          this.userId = '';
+        }
+      })
+    );
+
+    this.subscriptions.add(
+    this._notificationSocketService.onNewNotification().subscribe((notif) => {
+      this.notifications.unshift(notif); 
+      if (!notif.read) {
+        this.unreadNotificationCount++;
+      }
+    })
+  );
+    this.getNotifications(1, 10)
+    this.getUnreadCount();
+
+    this.subscriptions.add(
+      this._notificationSocketService.onNewNotification().subscribe((notification) => {
+        if (notification.type === 'SystemAlert') {
+          console.log('System alert received:', notification.message);
+
+          if (notification.message.includes('blocked')) {
+            this._router.navigate(['/unauthorized']);
+          }
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe(); 
+    // if (this._notificationSocketService.isSocketConnected()) {  
+    //     this._notificationSocketService.disconnect();
+    //   }
   }
 
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('auth');
+    this._notificationSocketService.disconnect();
     this._router.navigate(['/login']);
-    console.log('User logged out successfully');
   }
 
   navigateToMyProfile():void {
-    if (this.role === 'partner') {
+    if (this.role === 'partner' || this.role === 'user') {
       this._router.navigate(['/my-profile']);
-      this.dropdownOpen = false; // Close dropdown after navigation
+      this.userDropdownOpen = false;
     }
   }
 
   navigateToMyBookings(): void {
     if (this.role === 'user') {
       this._router.navigate(['/my-bookings']);
-      this.dropdownOpen = false; // Close dropdown after navigation
+      this.userDropdownOpen = false;
     }
   }
 
@@ -110,8 +115,8 @@ export class NavBarComponent implements OnInit {
       this._router.navigate(['/admin-wallet']);
     } else{
       this._router.navigate(['/user-wallet']);
-    }
-    this.dropdownOpen = false; 
+    } 
+    this.userDropdownOpen = false;
   }
 
   navigateToHome(): void {
@@ -122,22 +127,146 @@ export class NavBarComponent implements OnInit {
     } else {
       this._router.navigate(['/admin-dashboard']);
     }
-    this.dropdownOpen = false; // Close dropdown after navigation
+    this.userDropdownOpen = false;
   }
 
-  toggleDropdown(): void {
-    this.dropdownOpen = !this.dropdownOpen;
+  toggleUserDropdown(): void {
+    this.userDropdownOpen = !this.userDropdownOpen;
+    this.notificationDropdownOpen = false;
   }
 
-  // Closes the dropdown when a click occurs outside of the dropdown trigger or content
+
+
+   toggleNotificationDropdown(): void {
+    this.notificationDropdownOpen = !this.notificationDropdownOpen;
+    this.userDropdownOpen = false;
+    if (this.notificationDropdownOpen) {
+      this.getUnreadCount(); 
+      this.getNotifications(1, 10);
+      if (this.unreadNotificationCount > 0) {
+        this.markAllNotificationsAsRead();
+      }
+    }
+  }
+
+  getUnreadCount(): void {
+    this.subscriptions.add(
+      this._notificationService.getUnreadCount().subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.unreadNotificationCount = response.data.count;
+          }
+        },
+        error: (err) => console.error('Error fetching unread count:', err)
+      })
+    );
+  }
+
+  getNotifications(page: number, pageSize: number, filter?: undefined): void {
+    const pagination: PaginationRequestDTO = { page, pageSize, sortBy: 'createdAt', sortOrder: 'desc', filter };
+    this.subscriptions.add(
+      this._notificationService.getNotifications(pagination).subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.notifications = response.data.items; 
+          }
+        },
+        error: (err) => console.error('Error fetching notifications:', err)
+      })
+    );
+  }
+
+
+markAsRead(notificationId: string, actionTaken?: string): void {
+  this.subscriptions.add(
+    this._notificationService.markAsRead(notificationId, actionTaken).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const index = this.notifications.findIndex(n => n._id === notificationId);
+          if (index !== -1) {
+            this.notifications[index].read = true;
+            if (actionTaken) {
+              this.notifications[index].actionTaken = actionTaken;
+            }
+            this.unreadNotificationCount--;
+            if (this.unreadNotificationCount < 0) {
+              this.unreadNotificationCount = 0;
+            }
+          }
+        }
+      },
+      error: (err) => console.error('Error marking notification as read:', err)
+    })
+  );
+}
+  markAllNotificationsAsRead(): void {    
+    if (this.unreadNotificationCount > 0) { 
+      this.subscriptions.add(
+        this._notificationService.markAllAsRead().subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.notifications.forEach(notif => notif.read = true); 
+              this.unreadNotificationCount = 0; 
+            }
+          },
+          error: (err) => console.error('Error marking all notifications as read:', err)
+        })
+      );
+    }
+  }
+
+
+  acceptCallFromNavbar(notification: INotification): void {
+    if (notification.payload && notification.payload.callId) {
+      const callId = notification.payload.callId;
+      this.markAsRead(notification._id, 'accepted'); 
+      this._router.navigate(['/video-call/join', callId]);
+      this.notificationDropdownOpen = false; 
+    }
+  }
+
+    declineCallFromNavbar(notification: INotification): void {
+      this.markAsRead(notification._id, 'declined'); 
+      this.notificationDropdownOpen = false; 
+    }
+
+    private connectSocket(): void {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('Cannot connect socket: No access token found in localStorage');
+      return;
+    }
+    if (!this.userId) {
+      console.error('Cannot connect socket: No userId available');
+      return;
+    }
+    console.log('Connecting socket with token and userId:', token, this.userId);
+    this._notificationSocketService.connect(token, this.userId);
+    this.subscriptions.add(
+      this._notificationSocketService.getConnectionStatus().subscribe(isConnected => {
+        if (isConnected) {
+          console.log('Socket successfully connected!');
+        } else {
+          console.warn('Socket disconnected, check token or server');
+        }
+      })
+    );
+  }
+
+  
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
     const target = event.target as HTMLElement;
     const isInsideDropdown = target.closest('.user-menu-trigger') || target.closest('.user-menu-dropdown');
 
-    if (!isInsideDropdown && this.dropdownOpen) {
-      this.dropdownOpen = false;
+    if (!isInsideDropdown && this.userDropdownOpen) {
+      this.userDropdownOpen = false;
     }
   }
+
+
 }
+
+
+
 

@@ -7,7 +7,7 @@ import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
 interface SidebarItem {
   label: string;
   route: string;
-  icon?: string; // For future use with icons
+  icon?: string; 
   children?: SidebarItem[];
 }
 
@@ -18,13 +18,12 @@ interface SidebarItem {
   styleUrl: './partner-side-bar.component.scss'
 })
 export class PartnerSideBarComponent {
-title: string = 'Partner Panel';
+title = 'Partner Panel';
 menuItems: SidebarItem[] = [
     { label: 'Dashboard', route: '/partner-dashboard', icon:'dashboard' },
     { label: 'Location', route: '/location', icon:'location_on' },
     { label: 'Time slots', route: '/time-slots',icon:'schedule' },
-    { label: 'Tasks', route: '/tasks',icon: 'task_alt' },
-    { label: 'Requests', route: '/service-requests',icon: 'handyman' },
+    { label: 'Tasks', route: '/tasks',icon: 'task_alt' },//icon: 'handyman'
     { label: 'Wallet', route: '/partner-wallet', icon:'wallet'}
   ];
 }

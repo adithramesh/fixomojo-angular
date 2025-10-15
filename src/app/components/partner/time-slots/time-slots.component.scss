@@ -1,11 +1,8 @@
-// @use '../../../styles/variables' as var; 
-// @use '../../../styles/forms' as forms;   
-// @use '../../../styles/buttons' as btn;   
-
 @use 'variables' as var;
 @use 'buttons' as btn;
 @use 'forms' as forms;
 @use 'sass:color';
+@use '../partner-dashboard/partner-dashboard.component.scss';
 
 .time-slot-container {
   max-width: 900px;
@@ -16,6 +13,7 @@
   box-shadow: var.$box-shadow-sm;
   font-family: var.$primary-font;
   color: var.$text-color;
+
 
   h2 {
     font-family: var.$title-font;
@@ -92,7 +90,7 @@
       }
 
       &.available .color-box { background-color: var.$success-green; }
-      &.tech-blocked .color-box { background-color: #ff9800; } // Orange for technician blocked
+      &.tech-blocked .color-box { background-color: #ff9800; } 
       &.customer-booked .color-box { background-color: var.$error-red; }
     }
   }
@@ -104,7 +102,7 @@
     margin-bottom: var.$spacing-xl;
 
     .slot-button {
-      @include btn.button-style(var.$success-green); // Default available
+      @include btn.button-style(var.$success-green); 
       padding: var.$spacing-md;
       font-size: var.$font-size-sm;
       font-weight: var.$font-weight-semibold;
@@ -112,10 +110,10 @@
       text-align: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       transition: all 0.2s ease-in-out;
-      background-color: var.$success-green; // Available
+      background-color: var.$success-green; 
 
       &.technician-blocked {
-        background-color: #ff9800; // Orange
+        background-color: #ff9800; 
         &:hover:not(:disabled) {
           background-color: color.adjust(#ff9800, $lightness: -10%);
           
@@ -123,11 +121,11 @@
       }
 
       &.customer-booked {
-        background-color: var.$error-red; // Red
+        background-color: var.$error-red; 
         cursor: not-allowed;
         opacity: 0.7;
         &:hover {
-          background-color: var.$error-red; // No change on hover for clarity
+          background-color: var.$error-red; 
         }
       }
 
@@ -164,21 +162,21 @@
 
     .block-action-button {
       @include btn.button-style(var.$button-bg);
-      background-color: var.$purple; // Use purple for primary action
+      background-color: var.$purple; 
       &:hover:not(:disabled) {
         background-color: color.adjust(var.$purple, $lightness: -10%);
       }
     }
 
     .unblock-action-button {
-      @include btn.button-style(var.$error-red); // Use red for unblocking
+      @include btn.button-style(var.$error-red); 
       &:hover:not(:disabled) {
         background-color: color.adjust(var.$error-red, $lightness: -10%);
       }
     }
 
     .toggle-multi-day {
-      @include btn.button-style(var.$gray-text); // Grey for toggle
+      @include btn.button-style(var.$gray-text); 
       margin-top: var.$spacing-md;
       background-color: var.$link-color;
       &:hover:not(:disabled) {
@@ -203,11 +201,11 @@
       }
 
       .form-group {
-        margin-bottom: var.$spacing-lg; // Adjust spacing for multi-day form
+        margin-bottom: var.$spacing-lg; 
       }
 
       .block-multi-day-button {
-        @include btn.button-style(var.$error-red); // Red for multi-day blocking
+        @include btn.button-style(var.$error-red); 
         margin-top: var.$spacing-md;
       }
     }

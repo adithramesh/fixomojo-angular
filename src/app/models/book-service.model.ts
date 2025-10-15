@@ -16,29 +16,34 @@ export interface BookServiceRequestDTO {
 export interface BookServiceResponseDTO {
     success?:boolean,
     message:string,
-    data?:any
+    data?:IBooking
 }
 
-export interface IBooking {
-  _id: string;
-  userId: string;
-  subServiceId: string;
-  subServiceName: string;
+export interface IBooking  {
+  bookingId?: string ;
+  _id?:string;
+  userId?: string;
+  username?:string;
+  subServiceId?: string;
+  subServiceName?: string;
   location?: {
     address?: string;
     latitude: number;
     longitude: number;
   };
-  technicianId: string;
+  technicianId?: string;
+  technicianName?:string;
   googleCalendarId?: string;
   googleEventId?: string;
-  totalAmount: number;
-  paymentMethod: "Cash" | "Card" | "Wallet";
-  bookingStatus: "Hold" | "Pending" | "Confirmed" | "Cancelled" | "Completed" | "Failed";
-  paymentStatus: "Pending" | "Success" | "Failed";
+  totalAmount?: number;
+  paymentMethod?: "Cash" | "Card" | "Wallet";
+  bookingStatus?: "Hold" | "Pending" | "Confirmed" | "Cancelled" | "Completed" | "Failed";
+  paymentStatus?: "Pending" | "Success" | "Failed";
   isCompleted?: boolean;
-  timeSlotStart: string; // ISO date string from backend
-  timeSlotEnd: string;
-  createdAt: string;
-  updatedAt: string;
+  requiresCash?:boolean;
+  timeSlotStart?: string; // ISO date string from backend
+  timeSlotEnd?: string;
+  checkoutUrl?:string;
+  createdAt?: string;
+  updatedAt?: string;
 }

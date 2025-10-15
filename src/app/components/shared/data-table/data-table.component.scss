@@ -2,7 +2,7 @@
 @use 'variables' as var;
 @use 'buttons' as btn;
 
-// Data table container styles
+
 .data-table-container {
   position: relative;
   width: 100%;
@@ -14,13 +14,13 @@
   min-height: 200px;
   box-sizing: border-box;
 
- td .image-cell { /* Target specifically the image container within a table cell */
-    display: flex; /* Helps with centering */
+ td .image-cell { 
+    display: flex; 
     justify-content: center;
     align-items: center;
-    width: 80px; /* Or whatever width you allocate to the column */
-    height: 80px; /* Make it square */
-    overflow: hidden; /* Hide overflowing parts if image is too large */
+    width: 80px; 
+    height: 80px; 
+    overflow: hidden; 
   }
 
   td .image-cell img {
@@ -37,11 +37,11 @@
      display: flex;
      justify-content: center;
      align-items: center;
-     background-color: var.$input-bg; /* Light background for placeholder */
+     background-color: var.$input-bg; 
      color: var.$gray-text;
      border-radius: var.$border-radius-sm;
      cursor: pointer;
-     font-size: var.$font-size-md; /* Adjust icon size */
+     font-size: var.$font-size-md; 
   }
   // Title styling
   h2 {
@@ -87,6 +87,11 @@
       border-radius: var.$border-radius-sm;
       outline: none;
       transition: border-color 0.3s ease;
+    
+      display: block;             
+      line-height: 1.5;           
+      height: auto;             
+      box-sizing: border-box;     
 
       &:focus {
         border-color: var.$purple;
@@ -157,11 +162,11 @@
     tbody {
       tr {
         &:hover {
-          background-color: rgba(138, 79, 255, 0.05); // $purple with opacity
+          background-color: rgba(138, 79, 255, 0.05); 
         }
 
         td {
-          // padding: var.$spacing-sm;
+         
           font-size: var.$font-size-sm;
           color: var.$text-color;
           border-bottom: 1px solid var.$border-color;
@@ -170,6 +175,28 @@
           text-overflow: ellipsis;
           padding: var.$spacing-xs var.$spacing-sm; /* Reduce padding from var.$spacing-sm */
           vertical-align: middle; /* Or 'top' if you prefer text to start at the top */
+
+          select {
+              font-family: var.$primary-font;
+              font-size: var.$font-size-sm;
+              padding: var.$spacing-xs var.$spacing-sm;
+              border: 1px solid var.$border-color;
+              border-radius: var.$border-radius-sm;
+              background-color: var.$input-bg;
+              color: var.$text-color;
+              outline: none;
+              cursor: pointer;
+              transition: border-color 0.3s ease, background-color 0.3s ease;
+      
+              &:hover {
+                border-color: color.adjust(var.$purple, $lightness: -10%);
+              }
+      
+              &:focus {
+                border-color: var.$purple;
+                box-shadow: 0 0 0 2px rgba(var.$purple, 0.2);
+              }
+            }
 
           // Table button styles
           button {
@@ -230,7 +257,7 @@
         gap: var.$spacing-xs;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: flex-start; // or flex-start
+        justify-content: flex-start; 
         width: 100%;
         
         .btn {
@@ -274,7 +301,6 @@
     }
   }
 
-  // Pagination controls
   .pagination-controls {
     display: flex;
     justify-content: center;

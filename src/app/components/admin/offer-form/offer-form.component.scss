@@ -1,0 +1,115 @@
+@use 'sass:color';
+@use 'variables' as var;
+@use 'buttons' as buttons;
+@use 'forms' as forms;
+
+.offer-form-container {
+  padding: var.$spacing-lg;
+  max-width: 800px;
+  margin: var.$spacing-lg auto;
+  background-color: var.$white;
+  border-radius: var.$border-radius-md;
+  box-shadow: var.$box-shadow-sm;
+
+  h2 {
+    font-family: var.$title-font;
+    font-size: var.$font-size-lg;
+    margin-bottom: var.$spacing-md;
+    text-align: center;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var.$spacing-md;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-bottom: var.$spacing-xs;
+        font-size: var.$font-size-sm;
+        color: var.$gray-text;
+      }
+
+      input,
+      textarea,
+      select {
+        @include forms.input-style;
+        width: 100%;
+        font-size: var.$font-size-md;
+
+        &:focus {
+          border-color: var.$purple;
+        }
+      }
+
+      textarea {
+        height: 100px;
+        resize: vertical;
+      }
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .inline-input {
+      .input-wrapper {
+        display: flex;
+        align-items: center;
+
+        input {
+          flex: 1;
+        }
+
+        span {
+          margin-left: 8px;
+          font-size: var.$font-size-sm;
+          color: var.$gray-text;
+        }
+      }
+    }
+
+    .error {
+      small {
+        color: var.$purple;
+        font-size: var.$font-size-xs;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+
+    .form-actions {
+      grid-column: span 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: var.$spacing-md;
+      margin-top: var.$spacing-md;
+
+      button {
+        @include buttons.button-style(var.$purple);
+        width: 120px;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust(var.$purple, $lightness: -10%);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .cancel-button {
+        @include buttons.button-style(var.$gray-light);
+        color: var.$text-color;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust(var.$gray-light, $lightness: -10%);
+        }
+      }
+    }
+  }
+}

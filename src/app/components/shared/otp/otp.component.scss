@@ -5,12 +5,10 @@
 
 .otp-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh; // Changed: Full height for vertical centering; removed conflicting min-height: unset; and height: auto;
   background: linear-gradient(135deg, #f0f4f8 0%, #f9fafb 100%);
 
-
-  min-height: unset;
-  height: auto;
+  min-height: 100vh;
 
   .otp-left {
     width: 50%;
@@ -75,6 +73,7 @@
 
   @media (max-width: 768px) {
     flex-direction: column;
+    height: auto; // Added: Allow auto-height on mobile for stacked layout without overflow
     .otp-left, .otp-right {
       width: 100%;
       padding: 20px;
@@ -181,7 +180,7 @@
   }
 }
 
-// Styles for modal mode (work-completion OTP only)
+
 .modal-mode {
   justify-content: center;
   align-items: center;
@@ -278,5 +277,3 @@
     }
   }
 }
-
-

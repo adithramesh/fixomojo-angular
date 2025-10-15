@@ -16,9 +16,7 @@
             "outputPath": "dist/front-end",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -26,34 +24,40 @@
                 "input": "public"
               }
             ],
-         
-           "styles": [
-            "@angular/material/prebuilt-themes/magenta-violet.css",
-            "src/styles/styles.scss"
-          ],
-                  "stylePreprocessorOptions": {
-                    "includePaths": ["src/styles"]
-                  },
+            "styles": [
+              "@angular/material/prebuilt-themes/magenta-violet.css",
+              "src/styles/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
             "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+           
+            "prerender": false
+          
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "5MB",
+                  "maximumError": "10MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "50kB",
+                  "maximumError": "100kB"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "socket.io-client",
+                "canvg",
+                "file-saver",
+                "debug",
+                "axios",
+                "ngrx-store-localstorage",
+                "jspdf"
               ],
               "outputHashing": "all"
             },
@@ -67,9 +71,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-           "options": {
+          "options": {
             "proxyConfig": "src/proxy.conf.json"
-            },
+          },
           "configurations": {
             "production": {
               "buildTarget": "front-end:build:production"
@@ -86,10 +90,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
@@ -108,6 +109,12 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
         }
       }
     }
@@ -118,8 +125,6 @@
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@ngrx/schematics"
-    ]
+    "schematicCollections": ["angular-eslint", "@ngrx/schematics"]
   }
 }

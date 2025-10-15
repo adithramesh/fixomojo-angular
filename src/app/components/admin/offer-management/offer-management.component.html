@@ -1,0 +1,28 @@
+<app-nav-bar></app-nav-bar>
+<div class="admin-dashboard">
+  <app-side-bar></app-side-bar>
+  <div class="main-content">
+    <form [formGroup]="filterForm" class="filter-form">
+      <!-- <select formControlName="status" (change)="onFilterChange()">
+        <option value="">Filter by status</option>
+        <option value="Active">Active</option>
+        <option value="Blocked">Blocked</option>
+      </select> -->
+    </form>
+    <app-data-table
+      [tableData]="offerTableData"
+      [tableColumns]="offerTableColumns"
+      title="Offers"
+      [isLoading]="isLoading"
+      [emptyMessage]="'No offers found'"
+      (rowAction)="handleAction($event)"
+      [currentPage]="page"
+      [totalPages]="Math.ceil(totalItems / pageSize)"
+      (pageChange)="onPageChange($event)"
+      [showAddButton]="true"
+      (addItem)="addNewOffer()"
+      [showSearch]="false"
+      (searchChange)="onSearchChange($event)"
+    ></app-data-table>
+  </div>
+</div>

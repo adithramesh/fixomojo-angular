@@ -1,0 +1,146 @@
+@use 'variables' as var;  
+@use 'buttons' as btn;    
+@use 'sass:color';
+
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;  // Full viewport height
+  background: linear-gradient(135deg, var.$background-color 0%, color.adjust(var.$purple, $lightness: 45%));
+  padding: var.$spacing-lg 0;  // Reduced top/bottom on mobile
+  animation: fadeIn 0.8s ease-out;
+
+  @media (max-width: var.$breakpoint-md) {  // Mobile-first: XS/SM screens
+    padding: var.$spacing-md 0;
+    min-height: 100vh;  // Ensure full height on small viewports
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.not-found-content {
+  text-align: center;
+  max-width: 450px;
+  width: 90%;  // Fluid width: 90% on mobile, caps at 450px desktop
+  padding: var.$spacing-lg;
+  background: var.$white;
+  border-radius: var.$border-radius-lg;
+  box-shadow: var.$box-shadow-md;
+  margin: var.$spacing-md auto;  // Auto margins for centering
+  animation: slideUp 0.6s ease-out 0.2s both;
+
+  @media (max-width: var.$breakpoint-md ) {
+    width: 95%;  // Near-full width on mobile
+    padding: var.$spacing-md;
+    margin: var.$spacing-sm auto;
+  }
+
+  .fm-logo {
+    width: 100px;
+    height: 100px;  // Fixed base, but scales container
+    margin-bottom: var.$spacing-lg;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(138, 79, 255, 0.3));
+
+    @media (max-width: var.$breakpoint-md ) {
+      width: 80px;
+      height: 80px;  // Smaller on mobile
+      margin-bottom: var.$spacing-md;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .not-found-title {
+    font-family: var.$title-font;  // Poppins
+    font-size: clamp(var.$font-size-lg, 4vw, var.$font-size-xl);  // Fluid: Scales with viewport
+    font-weight: var.$font-weight-bold;
+    color: var.$purple;
+    margin-bottom: var.$spacing-sm;
+    line-height: 1.2;
+
+    @media (max-width: var.$breakpoint-md) {
+      margin-bottom: var.$spacing-xs;
+    }
+  }
+
+  .not-found-message {
+    font-family: var.$primary-font;  // Inter
+    font-size: clamp(var.$font-size-sm, 3.5vw, var.$font-size-md);  // Responsive text
+    color: var.$gray-dark;
+    margin-bottom: var.$spacing-xl;  // Increased bottom margin to fill search gap
+    line-height: 1.6;
+
+    @media (max-width: var.$breakpoint-md ) {
+      margin-bottom: var.$spacing-lg;
+      padding: 0 var.$spacing-sm;  // Side breathing room
+    }
+  }
+
+  .not-found-actions {
+    display: flex;
+    gap: var.$spacing-sm;
+    flex-direction: column;  // Default stack for mobile
+
+    @media (min-width: var.$breakpoint-md) {
+      flex-direction: row;
+      justify-content: center;
+      gap: var.$spacing-md;
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {  // Landscape mobile
+      flex-direction: row;
+      gap: var.$spacing-xs;
+    }
+
+    .login-button, .home-button {
+      flex: 1;
+      max-width: 150px;
+      padding: var.$spacing-md var.$spacing-lg;  // Bigger touch areas
+
+      @media (max-width: var.$breakpoint-md ) {
+        max-width: none;  // Full-width buttons on mobile
+        width: 100%;
+      }
+
+      @media (min-width: var.$breakpoint-md) {
+        max-width: 160px;  // Slightly wider desktop
+      }
+    }
+
+    .login-button {
+      @include btn.button-style(var.$button-bg);
+      animation: pulse 2s infinite;
+
+      &:hover {
+        background-color: var.$button-hover-bg;
+      }
+    }
+
+    .home-button {
+      @include btn.button-style(var.$purple);
+
+      &:hover {
+        background-color: color.adjust(var.$purple, $lightness: -10%);
+      }
+    }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

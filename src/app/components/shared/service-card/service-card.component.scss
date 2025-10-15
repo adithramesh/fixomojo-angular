@@ -1,172 +1,3 @@
-
-// @use 'sass:color';
-// @use 'variables' as var;
-
-// .card {
-//   background: var.$white;
-//   border-radius: var.$border-radius-md;
-//   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-//   padding: 0;
-//   width: 100%;
-//   max-width: 320px;
-//   height: 200; // Reduced overall height
-//   display: flex;
-//   flex-direction: column;
-//   transition: all 0.3s ease;
-//   cursor: pointer;
-//   position: relative;
-//   overflow: hidden;
-
-//   &:hover {
-//     transform: translateY(-8px);
-//     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-//   }
-
-//   img {
-//     width: 100%;
-//     height: 200; // Reduced image height to show button
-//     object-fit: cover;
-//     border-radius: var.$border-radius-md var.$border-radius-md 0 0;
-//   }
-
-//   .status-badge {
-//     position: absolute;
-//     top: 12px;
-//     right: 12px;
-//     padding: 0.4rem 0.8rem;
-//     border-radius: 20px;
-//     font-size: 0.75rem;
-//     font-weight: 600;
-//     text-transform: uppercase;
-//     letter-spacing: 0.5px;
-//     z-index: 2;
-    
-//     &.available {
-//       background: linear-gradient(45deg, #28a745, #20c997);
-//       color: var.$white;
-//       box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-//     }
-    
-//     &.unavailable {
-//       background: linear-gradient(45deg, #dc3545, #e74c3c);
-//       color: var.$white;
-//       box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-//     }
-//   }
-
-//   .card-content {
-//     padding: 1.5rem;
-//     display: flex;
-//     flex-direction: column;
-//     flex-grow: 1;
-//     justify-content: space-between;
-//   }
-
-//   .card-header {
-//     margin-bottom: 1rem;
-//   }
-
-//   h3 {
-//     font-size: 1.3rem;
-//     margin: 0 0 0.5rem 0;
-//     color: var.$text-color;
-//     font-family: var.$title-font;
-//     font-weight: 600;
-//     line-height: 1.3;
-//     min-height: 2.6rem; // Fixed height for title
-//     display: -webkit-box;
-//     -webkit-line-clamp: 2;
-//     -webkit-box-orient: vertical;
-//     overflow: hidden;
-//   }
-
-//   p {
-//     font-size: 0.9rem;
-//     color: var.$gray-text;
-//     margin: 0;
-//     line-height: 1.4;
-//     min-height: 3.5rem; // Reduced description height
-//     display: -webkit-box;
-//     -webkit-line-clamp: 2; // Show only 2 lines
-//     -webkit-box-orient: vertical;
-//     overflow: hidden;
-//   }
-
-//   .card-footer {
-//     margin-top: auto;
-//     padding-top: 1rem;
-//   }
-
-//   .price {
-//     font-weight: 700;
-//     color: var.$purple;
-//     font-size: 1.2rem;
-//     display: block;
-//     margin-bottom: 1rem;
-    
-//     &::before {
-//       content: '₹';
-//       font-weight: 600;
-//     }
-//   }
-
-//   .book-button {
-//     width: 100%;
-//     padding: 0.75rem;
-//     border: none;
-//     border-radius: var.$border-radius-sm;
-//     background: linear-gradient(45deg, var.$purple, color.adjust(var.$purple, $lightness: 10%));
-//     color: var.$white;
-//     font-size: 1rem;
-//     font-weight: 600;
-//     cursor: pointer;
-//     transition: all 0.3s ease;
-//     text-transform: uppercase;
-//     letter-spacing: 0.5px;
-
-//     &:hover {
-//       background: linear-gradient(45deg, color.adjust(var.$purple, $lightness: -10%), var.$purple);
-//       transform: translateY(-2px);
-//       box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
-//     }
-
-//     &:active {
-//       transform: translateY(0);
-//     }
-//   }
-
-//   .highlight {
-//     background: linear-gradient(45deg, rgba(111, 66, 193, 0.2), rgba(111, 66, 193, 0.1));
-//     padding: 0.1rem 0.2rem;
-//     border-radius: 3px;
-//     font-weight: 600;
-//   }
-
-//   // Responsive adjustments
-//   @media (max-width: 768px) {
-//     height: 340px;
-    
-//     img {
-//       height: 140px;
-//     }
-    
-//     .card-content {
-//       padding: 1rem;
-//     }
-    
-//     h3 {
-//       font-size: 1.1rem;
-//       min-height: 2.2rem;
-//     }
-    
-//     p {
-//       font-size: 0.85rem;
-//       min-height: 3rem;
-//     }
-//   }
-// }
-
-
 @use 'sass:color';
 @use 'variables' as var;
 
@@ -177,7 +8,6 @@
   padding: 0;
   width: 100%;
   max-width: 320px;
-  // height: 420px; // Increased height to ensure button visibility
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
@@ -197,8 +27,8 @@
     }
 
     h3 {
-      min-height: unset; // Remove fixed height for title
-      -webkit-line-clamp: 1; // Single line for title
+      min-height: unset; 
+      -webkit-line-clamp: 1; 
     }
   }
 
@@ -330,18 +160,18 @@
   }
 
   @media (max-width: 768px) {
-    height: 380px; // Adjusted for mobile
+    height: 380px; 
     max-width: 280px;
 
     &.home-page {
-      height: 260px; // Smaller height for mobile home page
+      height: 260px; 
       img {
-        height: 200px; // Adjusted image height
+        height: 200px; 
       }
     }
 
     img {
-      height: 160px; // Adjusted for mobile
+      height: 160px; 
     }
 
     .card-content {

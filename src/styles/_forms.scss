@@ -1,44 +1,3 @@
-// @use 'variables' as var;
-
-// @mixin input-style {
-//   border: 1px solid var.$border-color;
-//   border-radius: 4px;
-//   padding: 10px;
-//   font-size: 16px;
-//   background-color: var.$input-bg;
-//   outline: none;
-//   transition: border-color 0.3s;
-// }
-
-// .form-group {
-//   margin-bottom: 20px;
-//   position: relative;
-
-//   .form-input {
-//     width: 100%;
-//     padding: 12px 15px;
-//     border: 1px solid var.$border-color;
-//     border-radius: 8px;
-//     font-size: 14px;
-//     font-family: var.$primary-font;
-//     transition: all 0.3s ease;
-//     background-color: var.$input-bg;
-
-//     &:focus {
-//       outline: none;
-//       border-color: var.$button-bg;
-//       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-//       background-color: white;
-//     }
-//   }
-
-//   .error-message {
-//     color: var.$purple;
-//     font-size: 12px;
-//     text-align: left;
-//     margin-top: 5px;
-//   }
-// }
 
 @use 'variables' as var;
 
@@ -84,10 +43,10 @@
   // Styles for the autocomplete dropdown
   .autocomplete-suggestions {
     position: absolute;
-    top: 100%; // Position below the input
+    top: 100%; 
     left: 0;
     right: 0;
-    z-index: 10; // Ensure it's above other content
+    z-index: 10; 
     background-color: var.$white;
     border: 1px solid var.$border-color;
     border-top: none;
@@ -96,7 +55,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 200px; // Limit height and enable scrolling
+    max-height: 200px; 
     overflow-y: auto;
 
     li {

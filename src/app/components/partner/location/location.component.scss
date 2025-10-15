@@ -1,6 +1,7 @@
 @use 'variables' as var;
 @use 'buttons' as btn;
 @use 'forms' as forms;
+@use '../partner-dashboard/partner-dashboard.component.scss';
 
 .location-container {
   display: flex;
@@ -13,6 +14,7 @@
   border-radius: var.$border-radius-md;
   box-shadow: var.$box-shadow-sm;
 }
+
 
 .form-group {
   display: flex;

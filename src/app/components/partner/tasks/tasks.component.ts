@@ -1,21 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataTableComponent, TableColumn, TableData } from '../../shared/data-table/data-table.component';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { BookingResponse, BookingService } from '../../../services/booking.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { ModalComponent } from '../../shared/modal/modal.component';
+import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
+import { Router } from '@angular/router';
+import { selectTempUserId, selectUsername, selectUserRole } from '../../../store/auth/auth.reducer';
+import { Store } from '@ngrx/store';
+import { ChatService } from '../../../services/chat.service';
+import { ConfirmationModalComponent } from '../../shared/confirmation-modal/confirmation-modal.component';
+
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule, NavBarComponent, DataTableComponent,ModalComponent],
+  imports: [CommonModule, FormsModule,  DataTableComponent,ModalComponent, PartnerSideBarComponent, ConfirmationModalComponent],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })
 export class TasksComponent {
-   isLoading: boolean = true;
+   isLoading = true;
     bookingsTableColumns: TableColumn[] = [
       { header: 'Booking Number', key: 'displayId', type: 'text', width: '15%' },
       { header: 'Customer Name', key: 'username', type: 'text', width: '15%' },
@@ -25,8 +31,8 @@ export class TasksComponent {
       { header: 'Schedule', key: 'timeSlotStart', type: 'date', width: '20%' },
       { header: 'Status', key: 'bookingStatus', type: 'text', width: '10%' },
       { header: 'Work Location', key: 'location', type: 'text', width: '20%' },
-      { header: 'Action', key: 'actions', type: 'action-buttons', width: '15%' },
-      { header: 'WC', key: 'isCompleted', type: 'text', width: '15%' }
+      { header: 'Action', key: 'actions', type: 'action-buttons', width: '10%' },
+
     ];
   
     bookingsTableData: TableData[] = [];
@@ -37,23 +43,51 @@ export class TasksComponent {
       sortOrder: 'desc',
       searchTerm: ''
     };
-    totalBookings: number = 0;
-    totalPages: number = 0;
+    totalBookings = 0;
+    totalPages = 0;
     error: string | null = null;
     private searchSubject = new Subject<string>()
     private subscription: Subscription = new Subscription;
-    searchTerm: string=''
+    private _router = inject(Router)
+    private _store = inject(Store)
+    private chatService = inject(ChatService)
+    private _currentUserId = ''
+    private _role = ''
+    private _username = ''
+    searchTerm=''
 
-    isModalOpen:boolean=false
-    modalType:'service' | 'otp' = 'otp';
-    otpData:any
+    isModalOpen=false
+    modalType:'service' | 'otp' |'chat' = 'otp';
+    // otpData:any
     bookingId!:string
-    // selectedBooking!:string
-    selectedBooking: TableData | null = null
-  
-    constructor(private bookingService: BookingService) {}
+    selectedBooking: TableData | null = null ;
+
+    showCancelModal = false;
+    cancelModalTitle = '';
+    cancelModalMessage = '';
+    cancelButtonText = '';
+    canCancel = false;
+    private bookingToCancel: TableData | null = null;
+
+    private bookingService = inject(BookingService) 
   
     ngOnInit(): void {
+
+       this._store.select(selectTempUserId).subscribe(id => {
+                  if (id) {
+                    this._currentUserId = id;
+                  }
+                });
+      this._store.select(selectUsername).subscribe(name => {
+                  if (name) {
+                    this._username = name;
+                  }
+                });
+      this._store.select(selectUserRole).subscribe(role => {
+                  if (role) {
+                    this._role = role;
+                  }
+                });
    
       this.subscription.add(this.searchSubject.pipe(
                 debounceTime(300),
@@ -72,11 +106,12 @@ export class TasksComponent {
       
       this.bookingService.getBookings(this.pagination).subscribe({
         next: (response: BookingResponse) => {
-          // Check if response and bookingList exist
          if (response.success && response.bookingList?.items) {
-          console.log("bookingList", response.bookingList.items);
-          
-            this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
+            this.bookingsTableData = response.bookingList.items.map(booking =>{
+                 return this.mapBookingsToTableData(booking)
+            } );
+            
+            
             // this.totalBookings = response.bookingList.length; // Fallback; update if backend provides total
             this.totalBookings = response.bookingList.total;
             this.totalPages = response.bookingList.totalPages;
@@ -90,7 +125,7 @@ export class TasksComponent {
           }
           this.isLoading = false;
         },
-        error: (error: any) => {
+        error: (error) => {
           console.error('Failed to fetch bookings:', error);
           this.isLoading = false;
           this.bookingsTableData = [];
@@ -101,21 +136,22 @@ export class TasksComponent {
       });
     }
   
-    mapBookingsToTableData(booking: any): TableData {
-      console.log("booking", booking._id.toString());
+    mapBookingsToTableData(booking: TableData): TableData {
       
       return {
-        id: booking._id.toString(),
-        displayId: booking._id.toString().slice(18),
+        id: booking.id,
+        displayId: typeof booking.id === 'string'
+        ? booking.id.slice(18)
+        : booking.id?.toString().slice(18),
         username:booking.username,
-        subServiceId: booking.subServiceId.slice(18), // Use subServiceId instead of serviceName
+        subServiceId: booking.subServiceId, 
         subServiceName:booking.subServiceName,
-        totalAmount: booking.totalAmount.toString(),
+        totalAmount: booking.totalAmount,
         paymentStatus: booking.paymentStatus,
         bookingStatus: booking.bookingStatus,
-        timeSlotStart:booking.timeSlotStart,
-        createdAt:booking.createdAt,
-        location:booking.location.address.split(',').slice(0,2).join(','),
+        timeSlotStart:booking.timeSlotStart!,
+        createdAt:booking.createdAt!,
+        location:booking.location || '',
         isCompleted: booking.isCompleted ? 'Yes' : 'No'
       };
     }
@@ -137,27 +173,106 @@ export class TasksComponent {
         case 'complete':
           this.openOtpModal(event.item);
           break;
-        case 'rate':
-          this.openRating(event.item);
+        case 'cancel':
+          this.prepareAndOpenCancelModal(event.item);
           break;
       }
     }
 
-    openChat(booking: TableData): void {
-      // Navigate to chat or open chat modal
-      console.log('Opening chat for booking:', booking.id);
+    async openChat(booking: TableData): Promise<void> {
+    const _authToken=this.getValidToken()
+    if (!_authToken || !this._currentUserId || !this._role) {
+      console.error('Missing user authentication data');
+      return;
+    }
+
+    try {
+      // Open chat using the service
+      await this.chatService.openChat({
+        bookingId: booking.id as string,
+        userId: this._currentUserId,
+        userRole:'partner',
+        userName: booking.username as string,
+        serviceName: booking.subServiceName as string
+      }, _authToken);
+
+      console.log('Chat opened for booking:', booking);
+    } catch (error) {
+      console.error('Failed to open chat:', error);
+      // can show toast notification here
+    }
+  }
+
+  private prepareAndOpenCancelModal(booking: TableData): void {
+      const timeSlotStart = new Date(booking.timeSlotStart!);
+      const now = new Date();
+      const timeDifferenceInHours = (timeSlotStart.getTime() - now.getTime()) / (1000 * 60 * 60);
+      
+      this.bookingToCancel = booking;
+      this.showCancelModal = true;
+      
+      if (timeDifferenceInHours > 24) {
+          this.cancelModalTitle = 'Cancel Booking';
+          this.cancelModalMessage = `You are eligible to cancel this booking. Are you sure you want to proceed with the cancellation?`;
+          this.cancelButtonText = 'Cancel Booking';
+          this.canCancel = true; 
+      } else {
+          this.cancelModalTitle = 'Cancel Booking (No Refund)';
+          this.cancelModalMessage = 'This booking cannot be cancelled with as it is within 24 hours. ';
+          this.cancelButtonText = 'Cancel Booking';
+          this.canCancel = false;
+      }
+  }
+
+  confirmCancelBooking(): void {
+    if (!this.bookingToCancel || !this.bookingToCancel.id) {
+      console.error('Booking data is missing.');
+      return;
+    }
+    this.bookingService.cancelBooking(this.bookingToCancel.id as string).subscribe({
+      next: (response) => {
+        if (response.success) {
+          console.log(response.message || 'Booking cancelled successfully!');
+          this.getBookings();
+        } else {
+          console.error(response.message || 'Failed to cancel booking.');
+        }
+      },
+      error: (err) => {
+        console.error('Error during cancellation:', err);
+      }
+    });
+    this.cancelModalClosed();
+  }
+
+  cancelModalClosed(): void {
+      this.showCancelModal = false;
+      this.bookingToCancel = null;
+      this.canCancel = false;
+  }
+
+
+    private getValidToken(): string | null {
+    const _authToken = localStorage.getItem('access_token');
+    console.log('Token from localStorage:', _authToken);
+    
+    if (!_authToken) {
+      console.error('No token found');
+      return null;
+    }
+
+      return _authToken;
     }
 
     openOtpModal(booking: TableData): void {
-      // Open your existing modal with OTP component
-      // Pass booking data to modal
+    
       this.isModalOpen=true
       this.modalType = 'otp'
       this.selectedBooking = booking;
       this.bookingService.initiateWorkComplete(booking.id as string).subscribe({
       next: (result) => {
         console.log("Work completion initiated:", result);
-        // You can store any additional data from the result if needed
+        //can store any additional data from the result if needed
       },
       error: (error) => {
         console.error('Failed to initiate work completion:', error);
@@ -174,7 +289,7 @@ export class TasksComponent {
       document.body.classList.remove('modal-open');
     }
 
-    onOtpVerified(event: {otp: string, bookingData: any}): void {
+    onOtpVerified(event: {otp: string, bookingData: TableData}): void {
     const { otp, bookingData } = event;
     
     console.log('OTP verified:', otp, 'for booking:', bookingData);
@@ -201,23 +316,18 @@ export class TasksComponent {
         this.bookingService.emitBookingUpdate(updated)
         
         this.closeModal();
-        // Optionally refresh the entire list
         // this.getBookings();
       },
-      error: (error: any) => {
+      error: (error) => {
         console.error('OTP verification failed:', error);
-        // Handle error - you might want to show an error message in the modal
-        // instead of closing it immediately
+        
       }
     });
   }
 
-    openRating(booking: TableData): void {
-      // Navigate to rating page or open rating modal
-      console.log('Opening rating for booking:', booking.id);
+    openCancelBooking(booking: TableData): void {
+      console.log('Opening cancel model for booking:', booking.id);
     }
-
-    
 
     ngOnDestroy(): void {
       this.subscription.unsubscribe();

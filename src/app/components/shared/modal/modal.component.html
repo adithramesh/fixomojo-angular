@@ -1,17 +1,20 @@
-<!-- modal.component.html - Fixed structure -->
-<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <button class="close-button" (click)="closeModal()" aria-label="Close modal">
+<div *ngIf="isOpen" class="modal-overlay">
+  <dialog #modalDialog class="modal-content" open>
+    <button
+      class="close-button"
+      type="button"
+      (click)="closeModal()"
+      aria-label="Close modal"
+    >
       ×
     </button>
-    
+
     <div class="modal-body">
-      <!-- SERVICE MODAL -->
       <div *ngIf="modalType === 'service'" class="service-modal">
         <div class="image-container">
-          <img 
-            *ngIf="serviceData?.image" 
-            [src]="serviceData?.image"  
+          <img
+            *ngIf="serviceData?.image"
+            [src]="serviceData?.image"
             [alt]="serviceData?.subServiceName || 'Service image'"
             class="service-image"
           />
@@ -19,43 +22,53 @@
             <span>No Image Available</span>
           </div>
         </div>
-        
+
         <div class="service-details">
           <h2 class="service-title">{{ serviceData?.subServiceName }}</h2>
           <p class="service-description">{{ serviceData?.description }}</p>
-          <div class="price-container">
+          <div class="price-and-book">
             <span class="price">₹{{ serviceData?.price }}</span>
+            <button
+              class="book-button"
+              type="button"
+              (click)="onBookService()"
+              [disabled]="!serviceData"
+            >
+              Book Now
+            </button>
           </div>
-          <button 
-            class="book-button" 
-            (click)="onBookService()"
-            [disabled]="!serviceData"
-          >
-            Book Now
-          </button>
         </div>
       </div>
 
-      <!-- OTP MODAL -->
-      <!-- OTP MODAL -->
       <div *ngIf="modalType === 'otp'" class="otp-modal">
-        <h3 class="modal-heading">🔒 Complete Work - OTP Verification</h3>
-        <p class="modal-subtext">Enter the OTP sent to the customer to verify work completion.</p>
+        <h3 class="modal-heading">🔒 OTP Verification</h3>
+        <p class="modal-subtext">
+          Enter the OTP sent to the customer to verify work completion.
+        </p>
 
         <div class="booking-info-card">
-          <div class="info-row"><span class="label">Booking ID:</span> <span>{{ otpData?.id }}</span></div>
-          <div class="info-row"><span class="label">Service:</span> <span>{{ otpData?.subServiceName }}</span></div>
-          <div class="info-row"><span class="label">Amount:</span> <span>₹{{ otpData?.totalAmount }}</span></div>
+          <div class="info-row">
+            <span class="label">Booking ID:</span>
+            <span>{{ otpData?.id }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Service:</span>
+            <span>{{ otpData?.subServiceName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Amount:</span>
+            <span>₹{{ otpData?.totalAmount }}</span>
+          </div>
         </div>
 
-        <app-otp 
+        <app-otp
           [isModalMode]="true"
           [modalContext]="'work-completion'"
           (otpVerified)="onOtpVerified($event)"
-          (otpCancelled)="onOtpCancelled()">
+          (otpCancelled)="onOtpCancelled()"
+        >
         </app-otp>
       </div>
-
     </div>
-  </div>
+  </dialog>
 </div>

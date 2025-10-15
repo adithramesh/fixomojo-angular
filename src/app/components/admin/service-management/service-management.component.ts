@@ -22,10 +22,10 @@ export class ServiceManagementComponent {
   private _store = inject(Store);
   private _router = inject(Router)
   private _adminService = inject(AdminService);
-  private _subscription: Subscription = new Subscription();
+  private _subscription: Subscription = new Subscription;
   private searchSubject = new Subject<string>();
   private _imageUrlService = inject(ImageUrlService)
-  searchTerm:string = '';
+  searchTerm ='';
   username$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>; 
 
@@ -55,18 +55,16 @@ export class ServiceManagementComponent {
   ngOnInit() {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber); 
+    
     this._subscription.add(this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(searchTerm=>{
       this.searchTerm=searchTerm;
-      console.log("searchTerm",searchTerm);
       this.pagination.searchTerm = searchTerm; 
       this.pagination.page = 1;
-      console.log("loadServices 2 called");
       this.loadServices();
     }))
-     console.log("loadServices 1 called");
     this.loadServices();
   }
 
@@ -76,30 +74,34 @@ export class ServiceManagementComponent {
     }
   }
 
-  loadServices(): void {
+
+    loadServices(): void {
     this.isLoading = true;
-    console.log("this.pagination", this.pagination);
-    console.log("this.searchTerm",this.searchTerm);
-    this._subscription.add(this._adminService.getServices(this.pagination).subscribe({
+    
+    this._adminService.getServices(this.pagination).subscribe({
       next: (response) => {
         this.totalServices = response.total;
         this.totalPages = response.totalPages;
-        this.serviceTableData = response.items.map(service => this.mapServiceToTableData(service));
+        this.serviceTableData = response.items.map(user => this.mapServiceToTableData(user));
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading services:', error);
+        console.error('Error loading users:', error);
         this.isLoading = false;
       }
-    })
-  )
+    });
   }
+
+
+
+
   mapServiceToTableData(service: ServiceResponseDTO): TableData {
     return {
       id: service.id,
       serviceName: service.serviceName ,
       description:service.description, 
-      image: this._imageUrlService.buildImageUrl(service.image),
+      image: this._imageUrlService.buildImageUrl(service.image) || 'assets/images/service-placeholder.jpg',
+      // image: this._imageUrlService.buildImageUrl(service.image),
       status: service.status,
       createdAt:service.createdAt,
       edit: 'edit',
@@ -142,4 +144,6 @@ export class ServiceManagementComponent {
     this.searchSubject.next(searchTerm)
   }
 
+
 }
+

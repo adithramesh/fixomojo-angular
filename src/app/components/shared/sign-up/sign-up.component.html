@@ -1,7 +1,7 @@
 <div class="signup-container">
   <div class="signup-left">
     <div class="logo-container">
-      <!-- <img src="../../../assets/logo/fixomojo-logo.png" alt="FixoMojo Logo" width="40" height="40"> -->
+     
       <svg width="40" height="40" viewBox="0 0 100 100">
         <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="black"/>
         <text x="50" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">FM</text>
@@ -74,28 +74,13 @@
           </div>
         </div>
         <div class="error-message" *ngIf="error$ | async as error">
-          {{ error.error.message || 'Signup failed. Please try again.' }}
+          {{  error?.message || error?.error?.message || 'Default error'|| 'Signup failed. Please try again.' }}
         </div>
         <div class="loading-overlay" *ngIf="loading$ | async">
           <div class="spinner"></div>
         </div>
 
-        <!-- <div class="form-group">
-          <div class="radio-group" role="radiogroup" aria-label="Select Role">
-            <label>
-              <input type="radio" formControlName="role" value="user" aria-label="User Role"> User
-            </label>
-            <label>
-              <input type="radio" formControlName="role" value="partner" aria-label="Partner Role"> Partner
-            </label>
-            <label>
-              <input type="radio" formControlName="role" value="admin" aria-label="Admin Role"> Admin
-            </label>
-          </div>
-          <div class="error-message" *ngIf="signUpForm.get('role')?.touched && signUpForm.get('role')?.errors?.['required']">
-            Role is required.
-          </div>
-        </div> -->
+      
 
         <div class="form-group">
           <select class="form-input role-select" formControlName="role" aria-label="Select Role">

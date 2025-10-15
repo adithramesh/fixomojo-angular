@@ -1,35 +1,75 @@
-import { Component, inject } from '@angular/core';
-import {  DataTableComponent } from '../../shared/data-table/data-table.component';
-import { NavBarComponent } from "../../shared/nav-bar/nav-bar.component";
+import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { PartnerDashboardResponseDTO } from '../../../models/dashboard.model';
+import { DashboardService } from '../../../services/dashboard.service';
 import { selectPhoneNumber, selectUsername } from '../../../store/auth/auth.reducer';
+import { PartnerSideBarComponent } from '../partner-side-bar/partner-side-bar.component';
 import { CommonModule } from '@angular/common';
-import { PartnerSideBarComponent } from "../partner-side-bar/partner-side-bar.component";
+import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { LocationService } from '../../../services/location.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-partner-dashboard',
-  imports: [NavBarComponent, CommonModule, PartnerSideBarComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    PartnerSideBarComponent,
+    NavBarComponent,
+    MatIconModule
+  ],
   templateUrl: './partner-dashboard.component.html',
   styleUrl: './partner-dashboard.component.scss'
 })
-export class PartnerDashboardComponent {
-  private _store = inject(Store)
-  private _locationService = inject(LocationService)
-  phoneNumber$!:Observable<string|null>
-  username$!:Observable<string|null>
-  savedLocation!:string
+export class PartnerDashboardComponent implements OnInit {
+  private store = inject(Store);
+  private locationService = inject(LocationService);
+  private dashboardService = inject(DashboardService);
 
-  ngOnInit(){
-  this.username$=this._store.select(selectUsername)
-  this.phoneNumber$=this._store.select(selectPhoneNumber)||''
-  this._locationService.getSavedLocation().subscribe(location=>{
-    console.log("location", location);
-    
-    if(location){
-      this.savedLocation=location
-    }
-  })
+  phoneNumber$!: Observable<string | null>;
+  username$!: Observable<string | null>;
+  dashboardData: PartnerDashboardResponseDTO = {
+    totalRevenue: 0,
+    totalBookings: 0,
+    completedBookings: 0,
+    cancelledBookings: 0
+  };
+  isLoading = true;
+  error: string | null = null;
+  savedLocation = '';
+
+  ngOnInit() {
+    this.username$ = this.store.select(selectUsername);
+    this.phoneNumber$ = this.store.select(selectPhoneNumber);
+    this.getLocation();
+    this.loadDashboardData();
+  }
+
+  private getLocation(): void {
+    this.locationService.getSavedLocation().subscribe(location => {
+      if (location) {
+        this.savedLocation = location;
+      }
+    });
+  }
+
+  private loadDashboardData(): void {
+    this.isLoading = true;
+    this.dashboardService.getPartnerDashboard().subscribe({
+      next: (data) => {
+        this.dashboardData = {
+          totalRevenue: data.totalRevenue ?? 0,
+          totalBookings: data.totalBookings ?? 0,
+          completedBookings: data.completedBookings ?? 0,
+          cancelledBookings: data.cancelledBookings ?? 0
+        };
+        this.isLoading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load dashboard data.';
+        this.isLoading = false;
+      }
+    });
   }
 }

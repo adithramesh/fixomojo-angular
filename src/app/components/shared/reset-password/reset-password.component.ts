@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators, ValidatorFn } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AuthActions } from '../../../store/auth/auth.actions';
@@ -16,12 +16,12 @@ import { first } from 'rxjs/operators';
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss'],
 })
-export class ResetPasswordComponent {
+export class ResetPasswordComponent implements OnInit {
   private store = inject(Store);
   private router = inject(Router);
   
-  tempUserId$!:Observable<string | null>;
-  resetToken$!:Observable<string | null>;
+  tempUserId$!: Observable<string | null>;
+  resetToken$!: Observable<string | null>;
   resetPasswordForm!: FormGroup;
 
   constructor() {
@@ -36,21 +36,18 @@ export class ResetPasswordComponent {
       },
       { validators: this.passwordMatchValidator() }
     );
-
   }
 
-  ngOnInit():void{
-    this.tempUserId$=this.store.select(selectTempUserId)
-    this.resetToken$=this.store.select(selectResetToken)
+  ngOnInit(): void {
+    this.tempUserId$ = this.store.select(selectTempUserId);
+    this.resetToken$ = this.store.select(selectResetToken);
   }
-
 
   onSubmit(): void {
     if (this.resetPasswordForm.valid) {
       combineLatest([this.tempUserId$, this.resetToken$])
         .pipe(first())
         .subscribe(([tempUserId, resetToken]) => {
-          console.log('tempUserId:', tempUserId, 'resetToken:', resetToken);
           if (tempUserId && resetToken) {
             const { newPassword } = this.resetPasswordForm.value;
             const payload: ResetPasswordRequestDTO = {
@@ -66,9 +63,8 @@ export class ResetPasswordComponent {
     }
   }
   
-
   private passwordMatchValidator(): ValidatorFn {
-    return (form: AbstractControl): { [key: string]: any } | null => {
+    return (form: AbstractControl): Record<string, boolean> | null => {
       const password = form.get('newPassword')?.value;
       const confirmPassword = form.get('confirmPassword')?.value;
       return password && confirmPassword && password !== confirmPassword

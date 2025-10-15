@@ -1,16 +1,23 @@
 
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
-import { SignupResponseDTO, SignupUserRequestDTO } from '../../models/auth.model';
+import { SignupResponseDTO } from '../../models/auth.model';
 
-interface AuthState {
+export interface AuthState {
   user: SignupResponseDTO | null;
   username:string|null;
   tempUserId: string | null;
   phoneNumber: string | null;
   resetToken:string|null;
-  error: any;
+  error: ApiError | null;
   loading: boolean;
+}
+
+export interface ApiError {
+  error?: {
+    message?: string;
+  };
+  message?: string;
 }
 
 export const initialState: AuthState = {
@@ -65,7 +72,6 @@ export const authFeature = createFeature({
     on(AuthActions.resendOtp, state => ({ ...state, loading: true })),
     on(AuthActions.resendOtpSuccess, (state ) => ({
       ...state,
-      // tempUserId: response.tempUserId || state.tempUserId,
       loading: false,
       error: null,
     })),
@@ -90,10 +96,8 @@ export const authFeature = createFeature({
       error,
       loading: false,
     })),
-    on(AuthActions.resetPassword, (state,{resetData}) => ({ 
+    on(AuthActions.resetPassword, (state) => ({ 
       ...state, 
-      // resetToken:state.resetToken,
-      // tempUserId:resetData.tempUserId,
       loading: true 
     })),
     on(AuthActions.resetPasswordSuccess, (state) => ({
@@ -124,7 +128,13 @@ export const authFeature = createFeature({
       loading: false,
     })),
     on(AuthActions.setUser, (state, { user }) => ({ ...state, user })),
-    on(AuthActions.logout, () => initialState)
+    on(AuthActions.logout, () => initialState),
+
+    on(AuthActions.updateUsername, (state, { username }) => ({
+      ...state,
+      username,
+      // user: state.user ? { ...state.user, data: { ...state.user.data, username } } : null
+    }))
   ),
 });
 
@@ -146,3 +156,8 @@ export const selectUserRole = createSelector(
   selectUser,
   (user) => user?.data?.role || null
 );
+
+export const selectIsLoggedIn = createSelector(
+  selectUser,
+  (user) => !!user 
+)

@@ -21,12 +21,12 @@ export class LocationComponent {
   errorMessage?: string;
 
   // Typed location fields
-  addressInput: string = '';
-  autocompleteSuggestions: any[] = [];
+  addressInput = '';
+  autocompleteSuggestions: { display_name: string; lat: string; lon: string; }[] = [];
   selectedAddressDetails?: { address: string; latitude: number; longitude: number };
   typedLocationErrorMessage?: string;
 
-  showAddressInputField: boolean = false;
+  showAddressInputField = false;
 
   private _locationService = inject(LocationService);
   private _destroy$ = new Subject<void>();
@@ -68,7 +68,7 @@ export class LocationComponent {
     this.autocompleteSuggestions = [];
   }
 
-  onSelectSuggestion(suggestion: any): void {
+  onSelectSuggestion(suggestion: { display_name: string; lat: string; lon: string; }): void {
     this.addressInput = suggestion.display_name;
     this.selectedAddressDetails = {
       address: suggestion.display_name,
@@ -84,7 +84,6 @@ export class LocationComponent {
       next: (coords) => {
         this.currentLatitude = coords.latitude;
         this.currentLongitude = coords.longitude;
-        console.log("Latitude, Longitude:", this.currentLatitude, this.currentLongitude);
       },
       error: (err) => {
         this.errorMessage = `Error getting location: ${err.message || err}`;
@@ -102,10 +101,8 @@ export class LocationComponent {
   }
 
   updateLatLon(){
-    console.log("inside lat lon");
      console.trace("TRACE: updateLatLon called");
     this._userId.subscribe((id)=>{
-      console.log("User ID received:", id);
       if(!id ) return
       let locationToSend;
       if(this.selectedAddressDetails){
@@ -126,8 +123,8 @@ export class LocationComponent {
     }
 
     this._locationService.updateTechnicianWithLocation(id,locationToSend).subscribe({
-      next:(res)=>{
-        console.log("Technician location saved", res);
+      next:()=>{
+        // console.log("Technician location saved", res);
         this._router.navigate(['/partner-dashboard'])
       },
       error:(err)=>{

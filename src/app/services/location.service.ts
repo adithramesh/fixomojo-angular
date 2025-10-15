@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, Observer } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { UserResponseDTO } from '../models/admin.model';
 import { environment } from '../../environments/environment';
+import { AutocompleteSuggestion } from '../models/location.model';
 
 
 @Injectable({
@@ -36,17 +37,17 @@ export class LocationService {
     });
   }
 
-  getLocationIqAutocomplete(query: string): Observable<any[]> {
+  getLocationIqAutocomplete(query: string): Observable<AutocompleteSuggestion[]> {
     const url = `/locationiq/v1/autocomplete?key=${this.locationIqApiKey}&q=${query}&limit=5&format=json`;
-    return this.http.get<any[]>(url);
+    return this.http.get<AutocompleteSuggestion[]>(url);
   }
 
-  getLocationDetailsByLatLng(lat: string, lon: string): Observable<any> {
+  getLocationDetailsByLatLng(lat: string, lon: string): Observable<object> {
     const url = `/locationiq/v1/reverse?key=${this.locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`;
-    return this.http.get<any>(url);
+    return this.http.get<object>(url);
   }
 
-  updateTechnicianWithLocation(userId:string|undefined,location:{}){
+  updateTechnicianWithLocation(userId:string|undefined,location:{ address?: string; latitude?: number; longitude?: number }){
     return this.http.patch<UserResponseDTO>(`${this.apiUrl}partner/${userId}/location`,location)
   }
 

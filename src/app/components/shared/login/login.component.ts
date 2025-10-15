@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, AsyncPipe } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule} from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AuthActions } from '../../../store/auth/auth.actions';
-import { selectError, selectLoading } from '../../../store/auth/auth.reducer';
+import { ApiError, selectError, selectLoading } from '../../../store/auth/auth.reducer';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -16,10 +16,9 @@ import { RouterModule } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  error$!: Observable<any>;
+  error$!: Observable<ApiError | null>;
   loading$!: Observable<boolean>;
-
-  constructor(private store: Store) {}
+  private store = inject(Store)
 
   ngOnInit(): void {
     this.error$ = this.store.select(selectError);
@@ -27,6 +26,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = new FormGroup({
       phoneNumber: new FormControl('', [
         Validators.required,
+        // eslint-disable-next-line no-useless-escape
         Validators.pattern(/^\+91[\- ]?[6-9]\d{9}$/),
       ]),
       password: new FormControl('', [Validators.required]),

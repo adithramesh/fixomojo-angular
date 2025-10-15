@@ -1,22 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataTableComponent, TableColumn, TableData } from '../../shared/data-table/data-table.component';
 import { PaginationRequestDTO } from '../../../models/admin.model';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { BookingResponse, BookingService } from '../../../services/booking.service';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from '../side-bar/side-bar.component';
+import { ApiError } from '../../../store/auth/auth.reducer';
+import { IBooking } from '../../../models/book-service.model';
+
 
 @Component({
   selector: 'app-activities',
-  imports: [NavBarComponent, DataTableComponent, CommonModule],
+  imports: [NavBarComponent, DataTableComponent, CommonModule,SidebarComponent],
   templateUrl: './activities.component.html',
   styleUrl: './activities.component.scss'
 })
 export class ActivitiesComponent {
-   isLoading: boolean = true;
+   isLoading = true;
       bookingsTableColumns: TableColumn[] = [
         { header: 'Booking Number', key: 'id', type: 'text', width: '20%' },
-        { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, // Changed to subServiceId
+        { header: 'Service ID', key: 'subServiceId', type: 'text', width: '15%' }, 
         { header: 'Service Name', key: 'subServiceName', type: 'text', width: '30%' },
         { header: 'Amount', key: 'totalAmount', type: 'text', width: '20%' },
         { header: 'Paid', key: 'paymentStatus', type: 'text', width: '20%' },
@@ -34,22 +38,19 @@ export class ActivitiesComponent {
         sortOrder: 'desc',
         searchTerm: ''
       };
-      totalBookings: number = 0;
-      totalPages: number = 0;
+      totalBookings = 0;
+      totalPages = 0;
       error: string | null = null;
       private searchSubject = new Subject<string>()
       private subscription: Subscription = new Subscription;
-      searchTerm: string=''
-    
-      constructor(private bookingService: BookingService) {}
+      searchTerm =''
+      
+      private bookingService = inject(BookingService)
+      
     
       ngOnInit(): void {
      
-        // this.bookingService.countBookings().subscribe(count => {
-        //   if (count) {
-        //    this.totalBookings = count;
-        //   }
-        // });
+       
     
         this.subscription.add(this.searchSubject.pipe(
                   debounceTime(300),
@@ -68,12 +69,10 @@ export class ActivitiesComponent {
         
         this.bookingService.getAllBookingsForAdmin(this.pagination).subscribe({
           next: (response: BookingResponse) => {
-            // Check if response and bookingList exist
-           if (response.success && response.bookingList?.items) {
-            console.log("bookingList", response.bookingList.items);
-            
+           
+           if (response.success && response.bookingList?.items) {  
               this.bookingsTableData = response.bookingList.items.map(booking => this.mapBookingsToTableData(booking));
-              // this.totalBookings = response.bookingList.length; // Fallback; update if backend provides total
+            
               this.totalBookings = response.bookingList.total;
               this.totalPages = response.bookingList.totalPages;
               this.error = null;
@@ -86,7 +85,7 @@ export class ActivitiesComponent {
             }
             this.isLoading = false;
           },
-          error: (error: any) => {
+          error: (error: ApiError) => {
             console.error('Failed to fetch bookings:', error);
             this.isLoading = false;
             this.bookingsTableData = [];
@@ -97,14 +96,13 @@ export class ActivitiesComponent {
         });
       }
     
-      mapBookingsToTableData(booking: any): TableData {
-        console.log("booking", booking._id.toString());
+      mapBookingsToTableData(booking: IBooking): TableData {
         
         return {
-          id: booking._id.toString().slice(18),
-          subServiceId: booking.subServiceId.slice(18), // Use subServiceId instead of serviceName
+          id: booking._id?.toString().slice(18),
+          subServiceId: booking.subServiceId!.slice(18), 
           subServiceName:booking.subServiceName,
-          totalAmount: booking.totalAmount.toString(),
+          totalAmount: booking.totalAmount!.toString(),
           paymentStatus: booking.paymentStatus,
           bookingStatus: booking.bookingStatus,
           timeSlotStart:booking.timeSlotStart,

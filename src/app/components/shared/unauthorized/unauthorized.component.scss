@@ -1,0 +1,76 @@
+@use 'variables' as var;  
+@use 'buttons' as btn;    
+@use 'sass:color';
+
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var.$background-color;
+  padding: var.$spacing-xl 0;
+}
+
+.unauthorized-content {
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  padding: var.$spacing-lg;
+  background: var.$white;
+  border-radius: var.$border-radius-lg;
+  box-shadow: var.$box-shadow-md;
+  margin: var.$spacing-md;
+
+  .fm-logo {
+    margin-bottom: var.$spacing-lg;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));  // Subtle lift
+  }
+
+  .unauthorized-title {
+    font-family: var.$title-font;  // Poppins
+    font-size: var.$font-size-xl;
+    font-weight: var.$font-weight-bold;
+    color: var.$purple;
+    margin-bottom: var.$spacing-sm;
+    line-height: 1.2;
+  }
+
+  .unauthorized-message {
+    font-family: var.$primary-font;  // Inter
+    font-size: var.$font-size-md;
+    color: var.$gray-dark;
+    margin-bottom: var.$spacing-xl;
+    line-height: 1.6;
+  }
+
+  .unauthorized-actions {
+    display: flex;
+    gap: var.$spacing-sm;
+    flex-direction: column;  // Stack on mobile
+
+    @media (min-width: var.$breakpoint-md) {
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .login-button {
+      @include btn.button-style(var.$error-red);  // Red for "switch" urgency
+      flex: 1;
+      max-width: 200px;
+
+      &:hover {
+        background-color: color.adjust(var.$error-red, $lightness: -10%);
+      }
+    }
+
+    .home-button {
+      @include btn.button-style(var.$button-bg);  // Black for neutral back
+      flex: 1;
+      max-width: 200px;
+
+      &:hover {
+        background-color: var.$button-hover-bg;
+      }
+    }
+  }
+}

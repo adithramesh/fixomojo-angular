@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription, first, interval, combineLatest } from 'rxjs';
 import { AuthActions } from '../../../store/auth/auth.actions';
-import { selectTempUserId, selectPhoneNumber, selectError, selectLoading } from '../../../store/auth/auth.reducer';
+import { selectTempUserId, selectPhoneNumber, selectError, selectLoading, ApiError } from '../../../store/auth/auth.reducer';
 import { OtpRequestDTO, OtpResendRequestDTO } from '../../../models/auth.model';
 import { Clipboard } from '@angular/cdk/clipboard';
 
@@ -15,29 +15,28 @@ import { Clipboard } from '@angular/cdk/clipboard';
   templateUrl: './otp.component.html',
   styleUrls: ['./otp.component.scss'],
 })
-export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
+export class OtpComponent implements OnInit, OnDestroy {
   otpValues: string[] = ['', '', '', ''];
-  timeLeft: number = 600; // 10 minutes
+  timeLeft = 600; // 10 minutes
   timerSubscription?: Subscription;
   tempUserId$!: Observable<string | null>;
   phoneNumber$!: Observable<string | null>;
-  error$!: Observable<any>;
+  error$!: Observable<ApiError | null>;
   loading$!: Observable<boolean>;
   verificationContext: 'signup' | 'forgot-password' = 'signup';
-  isOtpValid: boolean = false; // Track OTP validity
+  isOtpValid = false; 
 
   @ViewChild('otpForm') otpForm!: ElementRef;
 
-  @Input() isModalMode: boolean = false; // New property
-  @Input() modalContext: 'auth' | 'work-completion' = 'auth'; // New property
-  @Output() otpVerified = new EventEmitter<string>(); // New output
-  @Output() otpCancelled = new EventEmitter<void>(); // New output
+  @Input() isModalMode = false; 
+  @Input() modalContext: 'auth' | 'work-completion' = 'auth'; 
+  @Output() otpVerified = new EventEmitter<string>();
+  @Output() otpCancelled = new EventEmitter<void>(); 
 
-  constructor(
-    private store: Store,
-    private route: ActivatedRoute,
-    private clipboard: Clipboard
-  ) {}
+  private store = inject(Store)
+  private route = inject(ActivatedRoute)
+  private clipboard = inject(Clipboard)
+
 
   ngOnInit(): void {
     this.tempUserId$ = this.store.select(selectTempUserId);
@@ -51,14 +50,10 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.loading$.subscribe(loading => console.log('loading state:', loading));
-    this.updateOtpValidity(); // Initial check
-    console.log('Initial isOtpValid:', this.isOtpValid);
+    this.updateOtpValidity(); 
   }
 
-  ngAfterViewInit() {
-    // console.log('otpForm initialized:', this.otpForm);
-  }
-
+ 
  
 
   private startTimer(): void {
@@ -111,39 +106,19 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
       this.otpForm.nativeElement.querySelectorAll('.otp-input').forEach((input: HTMLInputElement, i: number) => {
         input.value = this.otpValues[i];
       });
-      this.updateOtpValidity(); // Update validity on paste
+      this.updateOtpValidity(); 
     }
   }
 
-  // onSubmit(): void {
-  //   console.log('onSubmit triggered with otpValues:', this.otpValues);
-  //   if (this.isOtpValid) {
-  //     combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
-  //       // console.log('tempUserId:', tempUserId, 'loading:', loading);
-  //       if (tempUserId) {
-  //         const otpData: OtpRequestDTO = {
-  //           tempUserId,
-  //           otp: this.otpValues.join(''),
-  //           context: this.verificationContext
-  //         };
-  //         console.log('Dispatching verifyOtp with:', otpData);
-  //         this.store.dispatch(AuthActions.verifyOtp({ otpData }));
-  //       } else {
-  //         console.error('tempUserId is null or undefined');
-  //       }
-  //     });
-  //   }
-  // }
 
   
   onSubmit(): void {
-    console.log('onSubmit triggered with otpValues:', this.otpValues);
     if (this.isOtpValid) {
        if (this.isModalMode) {
-      // For modal mode, just emit the OTP
+      
       this.otpVerified.emit(this.otpValues.join(''));
       } else {
-      combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId, loading]) => {
+      combineLatest([this.tempUserId$, this.loading$]).pipe(first()).subscribe(([tempUserId]) => {
         // console.log('tempUserId:', tempUserId, 'loading:', loading);
         if (tempUserId) {
           const otpData: OtpRequestDTO = {
@@ -151,7 +126,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
             otp: this.otpValues.join(''),
             context: this.verificationContext
           };
-          console.log('Dispatching verifyOtp with:', otpData);
           this.store.dispatch(AuthActions.verifyOtp({ otpData }));
         } else {
           console.error('tempUserId is null or undefined');
@@ -162,8 +136,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onVerifyButtonClick(): void {
-    console.log('Verify button was clicked!');
-    this.onSubmit(); // Trigger onSubmit on click
+    this.onSubmit();
   }
 
   
@@ -177,8 +150,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
             phoneNumber, 
             context: this.verificationContext 
           };
-          
-          console.log("Resending OTP with data:", resendData);
           this.store.dispatch(AuthActions.resendOtp({ resendData }));
           
           // Reset timer
@@ -195,7 +166,6 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     const otp = this.otpValues.join('');
     if (otp.length === 4) {
       this.clipboard.copy(otp);
-      console.log('OTP copied to clipboard:', otp);
     }
   }
 

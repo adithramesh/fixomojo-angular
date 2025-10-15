@@ -1,15 +1,15 @@
-
 <div class="data-table-container">
   <h2 *ngIf="title">{{ title }}</h2>
 
-    <!-- Table controls: Search and Add button -->
-  <div class="table-controls" *ngIf="!isLoading && tableData.length > 0">
+  <!-- Table controls: Search and Add button -->
+  <div class="table-controls" *ngIf="!isLoading && (tableData.length > 0 || showAddButton)">
     <input
       *ngIf="showSearch"
+      #searchInput
       type="text"
-      [(ngModel)]="searchTerm"
+      [value]="searchTerm"
       (input)="onSearchChange($event)"
-      placeholder="Search..."
+      [placeholder]="searchPlaceholder"
       class="search-input"
       aria-label="Search table data"
     />
@@ -47,24 +47,33 @@
             <ng-container [ngSwitch]="column.type">
               <!-- Text content -->
               <ng-container *ngSwitchCase="'text'">
-                {{ item[column.key] }}
+                  {{ getItemValue(item, column.key) }}
               </ng-container>
 
-            <!-- Image content - now clickable -->
+              <!-- Image content - now accessible -->
               <ng-container *ngSwitchCase="'image'">
                 <div class="image-cell">
                   <img
-                    *ngIf="item[column.key]"
-                    [src]="item[column.key]"
+                    *ngIf="getItemValue(item, column.key)"
+                    [src]="getItemValue(item, column.key)"
                     alt="Service image"
                     class="table-image"
                     (click)="onImageClick(item)"
+                    (keydown.enter)="onImageClick(item)"
                     (error)="onImageError($event)"
+                    loading="lazy"
+                    tabindex="0"
+                    role="button"
+                    aria-label="View image"
                   />
                   <div
-                    *ngIf="!item[column.key]"
+                    *ngIf="!getItemValue(item, column.key)"
                     class="image-placeholder"
                     (click)="onImageClick(item)"
+                    (keydown.enter)="onImageClick(item)"
+                    tabindex="0"
+                    role="button"
+                    aria-label="Add image"
                   >
                     <span>📷</span>
                   </div>
@@ -76,6 +85,7 @@
                 <button
                   [class]="column.buttonClass || 'btn-default'"
                   (click)="onButtonClick(column.key, item)"
+                  [disabled]="isButtonDisabled(column, item)"
                 >
                   {{ column.buttonText || "Action" }}
                 </button>
@@ -83,9 +93,9 @@
 
               <!-- Date formatting -->
               <ng-container *ngSwitchCase="'date'">
-                <ng-container *ngIf="item[column.key]; else noSlot">
+                <ng-container *ngIf="getItemValue(item, column.key); else noSlot">
                   <span class="slot-date" [ngClass]="column.className">
-                    {{ item[column.key] | date : 'dd-MM-yy | hh:mm a' }}
+                    {{ getItemValueAsDate(item, column.key) | date : 'dd-MM-yy | hh:mm a' }}
                   </span>
                 </ng-container>
                 <ng-template #noSlot>
@@ -95,22 +105,21 @@
 
               <!-- Status with color coding -->
               <ng-container *ngSwitchCase="'status'">
-                <span [class]="'status-' + item[column.key].toLowerCase()">
-                  {{ item[column.key] }}
+                  <span [class]="'status-' + getItemValueAsString(item, column.key).toLowerCase()">
+                  {{ getItemValueAsString(item, column.key) }}
                 </span>
               </ng-container>
 
               <ng-container *ngSwitchCase="'dropdown'">
                 <select
-                  [(ngModel)]="item[column.key]"
-                  (change)="
-                    onDropdownChange(column.key, item[column.key], item)
-                  "
+                  [ngModel]="getItemValue(item, column.key)"
+                  (ngModelChange)="updateItemValue(item, column.key, $event)"
+                  (change)="onDropdownChange(column.key, getItemValueAsString(item, column.key), item)"
                 >
                   <option
                     *ngFor="let option of column.dropdownOptions"
                     [value]="option.value"
-                    [selected]="option.value === item[column.key]"
+                    [selected]="option.value === getItemValue(item, column.key)"
                   >
                     {{ option.label }}
                   </option>
@@ -126,7 +135,6 @@
                     (click)="onButtonClick('chat', item)"
                     title="Open chat">
                     Chat
-                      <!-- 💬 -->
                   </button>
                   
                   <!-- Complete button -->
@@ -138,20 +146,20 @@
                     Complete
                   </button>
                   
-                  <!-- Rate button (shows after completion) -->
+                  <!-- Cancel button (shows after confirmation) -->
                   <button 
-                    *ngIf="shouldShowRateButton(item)"
+                    *ngIf="shouldShowCancelButton(item)"
                     class="btn btn-sm btn-warning"
-                    (click)="onButtonClick('rate', item)"
-                    title="Rate service">
-                    Rate
+                    (click)="onButtonClick('cancel', item)"
+                    title="Cancel booking">
+                    Cancel
                   </button>
                 </div>
               </ng-container>
 
               <!-- Default case -->
               <ng-container *ngSwitchDefault>
-                {{ item[column.key] }}
+                {{ getItemValue(item, column.key) }}
               </ng-container>
             </ng-container>
           </td>
@@ -167,9 +175,9 @@
       >
         Previous
       </button>
-      <span class="pagination-info"
-        >Page {{ currentPage }} of {{ totalPages }}</span
-      >
+      <span class="pagination-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
       <button
         class="btn btn-secondary"
         [disabled]="currentPage === totalPages"

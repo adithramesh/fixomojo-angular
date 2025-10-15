@@ -1,0 +1,31 @@
+<div class="unauthorized-container">
+  <div class="unauthorized-content">
+    <!-- FM Logo -->
+    <svg width="80" height="80" viewBox="0 0 100 100" aria-label="Fixomojo Logo" class="fm-logo">
+      <rect x="10" y="10" width="80" height="80" rx="15" ry="15" fill="var(--button-bg, #000)" />
+      <text x="50" y="60" text-anchor="middle" font-family="Poppins, sans-serif"
+            font-size="40" font-weight="bold" fill="white">
+        FM
+      </text>
+    </svg>
+
+    <!-- Heading -->
+    <h1 class="unauthorized-title">Access Denied</h1>
+
+    <!-- Subtext -->
+    <p class="unauthorized-message">
+      Sorry, you don't have permission to view this page. 
+      It looks like your account role doesn't match what's needed here.
+    </p>
+
+    <!-- Buttons -->
+    <div class="unauthorized-actions">
+      <button class="login-button" (click)="goToSignup()">
+        Sign Up
+      </button>
+      <button class="home-button" (click)="goToLogin()">
+        Log In
+      </button>
+    </div>
+  </div>
+</div>

@@ -3,13 +3,14 @@
 <div class="admin-dashboard">
     <app-side-bar></app-side-bar>
   <div class="main-content">
-  
     <app-data-table
       [tableData]="userTableData"
       [tableColumns]="userTableColumns"
+      title="Partners"
       [isLoading]="isLoading"
       [emptyMessage]="'No users found'"
       (dropdownChange)="onDropdownChange($event)"
+      [searchTerm]="searchTerm" 
       (searchChange)="onSearchChange($event)"
       (rowAction)="handleAction($event)"
       [currentPage]="pagination.page"

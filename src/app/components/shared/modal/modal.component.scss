@@ -1,12 +1,14 @@
 @use 'variables' as var;
-@use 'sass:color';
+@use 'buttons' as btn;
+
 .modal-overlay {
+  // Consistent overlay styling with a slightly darker backdrop
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
@@ -16,215 +18,283 @@
 }
 
 .modal-content {
+  // Refined modal container with cleaner borders and shadow
   background: var.$white;
-  border-radius: var.$border-radius-md;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  border: 1px solid rgba(0, 0, 0, 0.05); // Added: Subtle border to replace any thick black; adjust opacity if needed
+  border-radius: var.$border-radius-lg;
+  box-shadow: var.$box-shadow-md;
+  max-width: 550px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 95vh; // Increased: From 90vh to 95vh to reduce shrinkage and scroll
   overflow: hidden;
   position: relative;
-  animation: modalSlideIn 0.3s ease-out;
+  animation: modalFadeIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes modalSlideIn {
+@keyframes modalFadeIn {
+  // Simplified animation for smoother entrance
   from {
     opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .close-button {
+  // Enhanced close button with consistent styling
   position: absolute;
-  top: var.$spacing-md;
-  right: var.$spacing-md;
-  background: rgba(0, 0, 0, 0.1);
+  top: var.$spacing-sm;
+  right: var.$spacing-sm;
+  background: var.$gray-light;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 18px;
   color: var.$text-color;
   cursor: pointer;
-  z-index: 1001;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  z-index: 10;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
+    background: var.$purple;
+    color: var.$white;
+    transform: scale(1.05);
   }
 }
 
 .modal-body {
-  display: flex;
-  flex-direction: column;
+  // Consistent padding and scroll handling
+  padding: var.$spacing-xs; // Further reduced: From md to xs for even more vertical space in tight modals
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: calc(95vh - 60px); // Further adjusted: Reduced subtraction for more body height (assuming ~60px for close button/header)
+  scrollbar-width: thin; // Added: For subtle scrollbar appearance
+  scrollbar-color: var.$gray-light transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var.$gray-light;
+    border-radius: 3px;
+  }
 }
 
-.image-container {
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
-  position: relative;
+/* Service modal specific styles */
+.service-modal {
+  // Simplified layout for service modal
+  display: flex;
+  flex-direction: column;
+  gap: var.$spacing-md;
+
+  .image-container {
+    // Standardized image size with cropping
+    width: 100%;
+    height: 180px;
+    background-color: var.$gray-light;
+    border-radius: var.$border-radius-md;
+    overflow: hidden;
+    margin-bottom: var.$spacing-md;
+  }
 
   .service-image {
+    // Ensure images are cropped to fit container
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
   }
 
   .placeholder-image {
-    width: 100%;
-    height: 100%;
-    background: var.$input-bg;
+    // Centered placeholder text
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
     color: var.$gray-text;
     font-size: var.$font-size-md;
-  }
-}
-
-.service-details {
-  padding: var.$spacing-xl;
-  
-  .service-title {
-    font-size: 1.5rem;
-    font-family: var.$title-font;
-    color: var.$text-color;
-    margin-bottom: var.$spacing-md;
-    font-weight: var.$font-weight-bold;
-  }
-
-  .service-description {
-    font-size: var.$font-size-md;
-    color: var.$gray-text;
-    line-height: 1.6;
-    margin-bottom: var.$spacing-lg;
-  }
-
-  .price-container {
-    margin-bottom: var.$spacing-xl;
-    
-    .price {
-      font-weight: var.$font-weight-bold;
-      color: var.$purple;
-      font-size: 1.25rem;
-      font-family: var.$title-font;
-    }
-  }
-
-  .book-button {
-    width: 100%;
-    padding: var.$spacing-md var.$spacing-xl;
-    background-color: var.$purple;
-    color: var.$white;
-    border: none;
-    border-radius: var.$border-radius-md;
-    font-family: var.$title-font;
-    font-size: var.$font-size-md;
-    font-weight: var.$font-weight-semibold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover:not(:disabled) {
-      background-color: color.adjust(var.$purple, $lightness: -10%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(138, 79, 255, 0.3);
-    }
-
-    &:disabled {
-      background-color: var.$disabled-bg;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-  }
-}
-
-// Responsive design
-@media (max-width: var.$breakpoint-md) {
-  .modal-content {
-    margin: var.$spacing-md;
-    max-height: 95vh;
-  }
-
-  .modal-body {
-    flex-direction: column;
-  }
-
-  .image-container {
-    height: 250px;
+    font-family: var.$primary-font;
   }
 
   .service-details {
-    padding: var.$spacing-lg;
+    // Clean layout for service details
+    display: flex;
+    flex-direction: column;
+    gap: var.$spacing-sm;
+  }
 
-    .service-title {
-      font-size: 1.25rem;
-    }
+  .service-title {
+    // Consistent typography
+    font-size: var.$font-size-lg;
+    font-weight: var.$font-weight-bold;
+    color: var.$text-color;
+    margin: 0;
+    font-family: var.$title-font;
+  }
 
-    .price {
-      font-size: 1.1rem;
-    }
+  .service-description {
+    // Improved readability
+    font-size: var.$font-size-sm;
+    color: var.$gray-text;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .price-and-book {
+    // Aligned price and button
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var.$spacing-sm;
+  }
+
+  .price {
+    // Consistent price styling
+    font-size: var.$font-size-lg;
+    font-weight: var.$font-weight-semibold;
+    color: var.$purple;
+  }
+
+  .book-button {
+    // [CHANGE LOCATION: Line 158-160] Reduced button width and ensured no black border
+    @include btn.button-style(var.$purple);
+    padding: var.$spacing-xs var.$spacing-sm; // Adjusted padding to reduce width
+    width: 100px; // Explicitly set a reduced width
+    border: none !important; // Strengthened: Override any mixin border with !important to remove thick black
+    font-size: var.$font-size-sm;
+    box-shadow: none; // Added: Remove any shadow that might mimic a border
   }
 }
 
-// Blur effect for background content
-:host-context(.modal-open) {
-  .home-container {
-    filter: blur(3px);
-    pointer-events: none;
-  }
-}
-
+/* OTP modal specific styles */
 .otp-modal {
-  padding: 1.5rem;
+  // Centered and clean OTP modal layout
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var.$spacing-xs; // Further reduced: From sm to xs to minimize vertical space
 
   .modal-heading {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: #333;
+    // Simplified heading
+    font-size: var.$font-size-lg;
+    font-weight: var.$font-weight-bold;
+    color: var.$text-color;
+    margin: 0;
+    font-family: var.$title-font;
+    padding-top: 0.5rem; // Added: Minimal top padding to account for close button overlap
   }
 
   .modal-subtext {
-    font-size: 0.95rem;
-    color: #666;
-    margin-bottom: 1rem;
+    // Improved subtext readability
+    font-size: var.$font-size-sm;
+    color: var.$gray-text;
+    margin: 0;
+    line-height: 1.4;
+    padding-bottom: 0.25rem; // Added: Tight bottom padding
   }
 
   .booking-info-card {
-    background-color: #f7f7f7;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    // Clean card design
+    background-color: var.$input-bg;
+    border: 1px solid rgba(0, 0, 0, 0.05); // Added: Subtle border for definition without thickness
+    border-radius: var.$border-radius-md;
+    padding: var.$spacing-xs; // Further reduced: From sm to xs for maximum compactness
+    width: 100%;
+    margin-bottom: var.$spacing-xs; // Further reduced: To save even more space
 
     .info-row {
+      // Consistent row styling
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
+      margin-bottom: 0.25rem; // Hard-coded minimal: Override var.$spacing-xs if needed for tighter rows
+      font-size: var.$font-size-sm;
 
       .label {
-        font-weight: 600;
-        color: #555;
+        font-weight: var.$font-weight-semibold;
+        color: var.$purple; // Adjusted: To match theme for better visibility
       }
 
-      span:last-child {
-        color: #222;
+      span {
+        color: var.$gray-text;
+      }
+
+      &:last-child {
+        margin-bottom: 0; // Added: Remove extra bottom margin on last row
+      }
+    }
+  }
+
+  // Further refined: Specific adjustments for nested OTP component to prevent scroll and fit OTP boxes in view
+  app-otp {
+    width: 100%;
+    margin-top: 0; // Ensure no extra top margin
+
+    // Target the modal-mode class to override OTP's internal styles
+    &.modal-mode {
+      // Override container height issues
+      .otp-container.modal-mode {
+        height: auto !important; // Force auto height in modal to prevent fixed vh expansion
+        min-height: unset !important;
+        padding: 0; // Remove any container padding
+      }
+
+      .otp-modal-content {
+        max-width: none; // Allow full width in modal context
+        padding: 0.5rem 1rem !important; // Further reduced: From 1rem to 0.5rem top/bottom for tight fit
+        gap: 0.5rem !important; // Further reduced: From 0.8rem to 0.5rem to compress sections
+        max-height: none; // Remove any max-height that could cause internal scroll
+        height: auto; // Ensure it sizes to content
+
+        .brand-logo {
+          margin: 0; // Remove any margins
+          padding: 0;
+          gap: 0.5rem; // Tighten logo gap
+
+          h2 {
+            font-size: 16px !important; // Further reduced: From 18px to 16px for space saving
+            margin: 0;
+          }
+        }
+
+        .otp-group.centered {
+          gap: 0.5rem !important; // Further reduced: For inputs to sit closer
+          margin: 0;
+          padding: 0;
+
+          .otp-input {
+            width: 50px !important; // Slightly reduced width for better fit if needed
+            height: 50px !important; // Reduced height from 60px to 50px to save vertical space
+            font-size: 20px !important; // Adjusted font for smaller box
+          }
+        }
+
+        .error-message {
+          margin: 0.25rem 0 !important; // Tight margins
+          padding: 0;
+          min-height: 0; // Prevent empty space if no error
+        }
+
+        .otp-button.modal-mode-button {
+          height: 40px !important; // Further reduced: From 44px to 40px
+          margin: 0;
+          padding: 0.5rem;
+          font-size: 14px; // Slightly smaller text
+        }
       }
     }
   }
 }
-
-

@@ -1,177 +1,6 @@
-// @use '../../../../styles/variables' as var;
-// @use '../../../../styles/buttons' as btn;
-// @use 'sass:color';
-
-// // Main layout for sidebars and content
-// .main-layout-container {
-//   display: flex;
-//   flex-direction: column; // Stack vertically by default
-//   min-height: 100vh;
-//   background-color: var.$background-color;
-//   font-family: var.$primary-font;
-//   color: var.$text-color;
-
-//   @media (min-width: var.$breakpoint-md) {
-//     flex-direction: row; // Arrange horizontally on medium screens and up
-//   }
-// }
-
-// .content-area {
-//   flex-grow: 1; // Allows content area to take up remaining space
-//   padding: var.$spacing-md; // Default padding
-//   display: flex;
-//   justify-content: center; // Center wallet container horizontally
-//   align-items: flex-start; // Align wallet container to the top
-
-//   @media (min-width: var.$breakpoint-md) {
-//     padding: var.$spacing-xl; // More padding on larger screens
-//   }
-// }
-
-// .wallet-container {
-//   background-color: var.$white;
-//   padding: var.$spacing-lg; // Default padding
-//   border-radius: var.$border-radius-md;
-//   box-shadow: var.$box-shadow-sm;
-//   width: 100%; // Take full width of its parent
-//   max-width: 768px; // Max width for readability, similar to Tailwind's max-w-3xl
-
-//   @media (min-width: var.$breakpoint-md) {
-//     padding: var.$spacing-xl; // Larger padding on medium screens
-//   }
-
-//   h2 {
-//     font-size: var.$font-size-xl;
-//     margin-bottom: var.$spacing-lg;
-//     font-family: var.$title-font;
-//     color: var.$text-color;
-//     text-align: center;
-//   }
-
-//   .wallet-balance {
-//     background-color: color.adjust(var.$input-bg, $lightness: 3%); // A light blueish background, adjust as needed
-//     padding: var.$spacing-lg;
-//     border-radius: var.$border-radius-md;
-//     margin-bottom: var.$spacing-xl;
-//     display: flex;
-//     flex-direction: column; // Stack items vertically by default
-//     align-items: center; // Center items horizontally
-//     gap: var.$spacing-md; // Space between elements
-
-//     @media (min-width: var.$breakpoint-md) {
-//       flex-direction: row; // Arrange horizontally on medium screens
-//       justify-content: space-between; // Space out items
-//       gap: 0; // Remove gap when row
-//     }
-
-//     p {
-//       font-size: var.$font-size-xl; // Larger font for balance
-//       font-weight: var.$font-weight-bold;
-//       color: var.$text-color; // Use primary text color
-//     }
-
-//     .currency-amount {
-//       color: var.$purple; // Use your purple color for the amount
-//     }
-
-//     .add-money-button {
-//       @include btn.button-style(var.$purple); // Use your button mixin with purple color
-//       width: 100%; // Full width on small screens
-//       max-width: 200px; // Max width for the button
-//       margin-top: var.$spacing-sm; // Small margin on top for stacking
-      
-//       @media (min-width: var.$breakpoint-md) {
-//         margin-top: 0; // Remove margin when row
-//         width: auto; // Auto width on larger screens
-//       }
-      
-//       &:hover {
-//         background-color: color.adjust(var.$purple, $lightness: -10%); // Darken purple on hover
-//       }
-//     }
-//   }
-
-//   .transaction-history {
-//     h3 {
-//       font-size: var.$font-size-xl;
-//       margin-bottom: var.$spacing-md;
-//       color: var.$text-color;
-//     }
-
-//     .loading-message,
-//     .no-transactions-message,
-//     .error-message {
-//       text-align: center;
-//       padding: var.$spacing-xl;
-//       color: var.$gray-text;
-//     }
-
-//     .error-message {
-//       color: var.$error-red;
-//       font-weight: var.$font-weight-semibold;
-//     }
-
-//     .table-wrapper {
-//       overflow-x: auto; // Allows horizontal scrolling on small screens
-//       border-radius: var.$border-radius-md;
-//       border: 1px solid var.$border-color;
-//       box-shadow: var.$box-shadow-sm;
-//     }
-
-//     table {
-//       width: 100%;
-//       border-collapse: collapse;
-//       min-width: 600px; // Ensure table doesn't get too squished on small screens
-
-//       th, td {
-//         padding: var.$spacing-md;
-//         border-bottom: 1px solid var.$border-color;
-//         text-align: left;
-//       }
-
-//       th {
-//         background-color: var.$input-bg;
-//         font-weight: var.$font-weight-semibold;
-//         color: var.$gray-text;
-//         text-transform: uppercase;
-//         font-size: var.$font-size-sm;
-//       }
-
-//       tbody tr {
-//         background-color: var.$white;
-//         &:hover {
-//           background-color: color.adjust(var.$input-bg, $lightness: 2%) // Light hover effect
-//         }
-//       }
-
-//       td {
-//         font-size: var.$font-size-md;
-//         white-space: nowrap; // Prevent text wrapping in cells
-//       }
-//     }
-//   }
-// }
-
-
 @use 'sass:color';
 @use 'variables' as var;
-
-.main-layout-container {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar-container {
-  width: 250px;
-  background-color: var.$input-bg;
-  border-right: 1px solid var.$border-color;
-}
-
-.content-area {
-  flex: 1;
-  padding: var.$spacing-lg;
-  background-color: var.$background-color;
-}
+@use '../../admin/admin-dashboard/admin-dashboard.component.scss';
 
 .wallet-container {
   max-width: 1200px;
@@ -221,13 +50,15 @@
 
   .wallet-recharge {
     margin-bottom: var.$spacing-lg;
+    display: flex; /* Added flex to align input and buttons */
+    gap: var.$spacing-sm; /* Added gap for consistent spacing */
+    align-items: center;
 
     input {
       padding: var.$spacing-sm;
       font-size: var.$font-size-sm;
       border: 1px solid var.$border-color;
       border-radius: var.$border-radius-sm;
-      margin-right: var.$spacing-sm;
       width: 200px;
 
       &:focus {
@@ -275,6 +106,7 @@
   color: var.$gray-text;
   font-size: var.$font-size-md;
 }
+
 .spinner {
   border: 3px solid var.$border-color;
   border-top: 3px solid var.$purple;
@@ -283,6 +115,7 @@
   height: 24px;
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -295,4 +128,61 @@
 .status-debit {
   color: var.$error-red;
   font-weight: var.$font-weight-semibold;
+}
+
+// Refactored Transaction Filters Section
+.transaction-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var.$spacing-sm;
+  margin-bottom: var.$spacing-md;
+  align-items: flex-start; /* Aligns items to the top to prevent tall elements from affecting others */
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    flex: 1; /* Allows groups to grow and shrink */
+    
+    label {
+      font-size: var.$font-size-sm;
+      color: var.$text-color;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select {
+      padding: var.$spacing-sm;
+      border: 1px solid var.$border-color;
+      border-radius: var.$border-radius-sm;
+      font-size: var.$font-size-sm;
+      height: calc(1em + var.$spacing-sm * 2 + 2px); /* Ensures consistent height across different input types */
+    }
+  }
+
+  .filter-button, .reset-button {
+    // Shared button styles
+    padding: var.$spacing-sm var.$spacing-md;
+    border: none;
+    border-radius: var.$border-radius-sm;
+    cursor: pointer;
+    font-weight: var.$font-weight-bold;
+    transition: background-color 0.3s ease;
+    align-self: flex-end; /* Aligns buttons to the bottom, next to the inputs */
+  }
+
+  .filter-button {
+    background-color: var.$purple;
+    color: var.$white;
+    &:hover {
+      background-color: color.adjust(var.$purple, $lightness: -10%);
+    }
+  }
+  
+  .reset-button {
+    background-color: var.$gray-light;
+    color: var.$text-color;
+    &:hover {
+      background-color: color.adjust(var.$gray-light, $lightness: -5%);
+    }
+  }
 }

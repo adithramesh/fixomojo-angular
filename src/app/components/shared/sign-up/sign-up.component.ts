@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import {
   AbstractControl,
@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { SignupUserRequestDTO } from '../../../models/auth.model';
 import { AuthActions } from '../../../store/auth/auth.actions';
-import { selectError, selectLoading } from '../../../store/auth/auth.reducer';
+import { ApiError, selectError, selectLoading } from '../../../store/auth/auth.reducer';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -24,21 +24,20 @@ import { RouterModule } from '@angular/router';
 export class SignUpComponent implements OnInit {
   signUpForm!: FormGroup;
   subtitleText?: string;
-  error$!: Observable<any>;
+  error$!: Observable<ApiError | null>;
   loading$!: Observable<boolean>;
+  private store = inject(Store)
 
-  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    // Initialize observables
+  
     this.error$ = this.store.select(selectError);
     this.loading$ = this.store.select(selectLoading);
 
-    // Initialize form
     this.initBaseForm();
     this.updateFormForRole(this.signUpForm.get('role')?.value || 'user');
 
-    // Listen for role changes
+   
     this.signUpForm.get('role')?.valueChanges.subscribe(role => {
       this.updateFormForRole(role);
     });
@@ -48,15 +47,20 @@ export class SignUpComponent implements OnInit {
     return this.subtitleText || this.getDefaultSubtitle();
   }
 
-  private getDefaultSubtitle(): string {
-    const subtitles: { [key: string]: string } = {
+
+ private getDefaultSubtitle(): string {
+    const subtitles: Record<'user' | 'partner' | 'admin', string> = {
       user: 'User SignUp',
       partner: 'Partner SignUp',
       admin: 'Admin SignUp',
     };
-    const role = this.signUpForm.get('role')?.value;
-    return role && ['user', 'partner', 'admin'].includes(role) ? subtitles[role] : 'SignUp';
+
+    const role = this.signUpForm.get('role')?.value as 'user' | 'partner' | 'admin' | null;
+
+    return role && subtitles[role] ? subtitles[role] : 'SignUp';
   }
+
+
 
   private initBaseForm(): void {
     this.signUpForm = new FormGroup(
@@ -69,6 +73,7 @@ export class SignUpComponent implements OnInit {
         email: new FormControl('', [Validators.required, Validators.email]),
         phoneNumber: new FormControl('', [
           Validators.required,
+          // eslint-disable-next-line no-useless-escape
           Validators.pattern(/^\+91[\- ]?[6-9]\d{9}$/),
         ]),
         password: new FormControl('', [
@@ -100,12 +105,18 @@ export class SignUpComponent implements OnInit {
     }
   }
 
-  passwordMatchValidator(form: AbstractControl): { [key: string]: boolean } | null {
+
+
+  passwordMatchValidator(form: AbstractControl): Record<string, boolean> | null {
     const formGroup = form as FormGroup;
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return password && confirmPassword && password === confirmPassword ? null : { mismatch: true };
+
+    return password && confirmPassword && password === confirmPassword
+      ? null
+      : { mismatch: true };
   }
+
 
   submitReactiveSignUpForm(): void {
     if (this.signUpForm.valid) {

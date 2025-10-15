@@ -5,11 +5,12 @@
     <app-data-table
       [tableData]="serviceTableData"
       [tableColumns]="serviceTableColumns"
+      title="Services"
       [isLoading]="isLoading"
       [emptyMessage]="'No services found'"
       [showAddButton]="true"
-      [searchTerm]="searchTerm"
       (rowAction)="handleAction($event)"
+      [searchTerm]="searchTerm" 
       (searchChange)="onSearchChange($event)"
       (addItem)="onAddService()"
       [currentPage]="pagination.page"

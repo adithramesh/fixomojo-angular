@@ -1,22 +1,75 @@
 <app-nav-bar></app-nav-bar>
 
 <main class="home-container">
-  <!-- Welcome Section -->
+  <!-- Welcome/Offers Carousel Section -->
   <section class="welcome-section">
-    <div class="welcome-card">
-      <h1>Welcome, {{ (username$ | async) || 'User' }}!</h1>
-      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
-      <p class="subtitle">Discover our services and find what you need</p>
+    <div class="carousel-container">
+      <!-- Welcome Card -->
+      <div class="welcome-card" *ngIf="!showOffers">
+        <h1>Welcome, {{ (username$ | async) || 'User' }}!</h1>
+        <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
+        <p class="subtitle">Discover our services and find what you need</p>
+      </div>
+
+      <!-- Offer Card -->
+      <div class="offer-card" *ngIf="showOffers && getCurrentOffer()">
+        <div class="offer-content">
+          <div class="offer-badge">
+            <span class="discount-text">{{ getDiscountText(getCurrentOffer()!) }}</span>
+          </div>
+          <h2>{{ getCurrentOffer()!.title }}</h2>
+          <p class="offer-description">{{ getCurrentOffer()!.description }}</p>
+          <div class="offer-details">
+            <span *ngIf="getCurrentOffer()!.min_booking_amount" class="min-amount">
+              Min booking: ₹{{ getCurrentOffer()!.min_booking_amount }}
+            </span>
+            <span *ngIf="getCurrentOffer()!.max_discount" class="max-discount">
+              Max discount: ₹{{ getCurrentOffer()!.max_discount }}
+            </span>
+            <span *ngIf="getCurrentOffer()!.valid_until" class="validity">
+              Valid until: {{ getCurrentOffer()!.valid_until | date:'dd MMM yyyy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carousel Controls -->
+      <div class="carousel-controls" *ngIf="offers.length > 0">
+        <button class="nav-btn prev" (click)="prevSlide()" aria-label="Previous">‹</button>
+        <div class="carousel-indicators">
+          <span 
+            class="indicator" 
+            [class.active]="currentSlide === 0"
+            role="button"
+            tabindex="0"
+            (click)="goToSlide(0)"
+            (keydown.enter)="goToSlide(0)"
+            (keydown.space)="goToSlide(0)">
+          </span>
+          <span 
+            *ngFor="let offer of offers; let i = index" 
+            class="indicator" 
+            [class.active]="currentSlide === i + 1"
+            role="button"
+            tabindex="0"
+            (click)="goToSlide(i + 1)"
+            (keydown.enter)="goToSlide(i + 1)"
+            (keydown.space)="goToSlide(i + 1)">
+          </span>
+        </div>
+        <button class="nav-btn next" (click)="nextSlide()" aria-label="Next">›</button>
+      </div>
     </div>
   </section>
 
   <!-- Featured Services Section -->
   <section class="featured-services-section">
     <div class="section-header">
-      <h2>Featured Services</h2>
-      <button class="view-all-btn" (click)="viewAllServices()">
+      <h2>Featured Categories of Services</h2>
+      <!-- <button class="view-all-btn" (click)="viewAllServices()">
         View All Services
-      </button>
+      </button> -->
+      <a class="view-all-link" (click)="viewAllServices()">View All Services</a>
     </div>
 
     <!-- Loading State -->
@@ -37,8 +90,12 @@
         [title]="service.serviceName"
         [imageUrl]="_imageUrlService.buildImageUrl(service.image)"
         [isHomePage]="true"
-       [showBookButton]="false"
+        [showBookButton]="false"
+        role="button"
+        tabindex="0"
         (click)="viewService(service)"
+        (keydown.enter)="viewService(service)"
+        (keydown.space)="viewService(service)"
       ></app-service-card>
     </div>
 
@@ -48,7 +105,118 @@
     </div>
   </section>
 
-  <!-- Quick Actions Section (Optional - for future features) -->
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="section-header-center">
+      <h2>How It Works</h2>
+      <p class="section-subtitle">Book your service in three simple steps</p>
+    </div>
+    
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon">🔍</div>
+        <h3>Choose Service</h3>
+        <p>Browse and select from our wide range of professional services</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon">📅</div>
+        <h3>Book Appointment</h3>
+        <p>Pick a convenient date and time that works for you</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon">✅</div>
+        <h3>Get It Done</h3>
+        <p>Our verified professionals will complete the job to perfection</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="why-choose-us-section">
+    <div class="section-header-center">
+      <h2>Why Choose Us</h2>
+      <p class="section-subtitle">Your trusted service partner</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Quick Response</h3>
+        <p>Fast booking confirmation and same-day service availability</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Verified Professionals</h3>
+        <p>All service providers are background-checked and certified</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Best Prices</h3>
+        <p>Transparent pricing with no hidden charges or surprises</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h3>Quality Assured</h3>
+        <p>100% satisfaction guarantee on all our services</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="section-header-center">
+      <h2>What Our Customers Say</h2>
+      <p class="section-subtitle">Real reviews from real customers</p>
+    </div>
+    
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"Excellent service! The electrician was professional and solved my problem quickly. Highly recommended!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RK</div>
+          <div class="author-info">
+            <h4>Rajesh Kumar</h4>
+            <p>Electrical Works</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"Great experience with the painting service. The team was punctual and did an amazing job. Very satisfied!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">PS</div>
+          <div class="author-info">
+            <h4>Priya Sharma</h4>
+            <p>Painting Works</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">"The AC repair was done perfectly. Professional service at reasonable prices. Will definitely use again!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AM</div>
+          <div class="author-info">
+            <h4>Arun Mehta</h4>
+            <p>AC Works</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions Section -->
   <section class="quick-actions-section">
     <div class="section-header">
       <h2>Quick Actions</h2>
@@ -58,7 +226,6 @@
         <h3>Browse Services</h3>
         <p>View all available services</p>
       </button>
-      <!-- Add more quick actions as needed -->
     </div>
   </section>
 </main>

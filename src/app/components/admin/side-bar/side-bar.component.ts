@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 interface SidebarItem {
   label: string;
   route: string;
-  icon?: string; // For future use with icons
+  icon?: string; 
   children?: SidebarItem[];
 }
 
@@ -18,7 +18,7 @@ interface SidebarItem {
   styleUrls: ['./side-bar.component.scss']
 })
 export class SidebarComponent {
-  title: string = 'Admin Panel';
+  title = 'Admin Panel';
 
   menuItems: SidebarItem[] = [
     { label: 'Dashboard', route: '/admin-dashboard', icon:'dashboard' },
@@ -27,6 +27,7 @@ export class SidebarComponent {
     { label: 'Services', route: '/service-management',icon: 'category' },
     { label: 'Sub-Services', route: '/sub-service-management',icon: 'build' },
     { label: 'Activities', route: '/activities',icon: 'task_alt'},
+    { label: 'Offers', route: '/offers',icon: 'discount'},
     { label: 'Revenue', route: '/admin-wallet',icon: 'money' },
   ];
 }

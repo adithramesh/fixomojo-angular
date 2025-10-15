@@ -38,15 +38,15 @@ export class SubServiceManagementComponent {
   ];
 
   subServiceTableData: TableData[] = [];
-  searchTerm: string = '';
-  serviceId: string | null = null; // For filtering by service
+  searchTerm = '';
+  serviceId: string | null = null; 
   pagination: PaginationRequestDTO = {
     page: 1,
     pageSize: 10,
     sortBy: 'subServiceName',
     sortOrder: 'asc',
     searchTerm: '',
-    filter: {} // Will include serviceId if provided
+    filter: {} 
   };
   totalSubServices = 0;
   totalPages = 0;
@@ -57,7 +57,7 @@ export class SubServiceManagementComponent {
     this.username$ = this._store.select(selectUsername);
     this.phoneNumber$ = this._store.select(selectPhoneNumber);
 
-    // Get serviceId from route if navigating from service
+ 
     this._subscription.add(
       this._route.queryParams.subscribe(params => {
         this.serviceId = params['serviceId'] || null;
@@ -73,16 +73,12 @@ export class SubServiceManagementComponent {
         debounceTime(300),
         distinctUntilChanged()
       ).subscribe(searchTerm => {
-        console.log('searchTerm', searchTerm);
         this.searchTerm = searchTerm;
         this.pagination.searchTerm = searchTerm;
         this.pagination.page = 1;
-        console.log('loadSubServices called');
         this.loadSubServices();
       })
     );
-
-    console.log('Initial loadSubServices called');
   }
   ngOnDestroy() {
     this._subscription.unsubscribe();
@@ -91,8 +87,6 @@ export class SubServiceManagementComponent {
 
     loadSubServices(): void {
     this.isLoading = true;
-    console.log('this.pagination', this.pagination);
-    console.log('this.searchTerm', this.searchTerm);
     this._subscription.add(
       this._adminService.getSubServices(this.pagination).subscribe({
         next: (response) => {
@@ -140,11 +134,6 @@ export class SubServiceManagementComponent {
     const subServiceId = event.item.id;
     switch (event.action) {
       case 'edit':
-        // console.log('Editing sub-service:', subServiceId);
-        // this._router.navigate(['/edit-sub-service', subServiceId], {
-        //   queryParams: { subServiceId: this.subServiceId }
-        // });
-        console.log('Editing sub-service:', subServiceId);
         this._router.navigate([`/edit-sub-service/${subServiceId}`]).then(success => {
         if (!success) {
           console.error('Navigation to edit-sub-service failed');
@@ -152,7 +141,6 @@ export class SubServiceManagementComponent {
       });
         break;
       case 'block':
-        console.log('Blocking sub-service:', subServiceId);
         this._adminService.changeSubServiceStatus(subServiceId).subscribe({
           next: (response: SubServiceResponseDTO) => {
             const index = this.subServiceTableData.findIndex(subService => subService.id === subServiceId);

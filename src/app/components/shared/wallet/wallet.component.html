@@ -1,21 +1,13 @@
-
 <app-nav-bar></app-nav-bar>
-<br>
-<div class="main-layout-container">
-  <!-- Sidebars (conditionally rendered) -->
-  <div *ngIf="role === 'admin'" class="sidebar-container">
-    <app-side-bar></app-side-bar>
-  </div>
-  <div *ngIf="role === 'partner'" class="sidebar-container">
-    <app-partner-side-bar></app-partner-side-bar>
-  </div>
+<div class="admin-dashboard">
+  <app-side-bar *ngIf="role === 'admin'"></app-side-bar>
+  <app-partner-side-bar *ngIf="role === 'partner'"></app-partner-side-bar>
 
-  <!-- Main Wallet Content Area -->
-  <div class="content-area">
+  <div class="main-content">
+
     <div class="wallet-container">
       <h2>{{ role | titlecase }} Wallet</h2>
 
-      <!-- Wallet Balance Section -->
       <div class="wallet-balance">
         <p>Balance: <span class="currency-amount">{{ currency }} {{ walletBalance | number:'1.2-2' }}</span></p>
         <button *ngIf="!showRechargeInput && role === 'user'" (click)="toggleRechargeInput()" class="add-money-button">
@@ -28,9 +20,45 @@
         <button (click)="toggleRechargeInput()" style="background: transparent; border: none; color: gray; margin-top: 0.5rem;">Cancel</button>
       </div>
 
-      <!-- Transaction History Section -->
       <div class="transaction-history">
         <h3>Transactions</h3>
+
+        <div class="transaction-filters">
+          
+          <div class="filter-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" [(ngModel)]="pagination.filter!['dateFrom']" [max]="today"/>
+          </div>
+
+          <div class="filter-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" [(ngModel)]="pagination.filter!['dateTo']" [min]="pagination.filter!['dateFrom']" [max]="today"/>
+            
+          </div>
+
+          <div class="filter-group">
+            <label for="transactionType">Type</label>
+            <select id="transactionType" [(ngModel)]="pagination.filter!['transactionType']">
+              <option value="">All Types</option>
+              <option value="credit">Credit</option>
+              <option value="debit">Debit</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="minAmount">Min Amount</label>
+            <input type="number" id="minAmount" placeholder="Min" [(ngModel)]="pagination.filter!['minAmount']" />
+          </div>
+          
+          <div class="filter-group">
+            <label for="maxAmount">Max Amount</label>
+            <input type="number" id="maxAmount" placeholder="Max" [(ngModel)]="pagination.filter!['maxAmount']" />
+          </div>
+
+          <button (click)="applyFilters()" class="filter-button">Apply Filters</button>
+          <button (click)="resetFilters()" class="reset-button">Reset</button>
+        </div>
+
         <div *ngIf="isLoading" class="loading-message">
           <div class="spinner"></div>
           <p>Loading transactions...</p>

@@ -1,15 +1,70 @@
 <app-nav-bar></app-nav-bar>
-<app-partner-side-bar></app-partner-side-bar>
-<main class="home-container">
-  <section class="user-info-section">
-    <div class="card">
-      <h2>Welcome, {{ (username$ | async) || 'User' }}!</h2>
-      <p>Phone: {{ (phoneNumber$ | async) || 'Not available' }}</p>
-    </div>
+
+<div class="partner-dashboard-layout">
+  <app-partner-side-bar></app-partner-side-bar>
+
+  <main class="partner-main-content">
+    <!-- Greeting (compact hero) -->
+    <header class="dashboard-header">
+      <h1>
+        Hello, {{ (username$ | async) || 'Partner' }}
+      </h1>
+      <span class="subtext">Here’s your performance summary</span>
+    </header>
+
+    <!-- Stats cards -->
+    <section class="stats-grid" *ngIf="!isLoading && !error">
+      <div class="stat-card green">
+        <mat-icon>attach_money</mat-icon>
+        <div class="stat-title">Total Earnings</div>
+        <div class="stat-value">
+          {{ dashboardData.totalRevenue | currency:'INR':'symbol':'1.2-2' }}
+        </div>
+      </div>
+
+      <div class="stat-card blue">
+        <mat-icon>event</mat-icon>
+        <div class="stat-title">Total Bookings</div>
+        <div class="stat-value">{{ dashboardData.totalBookings }}</div>
+      </div>
+
+      <div class="stat-card purple">
+        <mat-icon>check_circle</mat-icon>
+        <div class="stat-title">Completed</div>
+        <div class="stat-value">{{ dashboardData.completedBookings }}</div>
+      </div>
+
+      <div class="stat-card red">
+        <mat-icon>cancel</mat-icon>
+        <div class="stat-title">Cancelled</div>
+        <div class="stat-value">{{ dashboardData.cancelledBookings }}</div>
+      </div>
     </section>
 
-  <section class="location-section">
-    <h2>Your Selected Working Location/Area</h2>
-    <p>{{savedLocation || 'Location not set'}}</p>
-  </section>
-</main>
+    <!-- Lower section -->
+    <section class="lower-cards-grid" *ngIf="dashboardData">
+      <div class="card">
+        <h3>Booking Progress</h3>
+        <p class="subtitle">
+          Completed: {{ dashboardData.completedBookings }} / Total: {{ dashboardData.totalBookings }}
+        </p>
+        <div class="progress-bar">
+          <div
+            class="progress-bar-fill"
+            [style.width.%]="(dashboardData.completedBookings / dashboardData.totalBookings) * 100"
+          ></div>
+        </div>
+      </div>
+
+      <div class="card location-card">
+        <mat-icon>location_on</mat-icon>
+        <div>
+          <h3>Working Area</h3>
+          <p>{{ savedLocation || 'Location not set' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+  </main>
+</div>
