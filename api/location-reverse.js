@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { lat, lon } = req.query;
-  const key = process.env.LOCATION_IQ_API_KEY;
+  const key ='pk.06165ee01186e3b07b09c63eac711fbb';
 
   if (!lat || !lon) {
     return res.status(400).json({ error: "Missing lat or lon" });
