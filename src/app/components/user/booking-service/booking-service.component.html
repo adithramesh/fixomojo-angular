@@ -168,7 +168,7 @@
                   [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
                   (click)="onTimeSlotSelected(slot)"
                 >
-                  {{ slot.time }}
+                  {{ slot.time | date:'medium':'GMT+5:30'  }}
                 </button>
               </div>
             </ng-container>
