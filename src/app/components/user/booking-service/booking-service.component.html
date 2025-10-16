@@ -169,7 +169,8 @@
                   (click)="onTimeSlotSelected(slot)"
                 >
                   <!-- {{ slot.time | date:'medium':'GMT+5:30'  }} -->
-                    {{ slot.startTime | date:'shortTime':'Asia/Kolkata' }} - {{ slot.endTime | date:'shortTime':'Asia/Kolkata' }}
+                    {{ slot.startTime | date:'shortTime':'UTC' }} - {{ slot.endTime | date:'shortTime':'UTC' }}
+
 
                 </button>
               </div>
