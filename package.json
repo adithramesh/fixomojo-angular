@@ -43,6 +43,7 @@
     "ng2-charts": "^8.0.0",
     "ngrx-store-localstorage": "^19.0.0",
     "ngx-filepond": "^7.0.3",
+    "node-fetch": "^3.3.2",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.8.1",
     "tslib": "^2.3.0",
