@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, Observer } from 'rxjs';
 import { UserResponseDTO } from '../models/admin.model';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.prod';
 import { AutocompleteSuggestion } from '../models/location.model';
 
 
