@@ -37,21 +37,38 @@ export class LocationService {
     });
   }
 
+  // getLocationIqAutocomplete(query: string): Observable<AutocompleteSuggestion[]> {
+  //    const baseUrl = environment.production
+  //   ? 'https://api.locationiq.com'
+  //   : '/locationiq';
+  //   const url = `${baseUrl}/locationiq/v1/autocomplete?key=${this.locationIqApiKey}&q=${query}&limit=5&format=json`;
+  //   return this.http.get<AutocompleteSuggestion[]>(url);
+  // }
+
   getLocationIqAutocomplete(query: string): Observable<AutocompleteSuggestion[]> {
-     const baseUrl = environment.production
-    ? 'https://api.locationiq.com'
-    : '/locationiq';
-    const url = `${baseUrl}/locationiq/v1/autocomplete?key=${this.locationIqApiKey}&q=${query}&limit=5&format=json`;
+    const baseUrl = environment.production
+      ? 'https://api.locationiq.com' 
+      : '/locationiq';                
+    const url = `${baseUrl}/v1/autocomplete?key=${this.locationIqApiKey}&q=${query}&limit=5&format=json`;
     return this.http.get<AutocompleteSuggestion[]>(url);
   }
 
+
   getLocationDetailsByLatLng(lat: string, lon: string): Observable<object> {
-     const baseUrl = environment.production
-    ? 'https://api.locationiq.com'
-    : '/locationiq';
-    const url = `${baseUrl}/locationiq/v1/reverse?key=${this.locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`;
+    const baseUrl = environment.production
+      ? 'https://api.locationiq.com'  // ✅ correct base URL
+      : '/locationiq';
+    const url = `${baseUrl}/v1/reverse?key=${this.locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`;
     return this.http.get<object>(url);
   }
+
+  // getLocationDetailsByLatLng(lat: string, lon: string): Observable<object> {
+  //    const baseUrl = environment.production
+  //   ? 'https://api.locationiq.com'
+  //   : '/locationiq';
+  //   const url = `${baseUrl}/locationiq/v1/reverse?key=${this.locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`;
+  //   return this.http.get<object>(url);
+  // }
 
   updateTechnicianWithLocation(userId:string|undefined,location:{ address?: string; latitude?: number; longitude?: number }){
     return this.http.patch<UserResponseDTO>(`${this.apiUrl}partner/${userId}/location`,location)
