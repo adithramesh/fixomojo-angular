@@ -168,7 +168,9 @@
                   [class.selected]="bookingForm.get('timeSlot')?.value === slot.id"
                   (click)="onTimeSlotSelected(slot)"
                 >
-                  {{ slot.time | date:'medium':'GMT+5:30'  }}
+                  <!-- {{ slot.time | date:'medium':'GMT+5:30'  }} -->
+                    {{ slot.startTime | date:'shortTime':'Asia/Kolkata' }} - {{ slot.endTime | date:'shortTime':'Asia/Kolkata' }}
+
                 </button>
               </div>
             </ng-container>
