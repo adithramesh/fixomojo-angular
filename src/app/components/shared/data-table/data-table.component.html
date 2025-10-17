@@ -2,7 +2,7 @@
   <h2 *ngIf="title">{{ title }}</h2>
 
   <!-- Table controls: Search and Add button -->
-  <div class="table-controls" *ngIf="!isLoading && (tableData.length > 0 || showAddButton)">
+  <div class="table-controls" *ngIf="!isLoading && (tableData.length > 0 || showAddButton || tableData.length === 0)">
     <input
       *ngIf="showSearch"
       #searchInput
@@ -26,13 +26,10 @@
   <!-- Loading state -->
   <div *ngIf="isLoading" class="loading-indicator">Loading data...</div>
 
-  <!-- Empty state -->
-  <div *ngIf="!isLoading && tableData.length === 0" class="empty-state">
-    {{ emptyMessage }}
-  </div>
+ 
 
   <!-- Table with data -->
-  <div *ngIf="!isLoading && tableData.length > 0" class="table-responsive">
+  <div *ngIf="!isLoading && tableData.length > 0 || tableData.length === 0" class="table-responsive">
     <table class="data-table">
       <thead>
         <tr>
@@ -187,5 +184,10 @@
         Next
       </button>
     </div>
+  </div>
+
+   <!-- Empty state -->
+  <div *ngIf="!isLoading && tableData.length === 0" class="empty-state">
+    {{ emptyMessage }}
   </div>
 </div>
